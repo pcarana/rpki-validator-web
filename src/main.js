@@ -33,7 +33,7 @@ const messages = {
     },
     repositories: {
       title: 'TAL List',
-      description: 'This is the TALs configured at the validator',
+      description: 'This are the TALs configured at the validator',
       name: 'Name',
       uris: 'URIs',
       lastSync: 'Last sync',
@@ -43,6 +43,16 @@ const messages = {
       hideDetail: 'Hide detail',
       showDetail: 'Show detail',
       syncOne: 'Synchronize'
+    },
+    filter: {
+      placeholder: 'Filter...',
+      clean: 'Clean',
+      all: 'All'
+    },
+    general: {
+      return: 'Return',
+      displaying: 'Displaying {display} results of {total}',
+      maxResults: 'Max rows'
     },
     errors: {
       noDataFound: 'No data found'
