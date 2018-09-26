@@ -41,23 +41,17 @@
         <template slot="HEAD_uris" slot-scope="data">
           {{ $t(data.label) }}
         </template>
-        <template slot="HEAD_lastSync" slot-scope="data">
-          {{ $t(data.label) }}
-        </template>
         <template slot="HEAD_action" slot-scope="data">
           {{ $t(data.label) }}
         </template>
         <template slot="uris" slot-scope="data">
-          <span v-for="item in data.value" :key="item.value" :class="{'font-weight-bold': item.loaded}">
-            {{ item.value }}<br />
+          <span v-for="item in data.value" :key="item.location">
+            {{ item.location }}<br />
           </span>
         </template>
         <template slot="action" slot-scope="row">
           <b-button size="sm" class="mr-2" :to="{path: ''+row.item.id}" append>
             {{ $t('repositories.showDetail') }}
-          </b-button>
-          <b-button size="sm" class="mr-2">
-            {{ $t('repositories.syncOne') }}
           </b-button>
         </template>
       </b-table>
@@ -77,7 +71,6 @@ export default {
       tableFields: [
         {key: 'name', label: 'repositories.name', sortable: true},
         {key: 'uris', label: 'repositories.uris', sortable: true},
-        {key: 'lastSync', label: 'repositories.lastSync', sortable: true},
         {key: 'action', label: 'repositories.action', sortable: false}
       ],
       tableCurrentPage: 1,
@@ -96,15 +89,20 @@ export default {
         { text: 50, value: 50 },
         { text: 100, value: 100 }
       ],
-      eventHub: null
+      eventHub: null,
+      error: null,
+      requestedService: null
     }
   },
   methods: {
     successCb (response) {
-      this.repositoryList = response.data
+      if (response.config.method === 'get') {
+        this.repositoryList = response.data
+      }
     },
     errorCb (error) {
-      this.result = error
+      this.error = error
+      // Show the error
     },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
@@ -126,11 +124,11 @@ export default {
         case 'uris':
           // Map the values from the obj to search on those values only
           return item.uris.map(function (uri) {
-            return uri.value
+            return uri.location
           }).toString().match(regexp)
         default:
           return item.name.match(regexp) || item.uris.map(function (uri) {
-            return uri.value
+            return uri.location
           }).toString().match(regexp)
       }
     }
