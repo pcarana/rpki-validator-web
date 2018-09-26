@@ -24,7 +24,6 @@ const messages = {
         prefix: 'Prefix',
         bgpsec: 'BGPsec'
       },
-      rtr: 'RTR sessions',
       validate: 'Validate'
     },
     home: {
@@ -33,16 +32,17 @@ const messages = {
     },
     repositories: {
       title: 'TAL List',
-      description: 'This are the TALs configured at the validator',
+      description: 'These are the TALs configured at the validator',
       name: 'Name',
       uris: 'URIs',
-      lastSync: 'Last sync',
       action: 'Action',
       loadedUri: 'Loaded URI',
       publicKey: 'Public key',
       hideDetail: 'Hide detail',
-      showDetail: 'Show detail',
-      syncOne: 'Synchronize'
+      showDetail: 'Show detail'
+    },
+    repository: {
+      title: 'TAL {name} detail'
     },
     filter: {
       placeholder: 'Filter...',
