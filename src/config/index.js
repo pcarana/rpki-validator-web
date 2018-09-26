@@ -1,12 +1,11 @@
 /* eslint-disable */
 export default {
     api: {
-        url: 'http://localhost:9090/rpki-validator-api',
+        url: 'http://localhost:9090/rpki-validator-api-0.0.1-SNAPSHOT',
         services: {
             get: {
                 talList: '/tal',
                 talDetail: '/tal/:id',
-                talStatus: '/tal/status/:id',
                 roaList: '/roa',
                 roaDetail: '/roa/:id',
                 slurmGeneral: '/slurm/',
@@ -18,7 +17,6 @@ export default {
                 slurmBgpsecDetail: '/slurm/bgpsec/:id',
                 slurmBgpsecFilterList: '/slurm/bgpsec/filter',
                 slurmBgpsecAssertionList: '/slurm/bgpsec/assertion',
-                rtrSessions: '/rtr',
                 validate: '/validate/:asn/:prefix/:prefix-length'
             },
             post: {
@@ -26,10 +24,6 @@ export default {
                 slurmPrefixAssertion: '/slurm/prefix/assertion',
                 slurmBgpsecFilter: '/slurm/bgpsec/filter',
                 slurmBgpsecAssertion: '/slurm/bgpsec/assertion',
-            },
-            put: {
-                talSyncAll: '/tal/sync',
-                talSyncOne: '/tal/sync/:id'
             },
             delete: {
                 slurmPrefix: '/slurm/prefix/:id',
