@@ -1,8 +1,35 @@
 <template>
     <div class="container mt-2 mx-4">
-      <h1>{{ $t('repositories.title') }} {{ this.$route.params.talId }}</h1>
-      <p>{{ tal }}</p>
+      <h1>{{ $t('repository.title', { name: tal.name }) }}</h1>
       <p v-if="error">{{ error }}</p>
+      <h2>Detail</h2>
+      <h3>URIs</h3>
+      <p v-for="uri in tal.uris" :key="uri.location">
+        {{ uri.location}}
+      </p>
+      <h3>Public key</h3>
+      <p>{{ tal.publicKey }}</p>
+      <h3>Loaded certificate</h3>
+      <b-container>
+        <div v-html='loadedCerFormatted'></div>
+      </b-container>
+      <h3>Files summary</h3>
+      <b-container>
+        <b-row>
+          <b-col></b-col>
+          <b-col>Valid</b-col>
+          <b-col>Warning</b-col>
+          <b-col>Error</b-col>
+          <b-col>Total</b-col>
+        </b-row>
+        <b-row v-for="fileSummary in Array.from(filesSummary)" :key="fileSummary[0]">
+          <b-col>{{fileSummary[0]}}</b-col>
+          <b-col>{{fileSummary[1].valid}}</b-col>
+          <b-col>{{fileSummary[1].warning}}</b-col>
+          <b-col>{{fileSummary[1].error}}</b-col>
+          <b-col>{{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}</b-col>
+        </b-row>
+      </b-container>
       <b-button @click="back">{{ $t('general.return') }}</b-button>
     </div>
 </template>
@@ -28,11 +55,91 @@ export default {
     },
     errorCb (error) {
       this.error = error
+    },
+    formatObject (object) {
+      let formatted = ''
+      for (const prop in object) {
+        formatted += this.formatProperty(prop, object[prop])
+      }
+      return formatted
+    },
+    formatArray (array) {
+      let formatted = ''
+      for (let value of array) {
+        if (value instanceof Array) {
+          formatted += this.formatArray(value)
+        } else if (value instanceof Object) {
+          formatted += this.formatObject(value)
+        } else {
+          formatted += value + ','
+        }
+      }
+      if (formatted.endsWith(',')) {
+        return formatted.substr(0, formatted.length - 1)
+      }
+      return formatted
+    },
+    formatProperty (key, value) {
+      let formatted = '<div><b>' + key + '</b>: '
+      if (value instanceof Array) {
+        formatted += '<div class="ml-4">' + this.formatArray(value) + '</div>'
+      } else if (value instanceof Object) {
+        formatted += '<div class="ml-4">' + this.formatObject(value) + '</div>'
+      } else {
+        formatted += (value !== null && value !== '' ? value : 'NULL')
+      }
+      return formatted + '</div>'
+    },
+    addToSummaryMap (check, fileMap, property) {
+      let split = check.location.split('.')
+      let fileType = split[split.length - 1]
+      if (!fileMap.has(fileType)) {
+        let values = { valid: 0, warning: 0, error: 0 }
+        fileMap.set(fileType, values)
+      }
+      fileMap.get(fileType)[property] += 1
     }
   },
   created: function () {
-    const service = config.api.services.get.talDetail.replace(':id', this.$route.params.talId)
-    axios.get(this.$root.$i18n.locale, service, this.successCb, this.errorCb, this.eventHub)
+    const service = config.api.services.get.talDetail.replace(
+      ':id',
+      this.$route.params.talId
+    )
+    axios.get(
+      this.$root.$i18n.locale,
+      service,
+      this.successCb,
+      this.errorCb,
+      this.eventHub
+    )
+  },
+  computed: {
+    filesSummary: function () {
+      const fileMap = new Map()
+      this.tal.validations.filter((v) => {
+        return v.status !== 'RUNNING'
+      }).map((validation) => {
+        validation.checks.passed.map((c) => {
+          this.addToSummaryMap(c, fileMap, 'valid')
+        })
+        validation.checks.warning.map((c) => {
+          this.addToSummaryMap(c, fileMap, 'warning')
+        })
+        validation.checks.error.map((c) => {
+          this.addToSummaryMap(c, fileMap, 'error')
+        })
+        let object = {}
+        object.valid = validation.checks.passed.length
+        object.warning = validation.checks.warning.length
+        object.error = validation.checks.error.length
+        object.total = object.valid + object.warning + object.error
+        fileMap.set('', object)
+      })
+      return fileMap
+    },
+    loadedCerFormatted: function () {
+      return this.formatObject(this.tal.loadedCer)
+    }
   }
 }
 </script>
