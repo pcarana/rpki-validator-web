@@ -5,7 +5,6 @@ import Repositories from '@/components/Repositories'
 import Repository from '@/components/Repository'
 import Roa from '@/components/Roa'
 import Roas from '@/components/Roas'
-import RtrSessions from '@/components/RtrSessions'
 import SlurmGeneral from '@/components/SlurmGeneral'
 import SlurmBgpsec from '@/components/SlurmBgpsec'
 import SlurmPrefix from '@/components/SlurmPrefix'
@@ -54,11 +53,6 @@ export default new Router({
       path: '/slurm/bgpsec',
       name: 'modules.slurm.bgpsec',
       component: SlurmBgpsec
-    },
-    {
-      path: '/rtr',
-      name: 'modules.rtr',
-      component: RtrSessions
     },
     {
       path: '/validate',

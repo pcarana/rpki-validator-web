@@ -55,7 +55,6 @@ export default {
             }
           ]
         },
-        { to: '/rtr', name: 'modules.rtr' },
         { to: '/validate', name: 'modules.validate' }
       ],
       langItems: [{ id: 'en', lang: 'EN' }, { id: 'es', lang: 'ES' }]
