@@ -56,40 +56,6 @@ export default {
     errorCb (error) {
       this.error = error
     },
-    formatObject (object) {
-      let formatted = ''
-      for (const prop in object) {
-        formatted += this.formatProperty(prop, object[prop])
-      }
-      return formatted
-    },
-    formatArray (array) {
-      let formatted = ''
-      for (let value of array) {
-        if (value instanceof Array) {
-          formatted += this.formatArray(value)
-        } else if (value instanceof Object) {
-          formatted += this.formatObject(value)
-        } else {
-          formatted += value + ','
-        }
-      }
-      if (formatted.endsWith(',')) {
-        return formatted.substr(0, formatted.length - 1)
-      }
-      return formatted
-    },
-    formatProperty (key, value) {
-      let formatted = '<div><b>' + key + '</b>: '
-      if (value instanceof Array) {
-        formatted += '<div class="ml-4">' + this.formatArray(value) + '</div>'
-      } else if (value instanceof Object) {
-        formatted += '<div class="ml-4">' + this.formatObject(value) + '</div>'
-      } else {
-        formatted += (value !== null && value !== '' ? value : 'NULL')
-      }
-      return formatted + '</div>'
-    },
     addToSummaryMap (check, fileMap, property) {
       let split = check.location.split('.')
       let fileType = split[split.length - 1]
