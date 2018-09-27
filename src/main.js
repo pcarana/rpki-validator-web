@@ -44,6 +44,30 @@ const messages = {
     repository: {
       title: 'TAL {name} detail'
     },
+    validate: {
+      title: 'Validate',
+      description: 'Simulate the validation result of a ROA according to the rules of RFC 6483, the result will be the Route\'s Validity State',
+      asn: 'ASN',
+      prefix: 'Prefix',
+      prefixLength: 'Prefix length',
+      request: 'Validate',
+      validityState: 'Status',
+      roaMatch: 'ROA matched',
+      roaClosestMatch: 'Closest ROA matched',
+      state: {
+        valid: 'Valid',
+        invalid: 'Invalid',
+        unknown: 'Unknown'
+      },
+      validityMatrix: {
+        nonIntersecting: 'Non intersecting',
+        coveringAggregate: 'Covering aggregate',
+        matchRoa: 'Match ROA prefix',
+        moreSpecific: 'More specific than ROA',
+        matchAs: 'Matching',
+        nonMatchAs: 'Non matching'
+      }
+    },
     filter: {
       placeholder: 'Filter...',
       clean: 'Clean',
@@ -88,6 +112,40 @@ Vue.mixin({
     },
     isActiveLang (langId) {
       return i18n.locale === langId
+    },
+    formatObject (object) {
+      let formatted = ''
+      for (const prop in object) {
+        formatted += this.formatProperty(prop, object[prop])
+      }
+      return formatted
+    },
+    formatArray (array) {
+      let formatted = ''
+      for (let value of array) {
+        if (value instanceof Array) {
+          formatted += this.formatArray(value)
+        } else if (value instanceof Object) {
+          formatted += this.formatObject(value)
+        } else {
+          formatted += value + ','
+        }
+      }
+      if (formatted.endsWith(',')) {
+        return formatted.substr(0, formatted.length - 1)
+      }
+      return formatted
+    },
+    formatProperty (key, value) {
+      let formatted = '<div><b>' + key + '</b>: '
+      if (value instanceof Array) {
+        formatted += '<div class="ml-4">' + this.formatArray(value) + '</div>'
+      } else if (value instanceof Object) {
+        formatted += '<div class="ml-4">' + this.formatObject(value) + '</div>'
+      } else {
+        formatted += (value !== null && value !== '' ? value : 'NULL')
+      }
+      return formatted + '</div>'
     },
     getActiveLang () {
       return i18n.locale
