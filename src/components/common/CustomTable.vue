@@ -41,7 +41,7 @@
       </template>
       <template v-if="showDetailButton" slot="action" slot-scope="row">
         <b-button size="sm" class="mr-2" :to="{path: ''+row.item.id}" append>
-          {{ $t('repositories.showDetail') }}
+          {{ $t('general.showDetail') }}
         </b-button>
       </template>
     </b-table>
@@ -88,14 +88,7 @@ export default {
     customFilter (item) {
       var searchFilterOpt = this.searchFilter === null ? '' : this.searchFilter.trim()
       var filterItemTxt = this.filterItem === null ? '' : this.filterItem.trim()
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return true
-      }
-      return this.filterFunction(searchFilterOpt, item, regexp)
+      return this.filterFunction(item, searchFilterOpt, filterItemTxt)
     }
   }
 }

@@ -36,10 +36,7 @@ const messages = {
       name: 'Name',
       uris: 'URIs',
       action: 'Action',
-      loadedUri: 'Loaded URI',
-      publicKey: 'Public key',
-      hideDetail: 'Hide detail',
-      showDetail: 'Show detail'
+      publicKey: 'Public key'
     },
     repository: {
       title: 'TAL {name} detail'
@@ -76,7 +73,8 @@ const messages = {
     general: {
       return: 'Return',
       displaying: 'Displaying {display} results of {total}',
-      maxResults: 'Max rows'
+      maxResults: 'Max rows',
+      showDetail: 'Show detail'
     },
     errors: {
       noDataFound: 'No data found'

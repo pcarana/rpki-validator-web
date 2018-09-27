@@ -59,7 +59,14 @@ export default {
       this.error = error
       // Show the error
     },
-    filterFunction (searchFilterOpt, item, regexp) {
+    filterFunction (item, searchFilterOpt, filterItemTxt) {
+      var regexp
+      try {
+        regexp = new RegExp(filterItemTxt, 'i')
+      } catch (e) {
+        // Wait until the regexp is valid
+        return true
+      }
       switch (searchFilterOpt) {
         case 'name':
           return item.name.match(regexp)
