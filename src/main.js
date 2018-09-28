@@ -41,6 +41,15 @@ const messages = {
     repository: {
       title: 'TAL {name} detail'
     },
+    roas: {
+      title: 'ROA List',
+      description: 'These are the ROAs loaded from the configured TALs',
+      asn: 'ASN',
+      prefix: 'Prefix',
+      prefixMaxLength: 'Prefix max length',
+      prefixFamily: 'Prefix family',
+      action: 'Action'
+    },
     validate: {
       title: 'Validate',
       description: 'Simulate the validation result of a ROA according to the rules of RFC 6483, the result will be the Route\'s Validity State',
