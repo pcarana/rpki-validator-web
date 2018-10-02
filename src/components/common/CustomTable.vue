@@ -56,7 +56,6 @@
 
 <script>
 export default {
-  inheritAttrs: true,
   props: {
     items: Array,
     tableFields: Array,
