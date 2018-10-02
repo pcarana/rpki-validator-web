@@ -56,6 +56,10 @@ const messages = {
         title: 'GBRs'
       }
     },
+    slurm: {
+      filter: 'Filter',
+      assertion: 'Assertion'
+    },
     validate: {
       title: 'Validate',
       description: 'Simulate the validation result of a ROA according to the rules of RFC 6483, the result will be the Route\'s Validity State',
