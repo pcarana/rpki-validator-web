@@ -38,7 +38,7 @@ export default {
             return formatted
           }
         },
-        {key: 'action', label: 'repositories.action', sortable: false}
+        {key: 'action', label: 'common.action', sortable: false}
       ],
       searchFilterOpts: [
         { text: 'repositories.name', value: 'name' },

@@ -34,30 +34,19 @@ const messages = {
       title: 'TAL List',
       description: 'These are the TALs configured at the validator',
       name: 'Name',
-      uris: 'URIs',
-      action: 'Action',
-      publicKey: 'Public key'
+      uris: 'URIs'
     },
     repository: {
       title: 'TAL {name} detail'
     },
     roas: {
       title: 'ROA List',
-      description: 'These are the ROAs loaded from the configured TALs',
-      asn: 'ASN',
-      prefix: 'Prefix',
-      prefixMaxLength: 'Prefix max length',
-      prefixFamily: 'Prefix family',
-      action: 'Action'
+      description: 'These are the ROAs loaded from the configured TALs'
     },
     roa: {
       title: 'ROA detail',
       general: {
         title: 'General',
-        asn: 'ASN',
-        prefix: 'Prefix',
-        prefixMaxLength: 'Prefix max length',
-        prefixFamily: 'Prefix family',
         cms: 'CMS'
       },
       eecert: {
@@ -70,9 +59,6 @@ const messages = {
     validate: {
       title: 'Validate',
       description: 'Simulate the validation result of a ROA according to the rules of RFC 6483, the result will be the Route\'s Validity State',
-      asn: 'ASN',
-      prefix: 'Prefix',
-      prefixLength: 'Prefix length',
       request: 'Validate',
       validityState: 'Status',
       roaMatch: 'ROA matched',
@@ -90,6 +76,16 @@ const messages = {
         matchAs: 'Matching',
         nonMatchAs: 'Non matching'
       }
+    },
+    common: {
+      asn: 'ASN',
+      prefix: 'Prefix',
+      prefixLength: 'Prefix length',
+      prefixMaxLength: 'Prefix max length',
+      prefixFamily: 'Prefix family',
+      action: 'Action',
+      publicKey: 'Public key',
+      comment: 'Comment'
     },
     filter: {
       placeholder: 'Filter...',

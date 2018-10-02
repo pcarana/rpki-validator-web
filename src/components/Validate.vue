@@ -3,13 +3,13 @@
       <h1>{{ $t('validate.title') }}</h1>
       <p>{{ $t('validate.description') }}</p>
       <b-form @submit="onSubmit">
-        <b-form-group horizontal :label="$t('validate.asn')" label-for="asn">
+        <b-form-group horizontal :label="$t('common.asn')" label-for="asn">
           <b-form-input id="asn" type="number" v-model.trim="asn" />
         </b-form-group>
-        <b-form-group horizontal :label="$t('validate.prefix')" label-for="prefix">
+        <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix">
           <b-form-input id="prefix" type="text" v-model.trim="prefix" />
         </b-form-group>
-        <b-form-group horizontal :label="$t('validate.prefixLength')" label-for="prefixLength">
+        <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength">
           <b-form-input id="prefixLength" type="number" v-model.trim="prefixLength" />
         </b-form-group>
         <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
@@ -27,7 +27,7 @@
             <b-col>
               <b-row>
                 <b-col></b-col>
-                <b-col>{{ $t('validate.asn') }}</b-col>
+                <b-col>{{ $t('common.asn') }}</b-col>
               </b-row>
               <b-row>
                 <b-col></b-col>

@@ -24,17 +24,17 @@ export default {
     return {
       roasList: [],
       tableFields: [
-        {key: 'asn', label: 'roas.asn', sortable: true},
-        {key: 'prefix', label: 'roas.prefix', sortable: true},
-        {key: 'prefixMaxLength', label: 'roas.prefixMaxLength', sortable: true},
-        {key: 'prefixFamily', label: 'roas.prefixFamily', sortable: true},
-        {key: 'action', label: 'roas.action', sortable: false}
+        {key: 'asn', label: 'common.asn', sortable: true},
+        {key: 'prefix', label: 'common.prefix', sortable: true},
+        {key: 'prefixMaxLength', label: 'common.prefixMaxLength', sortable: true},
+        {key: 'prefixFamily', label: 'common.prefixFamily', sortable: true},
+        {key: 'action', label: 'common.action', sortable: false}
       ],
       searchFilterOpts: [
-        { text: 'roas.asn', value: 'asn' },
-        { text: 'roas.prefix', value: 'prefix' },
-        { text: 'roas.prefixMaxLength', value: 'prefixMaxLength' },
-        { text: 'roas.prefixFamily', value: 'prefixFamily' }
+        { text: 'common.asn', value: 'asn' },
+        { text: 'common.prefix', value: 'prefix' },
+        { text: 'common.prefixMaxLength', value: 'prefixMaxLength' },
+        { text: 'common.prefixFamily', value: 'prefixFamily' }
       ],
       eventHub: null,
       error: null,

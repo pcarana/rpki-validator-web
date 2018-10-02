@@ -5,19 +5,19 @@
     <b-card :title="$t('roa.general.title')">
       <b-container>
         <b-row>
-          <b-col><b>{{ $t('roa.general.asn') }}</b></b-col>
+          <b-col><b>{{ $t('common.asn') }}</b></b-col>
           <b-col>{{ roa.asn }}</b-col>
         </b-row>
         <b-row>
-          <b-col><b>{{ $t('roa.general.prefix') }}</b></b-col>
+          <b-col><b>{{ $t('common.prefix') }}</b></b-col>
           <b-col>{{ roa.prefix }}</b-col>
         </b-row>
         <b-row>
-          <b-col><b>{{ $t('roa.general.prefixMaxLength') }}</b></b-col>
+          <b-col><b>{{ $t('common.prefixMaxLength') }}</b></b-col>
           <b-col>{{ roa.prefixMaxLength }}</b-col>
         </b-row>
         <b-row>
-          <b-col><b>{{ $t('roa.general.prefixFamily') }}</b></b-col>
+          <b-col><b>{{ $t('common.prefixFamily') }}</b></b-col>
           <b-col>{{ roa.prefixFamily }}</b-col>
         </b-row>
         <b-row>
