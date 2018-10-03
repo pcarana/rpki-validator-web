@@ -97,7 +97,8 @@ const messages = {
       publicKey: 'Public key',
       comment: 'Comment',
       add: 'Add',
-      cancel: 'Cancel'
+      cancel: 'Cancel',
+      createSuccess: 'Object successfully created!'
     },
     filter: {
       placeholder: 'Filter...',
@@ -117,6 +118,7 @@ const messages = {
       asnInvalid: 'Invalid ASN',
       prefixInvalid: 'Must be a valid IP block',
       prefixLengthInvalid: 'Must be between {min} and {max}',
+      prefixMaxLengthGt: 'Must be greater than or equal to the prefix length',
       commentInvalid: 'Must have between {min} and {max} characters'
     },
     language: 'Language'
@@ -149,6 +151,7 @@ Vue.mixin({
         SlurmPrefix: {
           asn: 'common.asn',
           prefix: 'common.prefix',
+          maxPrefixLength: 'common.prefixMaxLength',
           comment: 'common.comment'
         }
       },

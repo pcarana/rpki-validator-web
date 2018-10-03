@@ -7,7 +7,9 @@
                   :showDetailButton="true">
     </custom-table>
     <add-prefix :successCallback="createSuccessCb"
-                prefixType="filter">
+                prefixType="filter"
+                addButtonLabel="slurm.filter.addNew"
+                :postService="postService">
     </add-prefix>
   </b-container>
 </template>
@@ -25,6 +27,7 @@ export default {
   },
   data () {
     return {
+      postService: config.api.services.post.slurmPrefixFilter,
       filtersList: [],
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },

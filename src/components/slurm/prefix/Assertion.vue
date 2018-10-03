@@ -6,32 +6,40 @@
                   :searchFilterOpts="searchFilterOpts"
                   :showDetailButton="true">
     </custom-table>
+    <add-prefix :successCallback="createSuccessCb"
+                prefixType="assertion"
+                addButtonLabel="slurm.assertion.addNew"
+                :postService="postService">
+    </add-prefix>
   </b-container>
 </template>
 
 <script>
+import AddPrefix from '@/components/slurm/prefix/AddPrefix.vue'
 import CustomTable from '@/components/common/CustomTable.vue'
 import axios from '@/axios'
 import config from '@/config'
 
 export default {
   components: {
+    'add-prefix': AddPrefix,
     'custom-table': CustomTable
   },
   data () {
     return {
+      postService: config.api.services.post.slurmPrefixAssertion,
       assertionsList: [],
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
         { key: 'prefix', label: 'common.prefix', sortable: true },
-        { key: 'prefixMaxLength', label: 'common.prefixMaxLength', sortable: true },
+        { key: 'maxPrefixLength', label: 'common.prefixMaxLength', sortable: true },
         { key: 'comment', label: 'common.comment', sortable: false },
         { key: 'action', label: 'common.action', sortable: false }
       ],
       searchFilterOpts: [
         { text: 'common.asn', value: 'asn' },
         { text: 'common.prefix', value: 'prefix' },
-        { text: 'common.prefixMaxLength', value: 'prefixMaxLength' },
+        { text: 'common.prefixMaxLength', value: 'maxPrefixLength' },
         { text: 'common.comment', value: 'comment' }
       ],
       eventHub: null,
@@ -40,6 +48,13 @@ export default {
     }
   },
   methods: {
+    loadList () {
+      axios.get(this.$root.$i18n.locale,
+        config.api.services.get.slurmPrefixAssertionList,
+        this.successCb,
+        this.errorCb,
+        this.eventHub)
+    },
     successCb (response) {
       this.assertionsList = response.data
     },
@@ -60,24 +75,23 @@ export default {
           return regexp.test(item.asn)
         case 'prefix':
           return item.prefix.match(regexp)
-        case 'prefixMaxLength':
-          return regexp.test(item.prefixMaxLength)
+        case 'maxPrefixLength':
+          return regexp.test(item.maxPrefixLength)
         case 'comment':
           return item.comment.match(regexp)
         default:
           return regexp.test(item.asn) ||
                  item.prefix.match(regexp) ||
-                 regexp.test(item.prefixMaxLength) ||
+                 regexp.test(item.maxPrefixLength) ||
                  item.comment.match(regexp)
       }
+    },
+    createSuccessCb (response) {
+      this.loadList()
     }
   },
   created: function () {
-    axios.get(this.$root.$i18n.locale,
-      config.api.services.get.slurmPrefixAssertionList,
-      this.successCb,
-      this.errorCb,
-      this.eventHub)
+    this.loadList()
   }
 }
 </script>

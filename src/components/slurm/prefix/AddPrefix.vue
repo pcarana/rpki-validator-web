@@ -1,13 +1,13 @@
 <template>
   <span>
     <b-button v-b-modal.createModal>
-      {{ $t('slurm.filter.addNew') }}
+      {{ $t(addButtonLabel) }}
     </b-button>
     <b-modal
       id="createModal"
       ref="createModal"
       @shown="focusFirstField"
-      :title="$t('slurm.filter.addNew')"
+      :title="$t(addButtonLabel)"
       :ok-title="$t('common.add')"
       :cancel-title="$t('common.cancel')"
       @ok="sendRequest"
@@ -70,6 +70,26 @@
             </b-form-group>
           </b-col>
         </b-row>
+        <b-row class="mb-1" v-if="showMaxLength">
+          <b-col cols="2">
+            <label for="prefixMaxLength">{{ $t('common.prefixMaxLength') }}</label>
+          </b-col>
+          <b-col>
+            <b-form-group id="prefixMaxLengthGroup">
+              <b-form-input id="prefixMaxLength"
+                ref="prefixMaxLength"
+                type="number"
+                v-model="newObject.prefixMaxLength"
+                :min="prefixLengthMin"
+                :max="prefixLengthMax"
+                :state="prefixMaxLengthState">
+              </b-form-input>
+              <b-form-invalid-feedback>
+                {{ $t(prefixMaxLengthMessage, { min: prefixLengthMin, max: prefixLengthMax }) }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-row>
         <b-row class="mb-1">
           <b-col cols="2"><label for="comment">{{ $t('common.comment') }}</label></b-col>
           <b-col>
@@ -98,19 +118,20 @@
       id="successModal"
       ref="successModal"
       ok-only>
-      <h2>Object successfully created!!</h2>
+      <h2>{{ $t('common.createSuccess') }}</h2>
     </b-modal>
   </span>
 </template>
 
 <script>
 import axios from '@/axios'
-import config from '@/config'
 
 export default {
   props: {
     successCallback: Function,
-    prefixType: String
+    prefixType: String,
+    addButtonLabel: String,
+    postService: String
   },
   data () {
     return {
@@ -118,6 +139,7 @@ export default {
         asn: null,
         prefix: null,
         prefixLength: null,
+        prefixMaxLength: null,
         comment: null
       },
       createError: null
@@ -129,6 +151,7 @@ export default {
       this.newObject.asn = null
       this.newObject.prefix = null
       this.newObject.prefixLength = null
+      this.newObject.prefixMaxLength = null
       this.newObject.comment = null
       this.$refs.asn.focus()
     },
@@ -137,18 +160,34 @@ export default {
       let newObject = this.newObject
       if (!this.validObject) {
         let validationMessage = 'errors.checkErrors'
-        if (!this.newObject.asn && !this.newObject.prefix) {
+        if (!this.showMaxLength && !this.newObject.asn && !this.newObject.prefix) {
           validationMessage = 'errors.asnOrPrefixRequired'
         }
         this.createError = { validationMessage: validationMessage }
         return
       }
       let newFilter = {}
-      newFilter.asn = parseInt(newObject.asn)
-      newFilter.prefix = newObject.prefix + '/' + newObject.prefixLength
-      newFilter.comment = newObject.comment
+      if (newObject.asn) {
+        newFilter.asn = parseInt(newObject.asn)
+      }
+      let prefix = ''
+      if (newObject.prefix) {
+        prefix += newObject.prefix
+      }
+      if (newObject.prefixLength) {
+        prefix += '/' + newObject.prefixLength
+      }
+      if (prefix.length > 0) {
+        newFilter.prefix = prefix
+      }
+      if (this.showMaxLength && newObject.prefixMaxLength) {
+        newFilter.maxPrefixLength = parseInt(newObject.prefixMaxLength)
+      }
+      if (newObject.comment) {
+        newFilter.comment = newObject.comment
+      }
       axios.post(this.$root.$i18n.locale,
-        config.api.services.post.slurmPrefixFilter,
+        this.postService,
         newFilter,
         null,
         this.createSuccessCb,
@@ -166,6 +205,9 @@ export default {
     }
   },
   computed: {
+    showMaxLength: function () {
+      return this.prefixType === 'assertion'
+    },
     createErrorMessage: function () {
       let error = this.createError
       if (!error) {
@@ -193,6 +235,8 @@ export default {
       if (this.newObject.asn) {
         return this.newObject.asn >= this.validationRules.asn.min &&
                this.newObject.asn <= this.validationRules.asn.max
+      } else if (this.showMaxLength) {
+        return false
       }
       return null
     },
@@ -200,6 +244,8 @@ export default {
       if (this.newObject.prefix && this.newObject.prefix.length > 0) {
         return this.validationRules.prefix.ipv4Regex.test(this.newObject.prefix) ||
                this.validationRules.prefix.ipv6Regex.test(this.newObject.prefix)
+      } else if (this.showMaxLength) {
+        return false
       }
       return null
     },
@@ -207,8 +253,18 @@ export default {
       if (this.newObject.prefixLength) {
         return this.newObject.prefixLength >= this.prefixLengthMin &&
                this.newObject.prefixLength <= this.prefixLengthMax
+      } else if (this.showMaxLength) {
+        return false
       }
       return this.newObject.prefix && this.newObject.prefix.length > 0 ? false : null
+    },
+    prefixMaxLengthState: function () {
+      if (this.showMaxLength && this.newObject.prefixMaxLength) {
+        return this.newObject.prefixMaxLength >= this.prefixLengthMin &&
+               this.newObject.prefixMaxLength <= this.prefixLengthMax &&
+               this.newObject.prefixMaxLength >= this.newObject.prefixLength
+      }
+      return null
     },
     commentState: function () {
       if (!this.newObject.comment) {
@@ -229,6 +285,17 @@ export default {
       }
       return this.validationRules.prefixLength.v6.max
     },
+    prefixMaxLengthMessage: function () {
+      if (this.prefixMaxLengthState !== false) {
+        return ''
+      }
+      if (this.newObject.prefixMaxLength < this.prefixLengthMin ||
+          this.newObject.prefixMaxLength > this.prefixLengthMax) {
+        return 'errors.prefixLengthInvalid'
+      }
+      // Then the cause is the other condition
+      return 'errors.prefixMaxLengthGt'
+    },
     validObject: function () {
       let fullPrefixState = false
       if (this.prefixState === null && this.prefixLengthState === null) {
@@ -237,11 +304,20 @@ export default {
         fullPrefixState = true
       }
       // Validate ASN and prefix first
-      if ((this.asnState === false || fullPrefixState === false) ||
-          (this.asnState === null && fullPrefixState === null)) {
-        return false
+      if (!this.showMaxLength) {
+        if ((this.asnState === false || fullPrefixState === false) ||
+            (this.asnState === null && fullPrefixState === null)) {
+          return false
+        }
+      } else {
+        if (this.asnState !== true || fullPrefixState !== true) {
+          return false
+        }
       }
       // Now the rest of the fields
+      if (this.showMaxLength && this.prefixMaxLengthState === false) {
+        return false
+      }
       return this.commentState === true
     }
   }
