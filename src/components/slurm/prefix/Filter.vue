@@ -27,50 +27,75 @@
         <b-row class="mb-1">
           <b-col cols="2"><label for="asn">{{ $t('common.asn') }}</label></b-col>
           <b-col>
-            <b-form-input id="asn"
-              ref="asn"
-              type="number"
-              v-model="newObject.asn"
-              :min="validationRules.asn.min"
-              :max="validationRules.asn.max"
-              :state="asnState">
-            </b-form-input>
+            <b-form-group id="asnGroup">
+              <b-form-input id="asn"
+                ref="asn"
+                type="number"
+                v-model="newObject.asn"
+                :min="validationRules.asn.min"
+                :max="validationRules.asn.max"
+                :state="asnState">
+              </b-form-input>
+              <b-form-invalid-feedback>
+                {{ $t('errors.asnInvalid') }}
+              </b-form-invalid-feedback>
+            </b-form-group>
           </b-col>
         </b-row>
         <b-row class="mb-1">
           <b-col cols="2"><label for="prefix">{{ $t('common.prefix') }}</label></b-col>
           <b-col>
-            <b-form-input id="prefix"
-              ref="prefix"
-              type="text"
-              v-model.trim="newObject.prefix"
-              :state="prefixState">
-            </b-form-input>
+            <b-form-group id="prefixGroup">
+              <b-form-input id="prefix"
+                ref="prefix"
+                type="text"
+                v-model.trim="newObject.prefix"
+                :state="prefixState">
+              </b-form-input>
+              <b-form-invalid-feedback>
+                {{ $t('errors.prefixInvalid') }}
+              </b-form-invalid-feedback>
+            </b-form-group>
           </b-col>
         </b-row>
         <b-row class="mb-1">
           <b-col cols="2"><label for="prefixLength">{{ $t('common.prefixLength') }}</label></b-col>
           <b-col>
-            <b-form-input id="prefixLength"
-              ref="prefixLength"
-              type="number"
-              v-model="newObject.prefixLength"
-              :min="prefixLengthMin"
-              :max="prefixLengthMax"
-              :state="prefixLengthState">
-            </b-form-input>
+            <b-form-group id="prefixLengthGroup">
+              <b-form-input id="prefixLength"
+                ref="prefixLength"
+                type="number"
+                v-model="newObject.prefixLength"
+                :min="prefixLengthMin"
+                :max="prefixLengthMax"
+                :state="prefixLengthState">
+              </b-form-input>
+              <b-form-invalid-feedback>
+                {{ $t('errors.prefixLengthInvalid', { min: prefixLengthMin, max: prefixLengthMax }) }}
+              </b-form-invalid-feedback>
+            </b-form-group>
           </b-col>
         </b-row>
         <b-row class="mb-1">
           <b-col cols="2"><label for="comment">{{ $t('common.comment') }}</label></b-col>
           <b-col>
-            <b-form-input id="comment"
-              ref="comment"
-              type="text"
-              v-model.trim="newObject.comment"
-              :maxlength="validationRules.comment.max"
-              :state="commentState">
-            </b-form-input>
+            <b-form-group id="commentGroup">
+              <b-form-input id="comment"
+                ref="comment"
+                type="text"
+                v-model.trim="newObject.comment"
+                :maxlength="validationRules.comment.max"
+                :state="commentState">
+              </b-form-input>
+              <b-form-invalid-feedback>
+                {{ $t('errors.commentInvalid',
+                      {
+                        min: validationRules.comment.min,
+                        max: validationRules.comment.max
+                      })
+                }}
+              </b-form-invalid-feedback>
+            </b-form-group>
           </b-col>
         </b-row>
       </b-container>
@@ -261,8 +286,19 @@ export default {
       return this.validationRules.prefixLength.v6.max
     },
     validObject: function () {
-      return (this.asnState || (this.prefixState && this.prefixLengthState)) &&
-             this.commentState
+      let fullPrefixState = false
+      if (this.prefixState === null && this.prefixLengthState === null) {
+        fullPrefixState = null
+      } else if (this.prefixState === true && this.prefixLengthState === true) {
+        fullPrefixState = true
+      }
+      // Validate ASN and prefix first
+      if ((this.asnState === false || fullPrefixState === false) ||
+          (this.asnState === null && fullPrefixState === null)) {
+        return false
+      }
+      // Now the rest of the fields
+      return this.commentState === true
     }
   },
   created: function () {

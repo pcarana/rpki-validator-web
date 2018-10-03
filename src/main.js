@@ -113,7 +113,11 @@ const messages = {
     errors: {
       noDataFound: 'No data found',
       asnOrPrefixRequired: 'An ASN or a prefix is required',
-      checkErrors: 'To continue, check the errors indicated at the form'
+      checkErrors: 'To continue, check the errors indicated at the form',
+      asnInvalid: 'Invalid ASN',
+      prefixInvalid: 'Must be a valid IP block',
+      prefixLengthInvalid: 'Must be between {min} and {max}',
+      commentInvalid: 'Must have between {min} and {max} characters'
     },
     language: 'Language'
   }
