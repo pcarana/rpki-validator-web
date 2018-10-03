@@ -7,7 +7,7 @@
         :class="{active: currentTab === tab}"
         v-on:click="currentTab = tab"
         variant="outline-secondary">
-        {{ $t('slurm.' + tab) }}
+        {{ $t('slurm.' + tab + '.title') }}
       </b-button>
     </b-button-group>
     <keep-alive>
