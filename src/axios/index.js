@@ -17,22 +17,22 @@ export default {
         }
         if (eventhub) {
             myaxios.interceptors.request.use(
-                conf => {
-                    eventHub.$emit('before-request');
+                function (conf) {
+                    eventHub.$emit('beforeRequest');
                     return conf;
                 },
-                error => {
-                    eventHub.$emit('request-error');
+                function (error) {
+                    eventHub.$emit('requestError', error);
                     return Promise.reject(error);
                 }
             );
             myaxios.interceptors.response.use(
-                response => {
-                    eventHub.$emit('after-response');
+                function (response) {
+                    eventHub.$emit('afterResponse');
                     return response;
                 },
-                error => {
-                    eventHub.$emit('response-error');
+                function (error) {
+                    eventHub.$emit('responseError', error);
                     return Promise.reject(error);
                 }
             );
@@ -52,9 +52,9 @@ export default {
             errorCb(error)
         })
     },
-    post: function (lang, service, auth, successCb, errorCb, eventhub) {
+    post: function (lang, service, content, auth, successCb, errorCb, eventhub) {
         var axiosInst = this.createAxios(lang, eventhub, null, auth)
-        axiosInst.post(service).then(function (response) {
+        axiosInst.post(service, content).then(function (response) {
             console.log(response)
             successCb(response)
         }).catch(function (error) {
