@@ -39,9 +39,12 @@
       <template v-for="field in tableFields" :slot="'HEAD_' + field.key" slot-scope="data">
         {{ $t(data.label) }}
       </template>
-      <template v-if="showDetailButton" slot="action" slot-scope="row">
-        <b-button size="sm" class="mr-2" :to="{path: ''+row.item.id}" append>
+      <template v-if="showDetailButton || showDeleteButton" slot="action" slot-scope="row">
+        <b-button size="sm" class="mr-2" :to="{path: ''+row.item.id}" append v-if="showDetailButton">
           {{ $t('general.showDetail') }}
+        </b-button>
+        <b-button size="sm" class="mr-2" variant="outline-danger" @click="deleteCallback(row.item)" append v-if="showDeleteButton">
+          {{ $t('common.delete') }}
         </b-button>
       </template>
     </b-table>
@@ -61,7 +64,12 @@ export default {
     tableFields: Array,
     filterFunction: Function,
     searchFilterOpts: Array,
-    showDetailButton: Boolean
+    showDetailButton: Boolean,
+    showDeleteButton: {
+      type: Boolean,
+      default: false
+    },
+    deleteCallback: Function
   },
   data () {
     return {

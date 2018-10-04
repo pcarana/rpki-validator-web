@@ -98,7 +98,10 @@ const messages = {
       comment: 'Comment',
       add: 'Add',
       cancel: 'Cancel',
-      createSuccess: 'Object successfully created!'
+      createSuccess: 'Object successfully created!',
+      delete: 'Delete',
+      confirm: 'Confirmation',
+      deleteSuccess: 'Object successfully deleted!'
     },
     filter: {
       placeholder: 'Filter...',

@@ -61,5 +61,15 @@ export default {
             console.log(error)
             errorCb(error)
         })
+    },
+    delete: function (lang, service, successCb, errorCb, eventhub) {
+        var axiosInst = this.createAxios(lang, eventhub)
+        axiosInst.delete(service).then(function (response) {
+            console.log(response)
+            successCb(response)
+        }).catch(function (error) {
+            console.log(error)
+            errorCb(error)
+        })
     }
 }
