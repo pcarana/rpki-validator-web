@@ -4,7 +4,6 @@
                   :tableFields="tableFields"
                   :filterFunction="filterFunction"
                   :searchFilterOpts="searchFilterOpts"
-                  :showDetailButton="true"
                   :showDeleteButton="true"
                   :deleteCallback="confirmDelete">
     </custom-table>
