@@ -101,6 +101,7 @@ const messages = {
       createSuccess: 'Object successfully created!',
       delete: 'Delete',
       confirm: 'Confirmation',
+      confirmDelete: 'Do you wish to delete the following object?',
       deleteSuccess: 'Object successfully deleted!'
     },
     filter: {
