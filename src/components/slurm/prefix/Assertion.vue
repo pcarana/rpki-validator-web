@@ -4,30 +4,39 @@
                   :tableFields="tableFields"
                   :filterFunction="filterFunction"
                   :searchFilterOpts="searchFilterOpts"
-                  :showDetailButton="true">
+                  :showDeleteButton="true"
+                  :deleteCallback="confirmDelete">
     </custom-table>
     <add-prefix :successCallback="createSuccessCb"
                 prefixType="assertion"
                 addButtonLabel="slurm.assertion.addNew"
                 :postService="postService">
     </add-prefix>
+    <delete-object :id="confirmDeleteModalId"
+                   :successCallback="deleteSuccessCb"
+                   type="prefix"
+                   :item="deleteItem">
+    </delete-object>
   </b-container>
 </template>
 
 <script>
 import AddPrefix from '@/components/slurm/prefix/AddPrefix.vue'
 import CustomTable from '@/components/common/CustomTable.vue'
+import DeleteObject from '@/components/slurm/DeleteObject.vue'
 import axios from '@/axios'
 import config from '@/config'
 
 export default {
   components: {
     'add-prefix': AddPrefix,
-    'custom-table': CustomTable
+    'custom-table': CustomTable,
+    'delete-object': DeleteObject
   },
   data () {
     return {
       postService: config.api.services.post.slurmPrefixAssertion,
+      confirmDeleteModalId: 'confirmDelete',
       assertionsList: [],
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
@@ -44,7 +53,7 @@ export default {
       ],
       eventHub: null,
       error: null,
-      requestedService: null
+      deleteItem: null
     }
   },
   methods: {
@@ -88,6 +97,13 @@ export default {
     },
     createSuccessCb (response) {
       this.loadList()
+    },
+    deleteSuccessCb (response) {
+      this.loadList()
+    },
+    confirmDelete (item) {
+      this.deleteItem = item
+      this.$root.$emit('bv::show::modal', this.confirmDeleteModalId)
     }
   },
   created: function () {
