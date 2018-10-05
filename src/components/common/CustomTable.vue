@@ -64,7 +64,10 @@ export default {
     tableFields: Array,
     filterFunction: Function,
     searchFilterOpts: Array,
-    showDetailButton: Boolean,
+    showDetailButton: {
+      type: Boolean,
+      default: false
+    },
     showDeleteButton: {
       type: Boolean,
       default: false
