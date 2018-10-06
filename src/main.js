@@ -94,7 +94,11 @@ const messages = {
       prefixMaxLength: 'Prefix max length',
       prefixFamily: 'Prefix family',
       action: 'Action',
+      ski: 'SKI',
       publicKey: 'Public key',
+      routerPublicKey: 'Router public key',
+      hexValue: 'Hexadecimal value',
+      derFormat: 'DER format base64 encoded',
       comment: 'Comment',
       add: 'Add',
       cancel: 'Cancel',
@@ -118,11 +122,14 @@ const messages = {
     errors: {
       noDataFound: 'No data found',
       asnOrPrefixRequired: 'An ASN or a prefix is required',
+      asnOrSkiRequired: 'An ASN or a SKI is required',
       checkErrors: 'To continue, check the errors indicated at the form',
       asnInvalid: 'Invalid ASN',
       prefixInvalid: 'Must be a valid IP block',
       prefixLengthInvalid: 'Must be between {min} and {max}',
       prefixMaxLengthGt: 'Must be greater than or equal to the prefix length',
+      skiInvalid: 'Must be a valid hexadecimal value of 40 characters',
+      routerPublicKeyInvalid: 'Must be a valid public key in DER format base64 encoded',
       commentInvalid: 'Must have between {min} and {max} characters'
     },
     language: 'Language'
@@ -157,6 +164,12 @@ Vue.mixin({
           prefix: 'common.prefix',
           maxPrefixLength: 'common.prefixMaxLength',
           comment: 'common.comment'
+        },
+        SlurmBgpsec: {
+          asn: 'common.asn',
+          SKI: 'common.ski',
+          routerPublicKey: 'common.routerPublicKey',
+          comment: 'common.comment'
         }
       },
       validationRules: {
@@ -177,6 +190,9 @@ Vue.mixin({
             min: 0,
             max: 128
           }
+        },
+        ski: {
+          regex: /^([0-9a-fA-F]{40})$/
         },
         comment: {
           min: 1,
