@@ -166,9 +166,9 @@ export default {
         this.createError = { validationMessage: validationMessage }
         return
       }
-      let newFilter = {}
+      let newPrefix = {}
       if (newObject.asn) {
-        newFilter.asn = parseInt(newObject.asn)
+        newPrefix.asn = parseInt(newObject.asn)
       }
       let prefix = ''
       if (newObject.prefix) {
@@ -178,17 +178,17 @@ export default {
         prefix += '/' + newObject.prefixLength
       }
       if (prefix.length > 0) {
-        newFilter.prefix = prefix
+        newPrefix.prefix = prefix
       }
       if (this.showMaxLength && newObject.prefixMaxLength) {
-        newFilter.maxPrefixLength = parseInt(newObject.prefixMaxLength)
+        newPrefix.maxPrefixLength = parseInt(newObject.prefixMaxLength)
       }
       if (newObject.comment) {
-        newFilter.comment = newObject.comment
+        newPrefix.comment = newObject.comment
       }
       axios.post(this.$root.$i18n.locale,
         this.postService,
-        newFilter,
+        newPrefix,
         null,
         this.createSuccessCb,
         this.createErrorCb,
