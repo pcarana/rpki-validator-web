@@ -8,7 +8,7 @@ export default {
                 talDetail: '/tal/:id',
                 roaList: '/roa',
                 roaDetail: '/roa/:id',
-                slurmGeneral: '/slurm/',
+                slurmGeneral: '/slurm',
                 slurmPrefixList: '/slurm/prefix',
                 slurmPrefixDetail: '/slurm/prefix/:id',
                 slurmPrefixFilterList: '/slurm/prefix/filter',
