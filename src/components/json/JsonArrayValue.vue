@@ -30,7 +30,7 @@
 export default {
   props: {
     index: Number,
-    value: [String, Number, Object, Array],
+    value: [String, Number, Boolean, Date, Object, Array],
     father: {
       type: String,
       default: null
