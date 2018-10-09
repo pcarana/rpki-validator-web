@@ -64,6 +64,10 @@ const messages = {
       assertion: {
         title: 'Assertion',
         addNew: 'Add new assertion'
+      },
+      general: {
+        title: 'SLURM loaded',
+        description: 'This is a preview of the SLURM loaded at the validator'
       }
     },
     validate: {
@@ -106,7 +110,8 @@ const messages = {
       delete: 'Delete',
       confirm: 'Confirmation',
       confirmDelete: 'Do you wish to delete the following object?',
-      deleteSuccess: 'Object successfully deleted!'
+      deleteSuccess: 'Object successfully deleted!',
+      loading: 'Loading...'
     },
     filter: {
       placeholder: 'Filter...',
