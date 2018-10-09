@@ -37,7 +37,7 @@
             </b-col>
           </b-row>
           <b-row>
-            <b-col>{{ $t('validate.prefix') }}</b-col>
+            <b-col>{{ $t('common.prefix') }}</b-col>
             <b-col>
               <b-row>
                 <b-col>{{ $t('validate.validityMatrix.nonIntersecting') }}</b-col>
