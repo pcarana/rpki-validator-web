@@ -18,7 +18,7 @@
         <b-row class="mb-1">
           <b-col>
             {{ $t('common.confirmDelete') }}<br />
-            <span v-html="formatObject(item)"></span>
+            <json-object :object="item"></json-object>
           </b-col>
         </b-row>
       </b-container>

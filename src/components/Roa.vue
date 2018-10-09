@@ -22,15 +22,17 @@
         </b-row>
         <b-row>
           <b-col><b>{{ $t('roa.general.cms') }}</b></b-col>
-          <b-col><div v-html='cmsFormatted'></div></b-col>
+          <b-col>
+            <json-object :object="roa.cms"></json-object>
+          </b-col>
         </b-row>
       </b-container>
     </b-card>
     <b-card :title="$t('roa.eecert.title')">
-      <div v-html='eeCertFormatted'></div>
+      <json-object :object="roa.cms.content.certificates[0]"></json-object>
     </b-card>
     <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :title="$t('roa.gbr.title')">
-      <div v-html='gbrsFormatted'></div>
+      <json-array :array="roa.gbrs"></json-array>
     </b-card>
     <b-button @click="back">{{ $t('general.return') }}</b-button>
   </b-container>
@@ -71,17 +73,6 @@ export default {
       this.errorCb,
       this.eventHub
     )
-  },
-  computed: {
-    cmsFormatted: function () {
-      return this.formatObject(this.roa.cms)
-    },
-    eeCertFormatted: function () {
-      return this.formatObject(this.roa.cms.content.certificates[0])
-    },
-    gbrsFormatted: function () {
-      return this.formatArray(this.roa.gbrs)
-    }
   }
 }
 </script>

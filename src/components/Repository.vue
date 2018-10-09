@@ -11,7 +11,7 @@
       <p>{{ tal.publicKey }}</p>
       <h3>Loaded certificate</h3>
       <b-container>
-        <div v-html='loadedCerFormatted'></div>
+        <json-object :object="tal.loadedCer"></json-object>
       </b-container>
       <h3>Files summary</h3>
       <b-container>
@@ -102,9 +102,6 @@ export default {
         fileMap.set('', object)
       })
       return fileMap
-    },
-    loadedCerFormatted: function () {
-      return this.formatObject(this.tal.loadedCer)
     }
   }
 }

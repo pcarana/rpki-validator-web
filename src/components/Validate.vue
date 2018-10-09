@@ -64,7 +64,7 @@
         </b-container>
         <b-container v-if="validationResult && validationResult.match">
           <h3>{{ $t(matchTitle) }}</h3>
-          <div v-html='matchRoaFormatted'></div>
+          <json-object :object="validationResult.match"></json-object>
         </b-container>
       </b-container>
     </b-container>
@@ -135,9 +135,6 @@ export default {
         return this.validationResult.validityState === 'valid' ? 'validate.roaMatch' : 'validate.roaClosestMatch'
       }
       return ''
-    },
-    matchRoaFormatted: function () {
-      return this.formatObject(this.validationResult.match)
     }
   }
 }
