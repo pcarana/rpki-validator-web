@@ -5,6 +5,10 @@ import App from './App'
 import router from './router'
 import VueI18n from 'vue-i18n'
 import BootstrapVue from 'bootstrap-vue'
+import JsonValue from './components/json/JsonValue.vue'
+import JsonObject from './components/json/JsonObject.vue'
+import JsonArray from './components/json/JsonArray.vue'
+import JsonArrayValue from './components/json/JsonArrayValue.vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
@@ -249,6 +253,11 @@ Vue.mixin({
     }
   }
 })
+
+Vue.component('json-value', JsonValue)
+Vue.component('json-object', JsonObject)
+Vue.component('json-array', JsonArray)
+Vue.component('json-array-value', JsonArrayValue)
 
 /* eslint-disable no-new */
 var vm = new Vue({
