@@ -151,7 +151,7 @@ export default {
         newBgpsec.asn = parseInt(newObject.asn)
       }
       if (newObject.ski) {
-        newBgpsec.SKI = btoa(newObject.ski).replace('=', '')
+        newBgpsec.SKI = btoa(newObject.ski).replace(/=/g, '')
       }
       if (this.showRouterPublicKey && newObject.routerPublicKey) {
         newBgpsec.routerPublicKey = newObject.routerPublicKey
