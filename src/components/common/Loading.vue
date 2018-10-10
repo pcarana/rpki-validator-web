@@ -19,7 +19,10 @@
 <script>
 export default {
   props: {
-    show: Boolean
+    show: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

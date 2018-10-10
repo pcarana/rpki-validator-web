@@ -15,7 +15,10 @@
 <script>
 export default {
   props: {
-    error: [Object, Error]
+    error: {
+      type: [Object, Error],
+      default: null
+    }
   },
   data () {
     return {
