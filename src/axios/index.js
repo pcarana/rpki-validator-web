@@ -52,6 +52,10 @@ export default {
             errorCb(error)
         })
     },
+    getPromise: function (lang, service) {
+        var axiosInst = this.createAxios(lang, null)
+        return axiosInst.get(service)
+    },
     post: function (lang, service, content, auth, successCb, errorCb, eventhub) {
         var axiosInst = this.createAxios(lang, eventhub, null, auth)
         axiosInst.post(service, content).then(function (response) {

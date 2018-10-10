@@ -2,11 +2,13 @@
     <div class="container mt-2 mx-4">
       <h1>{{ $t('roas.title') }}</h1>
       <p>{{ $t('roas.description') }}</p>
-      <custom-table :items="roasList"
+      <custom-table :items="loadRoas"
                     :tableFields="tableFields"
                     :filterFunction="filterFunction"
                     :searchFilterOpts="searchFilterOpts"
-                    :showDetailButton="true">
+                    :showDetailButton="true"
+                    :error="error"
+                    :loading="loading">
       </custom-table>
     </div>
 </template>
@@ -36,18 +38,24 @@ export default {
         { text: 'common.prefixMaxLength', value: 'prefixMaxLength' },
         { text: 'common.prefixFamily', value: 'prefixFamily' }
       ],
-      eventHub: null,
       error: null,
-      requestedService: null
+      loading: false
     }
   },
   methods: {
-    successCb (response) {
-      this.roasList = response.data
-    },
-    errorCb (error) {
-      this.error = error
-      // Show the error
+    loadRoas (ctx) {
+      let me = this
+      let promise = axios.getPromise(me.$root.$i18n.locale, config.api.services.get.roaList)
+      me.loading = true
+      return promise.then(function (response) {
+        me.error = null
+        return response.data
+      }).catch(function (error) {
+        me.error = error
+        return []
+      }).finally(function () {
+        me.loading = false
+      })
     },
     filterFunction (item, searchFilterOpt, filterItemTxt) {
       var regexp
@@ -55,7 +63,7 @@ export default {
         regexp = new RegExp(filterItemTxt, 'i')
       } catch (e) {
         // Wait until the regexp is valid
-        return true
+        return null
       }
       switch (searchFilterOpt) {
         case 'asn':
@@ -73,9 +81,6 @@ export default {
                  regexp.test(item.prefixFamily)
       }
     }
-  },
-  created: function () {
-    axios.get(this.$root.$i18n.locale, config.api.services.get.roaList, this.successCb, this.errorCb, this.eventHub)
   }
 }
 </script>
