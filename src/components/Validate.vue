@@ -81,7 +81,6 @@ export default {
       prefix: null,
       prefixLength: null,
       validationResult: null,
-      eventHub: null,
       error: null
     }
   },
@@ -104,8 +103,7 @@ export default {
         this.$root.$i18n.locale,
         service,
         this.successCb,
-        this.errorCb,
-        this.eventHub
+        this.errorCb
       )
     },
     asnMatchPrefixState (prefixState) {

@@ -3,10 +3,10 @@ import Axios from 'axios'
 import config from '@/config'
 
 export default {
-    createAxios: function (lang, eventhub) {
-        return this.createAxios(lang, event, null, null);
+    createAxios: function (lang) {
+        return this.createAxios(lang, null, null);
     },
-    createAxios: function (lang, eventhub, data, auth) {
+    createAxios: function (lang, data, auth) {
         const myaxios = Axios.create();
         myaxios.defaults.headers.common['Accept-Language'] = lang ? lang : 'EN';
         myaxios.defaults.baseURL = config.api.url;
@@ -15,65 +15,51 @@ export default {
             myaxios.defaults.auth = auth;
             myaxios.defaults.withCredentials = true;
         }
-        if (eventhub) {
-            myaxios.interceptors.request.use(
-                function (conf) {
-                    eventHub.$emit('beforeRequest');
-                    return conf;
-                },
-                function (error) {
-                    eventHub.$emit('requestError', error);
-                    return Promise.reject(error);
-                }
-            );
-            myaxios.interceptors.response.use(
-                function (response) {
-                    eventHub.$emit('afterResponse');
-                    return response;
-                },
-                function (error) {
-                    eventHub.$emit('responseError', error);
-                    return Promise.reject(error);
-                }
-            );
-        }
         return myaxios;
+    },
+    getAsPromise: function (lang, service) {
+        var axiosInst = this.createAxios(lang)
+        return axiosInst.get(service)
     },
     get: function (lang, service, successCb, errorCb) {
         this.get(lang, service, successCb, errorCb, null)
     },
-    get: function (lang, service, successCb, errorCb, eventhub) {
-        var axiosInst = this.createAxios(lang, eventhub)
-        axiosInst.get(service).then(function (response) {
-            console.log(response)
-            successCb(response)
-        }).catch(function (error) {
-            console.log(error)
-            errorCb(error)
-        })
+    get: function (lang, service, successCb, errorCb, finallyCb) {
+        let promise = this.getAsPromise(lang, service)
+        this.processPromise(promise, successCb, errorCb, finallyCb)
     },
-    getPromise: function (lang, service) {
-        var axiosInst = this.createAxios(lang, null)
-        return axiosInst.get(service)
+    post: function (lang, service, content, successCb, errorCb) {
+        this.post(lang, service, content, successCb, errorCb, null)
     },
-    post: function (lang, service, content, auth, successCb, errorCb, eventhub) {
-        var axiosInst = this.createAxios(lang, eventhub, null, auth)
-        axiosInst.post(service, content).then(function (response) {
-            console.log(response)
-            successCb(response)
-        }).catch(function (error) {
-            console.log(error)
-            errorCb(error)
-        })
+    post: function (lang, service, content, successCb, errorCb, finallyCb) {
+        var axiosInst = this.createAxios(lang)
+        let promise = axiosInst.post(service, content)
+        this.processPromise(promise, successCb, errorCb, finallyCb)
     },
-    delete: function (lang, service, successCb, errorCb, eventhub) {
-        var axiosInst = this.createAxios(lang, eventhub)
-        axiosInst.delete(service).then(function (response) {
-            console.log(response)
-            successCb(response)
+    delete: function (lang, service, successCb, errorCb) {
+        this.delete(lang, service, successCb, errorCb, null)
+    },
+    delete: function (lang, service, successCb, errorCb, finallyCb) {
+        var axiosInst = this.createAxios(lang)
+        let promise = axiosInst.delete(service)
+        this.processPromise(promise, successCb, errorCb, finallyCb)
+    },
+    processPromise: function (promise, thenCb, errorCb, finallyCb) {
+        if (!promise) {
+            return
+        }
+        promise.then(function (response) {
+            if (thenCb) {
+                thenCb(response)
+            }
         }).catch(function (error) {
-            console.log(error)
-            errorCb(error)
+            if (errorCb) {
+                errorCb(error)
+            }
+        }).finally(function () {
+            if (finallyCb) {
+                finallyCb()
+            }
         })
     }
 }

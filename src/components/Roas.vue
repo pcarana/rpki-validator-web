@@ -45,7 +45,7 @@ export default {
   methods: {
     loadRoas (ctx) {
       let me = this
-      let promise = axios.getPromise(me.$root.$i18n.locale, config.api.services.get.roaList)
+      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.roaList)
       me.loading = true
       return promise.then(function (response) {
         me.error = null

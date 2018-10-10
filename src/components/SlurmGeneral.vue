@@ -27,7 +27,6 @@ export default {
   data () {
     return {
       slurm: null,
-      eventHub: null,
       error: null,
       showCollapse: true,
       loading: null
@@ -39,8 +38,7 @@ export default {
       axios.get(this.$root.$i18n.locale,
         config.api.services.get.slurmGeneral,
         this.successCb,
-        this.errorCb,
-        this.eventHub)
+        this.errorCb)
     },
     successCb (response) {
       this.slurm = response.data
@@ -49,7 +47,6 @@ export default {
     errorCb (error) {
       this.error = error
       this.loading = false
-      // Show the error
     }
   },
   created: function () {

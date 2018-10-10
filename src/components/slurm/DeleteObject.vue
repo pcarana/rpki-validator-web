@@ -60,8 +60,7 @@ export default {
       axios.delete(this.$root.$i18n.locale,
         service,
         this.deleteSuccessCb,
-        this.deleteErrorCb,
-        this.eventHub)
+        this.deleteErrorCb)
     },
     deleteSuccessCb (response) {
       this.$refs[this.id].hide()
@@ -69,7 +68,6 @@ export default {
       this.$refs.successModal.show()
     },
     deleteErrorCb (error) {
-      // Show the error
       this.deleteError = error
     }
   },

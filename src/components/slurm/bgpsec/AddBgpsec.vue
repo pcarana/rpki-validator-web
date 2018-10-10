@@ -162,10 +162,8 @@ export default {
       axios.post(this.$root.$i18n.locale,
         this.postService,
         newBgpsec,
-        null,
         this.createSuccessCb,
-        this.createErrorCb,
-        this.eventHub)
+        this.createErrorCb)
     },
     createSuccessCb (response) {
       this.$refs.createModal.hide()
@@ -173,7 +171,6 @@ export default {
       this.$refs.successModal.show()
     },
     createErrorCb (error) {
-      // Show the error
       this.createError = error
     }
   },

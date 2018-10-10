@@ -64,7 +64,6 @@ export default {
         { text: 'common.ski', value: 'ski' },
         { text: 'common.comment', value: 'comment' }
       ],
-      eventHub: null,
       error: null,
       deleteItem: null
     }
@@ -74,15 +73,13 @@ export default {
       axios.get(this.$root.$i18n.locale,
         config.api.services.get.slurmBgpsecAssertionList,
         this.successCb,
-        this.errorCb,
-        this.eventHub)
+        this.errorCb)
     },
     successCb (response) {
       this.assertionsList = response.data
     },
     errorCb (error) {
       this.error = error
-      // Show the error
     },
     filterFunction (item, searchFilterOpt, filterItemTxt) {
       var regexp
@@ -90,7 +87,7 @@ export default {
         regexp = new RegExp(filterItemTxt, 'i')
       } catch (e) {
         // Wait until the regexp is valid
-        return true
+        return null
       }
       switch (searchFilterOpt) {
         case 'asn':

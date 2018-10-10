@@ -45,7 +45,6 @@ import config from '@/config'
 export default {
   data () {
     return {
-      eventHub: null,
       roa: null,
       error: null
     }
@@ -70,8 +69,7 @@ export default {
       this.$root.$i18n.locale,
       service,
       this.successCb,
-      this.errorCb,
-      this.eventHub
+      this.errorCb
     )
   }
 }
