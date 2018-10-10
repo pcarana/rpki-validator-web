@@ -55,7 +55,7 @@
       </template>
       <template slot="table-caption">
         <p v-if="totalRows > perPage">
-          {{ $t('general.displaying', {display: perPage, total: totalRows}) }}
+          {{ $t('general.displaying', {from: fromResult, to: toResult, total: totalRows}) }}
         </p>
       </template>
     </b-table>
@@ -117,6 +117,18 @@ export default {
       var searchFilterOpt = this.searchFilter === null ? '' : this.searchFilter.trim()
       var filterItemTxt = this.filterItem === null ? '' : this.filterItem.trim()
       return this.filterFunction(item, searchFilterOpt, filterItemTxt)
+    }
+  },
+  computed: {
+    fromResult: function () {
+      return (this.tableCurrentPage - 1) * this.perPage + 1
+    },
+    toResult: function () {
+      let toResult = this.tableCurrentPage * this.perPage
+      if (toResult < this.totalRows) {
+        return toResult
+      }
+      return this.totalRows
     }
   }
 }

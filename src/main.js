@@ -120,7 +120,7 @@ const messages = {
     },
     general: {
       return: 'Return',
-      displaying: 'Displaying {display} results of {total}',
+      displaying: 'Displaying from {from} to {to} of {total}',
       maxResults: 'Max rows',
       showDetail: 'Show detail'
     },
