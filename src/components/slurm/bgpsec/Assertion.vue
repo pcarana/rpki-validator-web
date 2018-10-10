@@ -1,11 +1,14 @@
 <template>
   <b-container class="mt-2 mx-4">
-    <custom-table :items="assertionsList"
+    <custom-table :items="loadAssertions"
                   :tableFields="tableFields"
                   :filterFunction="filterFunction"
                   :searchFilterOpts="searchFilterOpts"
                   :showDeleteButton="true"
-                  :deleteCallback="confirmDelete">
+                  :deleteCallback="confirmDelete"
+                  :error="error"
+                  :loading="loading"
+                  :tableId="tableId">
     </custom-table>
     <add-bgpsec :successCallback="createSuccessCb"
                 bgpsecType="assertion"
@@ -35,9 +38,9 @@ export default {
   },
   data () {
     return {
+      tableId: 'assertionTable',
       postService: config.api.services.post.slurmBgpsecAssertion,
       confirmDeleteModalId: 'confirmDelete',
-      assertionsList: [],
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
         {
@@ -65,21 +68,24 @@ export default {
         { text: 'common.comment', value: 'comment' }
       ],
       error: null,
+      loading: false,
       deleteItem: null
     }
   },
   methods: {
-    loadList () {
-      axios.get(this.$root.$i18n.locale,
-        config.api.services.get.slurmBgpsecAssertionList,
-        this.successCb,
-        this.errorCb)
-    },
-    successCb (response) {
-      this.assertionsList = response.data
-    },
-    errorCb (error) {
-      this.error = error
+    loadAssertions () {
+      let me = this
+      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.slurmBgpsecAssertionList)
+      me.loading = true
+      return promise.then(function (response) {
+        me.error = null
+        return response.data
+      }).catch(function (error) {
+        me.error = error
+        return []
+      }).finally(function () {
+        me.loading = false
+      })
     },
     filterFunction (item, searchFilterOpt, filterItemTxt) {
       var regexp
@@ -103,18 +109,15 @@ export default {
       }
     },
     createSuccessCb (response) {
-      this.loadList()
+      this.$root.$emit('bv::refresh::table', this.tableId)
     },
     deleteSuccessCb (response) {
-      this.loadList()
+      this.$root.$emit('bv::refresh::table', this.tableId)
     },
     confirmDelete (item) {
       this.deleteItem = item
       this.$root.$emit('bv::show::modal', this.confirmDeleteModalId)
     }
-  },
-  created: function () {
-    this.loadList()
   }
 }
 </script>

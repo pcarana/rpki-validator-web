@@ -24,7 +24,6 @@ export default {
   },
   data () {
     return {
-      roasList: [],
       tableFields: [
         {key: 'asn', label: 'common.asn', sortable: true},
         {key: 'prefix', label: 'common.prefix', sortable: true},

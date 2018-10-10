@@ -1,11 +1,14 @@
 <template>
   <b-container class="mt-2 mx-4">
-    <custom-table :items="filtersList"
+    <custom-table :items="loadFilters"
                   :tableFields="tableFields"
                   :filterFunction="filterFunction"
                   :searchFilterOpts="searchFilterOpts"
                   :showDeleteButton="true"
-                  :deleteCallback="confirmDelete">
+                  :deleteCallback="confirmDelete"
+                  :error="error"
+                  :loading="loading"
+                  :tableId="tableId">
     </custom-table>
     <add-prefix :successCallback="createSuccessCb"
                 prefixType="filter"
@@ -35,9 +38,9 @@ export default {
   },
   data () {
     return {
+      tableId: 'filterTable',
       postService: config.api.services.post.slurmPrefixFilter,
       confirmDeleteModalId: 'confirmDelete',
-      filtersList: [],
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
         { key: 'prefix', label: 'common.prefix', sortable: true },
@@ -54,17 +57,19 @@ export default {
     }
   },
   methods: {
-    loadList () {
-      axios.get(this.$root.$i18n.locale,
-        config.api.services.get.slurmPrefixFilterList,
-        this.successCb,
-        this.errorCb)
-    },
-    successCb (response) {
-      this.filtersList = response.data
-    },
-    errorCb (error) {
-      this.error = error
+    loadFilters () {
+      let me = this
+      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.slurmPrefixFilterList)
+      me.loading = true
+      return promise.then(function (response) {
+        me.error = null
+        return response.data
+      }).catch(function (error) {
+        me.error = error
+        return []
+      }).finally(function () {
+        me.loading = false
+      })
     },
     filterFunction (item, searchFilterOpt, filterItemTxt) {
       var regexp
@@ -88,18 +93,15 @@ export default {
       }
     },
     createSuccessCb (response) {
-      this.loadList()
+      this.$root.$emit('bv::refresh::table', this.tableId)
     },
     deleteSuccessCb (response) {
-      this.loadList()
+      this.$root.$emit('bv::refresh::table', this.tableId)
     },
     confirmDelete (item) {
       this.deleteItem = item
       this.$root.$emit('bv::show::modal', this.confirmDeleteModalId)
     }
-  },
-  created: function () {
-    this.loadList()
   }
 }
 </script>
