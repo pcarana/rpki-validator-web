@@ -30,6 +30,7 @@
       </b-col>
     </b-row>
     <b-table striped hover responsive show-empty
+      :id="tableId"
       :items="items"
       :fields="tableFields"
       :per-page="perPage"
@@ -84,7 +85,8 @@ export default {
     },
     deleteCallback: Function,
     error: [Object, Error],
-    loading: Boolean
+    loading: Boolean,
+    tableId: String
   },
   data () {
     return {
