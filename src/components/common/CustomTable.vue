@@ -1,5 +1,7 @@
 <template>
   <b-container>
+    <loading :show="loading"></loading>
+    <error-display :error="error"></error-display>
     <b-row align-h="between">
       <b-col cols="6">
         <b-form-group horizontal>
@@ -35,7 +37,10 @@
       :current-page="tableCurrentPage"
       :filter="customFilter"
       @filtered="onFiltered"
-      :empty-filtered-text="$t('errors.noDataFound')">
+      :empty-filtered-text="$t('errors.noDataFound')"
+      no-provider-paging
+      no-provider-sorting
+      no-provider-filtering>
       <template v-for="field in tableFields" :slot="'HEAD_' + field.key" slot-scope="data">
         {{ $t(data.label) }}
       </template>
@@ -47,20 +52,25 @@
           {{ $t('common.delete') }}
         </b-button>
       </template>
+      <template slot="table-caption">
+        <p v-if="totalRows > perPage">
+          {{ $t('general.displaying', {display: perPage, total: totalRows}) }}
+        </p>
+      </template>
     </b-table>
     <b-pagination v-if="totalRows > perPage" size="md" :total-rows="totalRows"
-                :per-page="perPage" v-model="tableCurrentPage" align="center">
+                  :per-page="perPage" v-model="tableCurrentPage" align="center">
     </b-pagination>
-    <p v-if="totalRows > perPage">
-        {{ $t('general.displaying', {display: perPage, total: totalRows}) }}
-    </p>
   </b-container>
 </template>
 
 <script>
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
+import Loading from '@/components/common/Loading.vue'
+
 export default {
   props: {
-    items: Array,
+    items: [Array, Function],
     tableFields: Array,
     filterFunction: Function,
     searchFilterOpts: Array,
@@ -72,7 +82,9 @@ export default {
       type: Boolean,
       default: false
     },
-    deleteCallback: Function
+    deleteCallback: Function,
+    error: [Object, Error],
+    loading: Boolean
   },
   data () {
     return {
@@ -88,6 +100,10 @@ export default {
         { text: 100, value: 100 }
       ]
     }
+  },
+  components: {
+    'error-display': ErrorDisplay,
+    'loading': Loading
   },
   methods: {
     onFiltered (filteredItems) {

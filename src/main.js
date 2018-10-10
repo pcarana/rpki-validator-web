@@ -135,7 +135,40 @@ const messages = {
       prefixMaxLengthGt: 'Must be greater than or equal to the prefix length',
       skiInvalid: 'Must be a valid hexadecimal value of 40 characters',
       routerPublicKeyInvalid: 'Must be a valid public key in DER format base64 encoded',
-      commentInvalid: 'Must have between {min} and {max} characters'
+      commentInvalid: 'Must have between {min} and {max} characters',
+      http: {
+        badRequest: {
+          title: 'Bad request to the server',
+          message: 'The request made to the server isn\'t valid'
+        },
+        notFound: {
+          title: 'Object not found',
+          message: 'The server didn\'t found the searched object or service'
+        },
+        methodNotAllowed: {
+          title: 'Not allowed',
+          message: 'The operation isn\'t allowed at the server'
+        },
+        conflict: {
+          title: 'Conflict',
+          message: 'There was a conflict performing the action, try again'
+        },
+        internalServer: {
+          title: 'Server error',
+          message: 'There was an error at the server, try again'
+        },
+        default: {
+          title: 'Communication error',
+          message: 'There was an error communicating with the server, try again'
+        }
+      },
+      request: {
+        incomplete: {
+          title: 'Local error',
+          message: 'There was a local error before sending the request to the server, try again'
+        }
+      },
+      serverMessage: 'The server sent the message: \'{serverMessage}\''
     },
     language: 'Language'
   }
