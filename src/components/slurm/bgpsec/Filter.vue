@@ -10,13 +10,13 @@
                   :loading="loading"
                   :tableId="tableId">
     </custom-table>
-    <add-bgpsec :successCallback="createSuccessCb"
+    <add-bgpsec :successCallback="actionSuccessCb"
                 bgpsecType="filter"
                 addButtonLabel="slurm.filter.addNew"
                 :postService="postService">
     </add-bgpsec>
     <delete-object :id="confirmDeleteModalId"
-                   :successCallback="deleteSuccessCb"
+                   :successCallback="actionSuccessCb"
                    type="bgpsec"
                    :item="deleteItem">
     </delete-object>
@@ -100,10 +100,7 @@ export default {
                  item.comment.match(regexp)
       }
     },
-    createSuccessCb (response) {
-      this.$root.$emit('bv::refresh::table', this.tableId)
-    },
-    deleteSuccessCb (response) {
+    actionSuccessCb (response) {
       this.$root.$emit('bv::refresh::table', this.tableId)
     },
     confirmDelete (item) {

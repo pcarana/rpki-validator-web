@@ -10,13 +10,13 @@
                   :loading="loading"
                   :tableId="tableId">
     </custom-table>
-    <add-prefix :successCallback="createSuccessCb"
+    <add-prefix :successCallback="actionSuccessCb"
                 prefixType="assertion"
                 addButtonLabel="slurm.assertion.addNew"
                 :postService="postService">
     </add-prefix>
     <delete-object :id="confirmDeleteModalId"
-                   :successCallback="deleteSuccessCb"
+                   :successCallback="actionSuccessCb"
                    type="prefix"
                    :item="deleteItem">
     </delete-object>
@@ -98,10 +98,7 @@ export default {
                  item.comment.match(regexp)
       }
     },
-    createSuccessCb (response) {
-      this.$root.$emit('bv::refresh::table', this.tableId)
-    },
-    deleteSuccessCb (response) {
+    actionSuccessCb (response) {
       this.$root.$emit('bv::refresh::table', this.tableId)
     },
     confirmDelete (item) {
