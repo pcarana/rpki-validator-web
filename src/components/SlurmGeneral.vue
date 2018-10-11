@@ -1,12 +1,28 @@
 <template>
-  <b-container class="mt-2 mx-4">
-    <h1>{{ $t('slurm.general.title') }}</h1>
-    <p>{{ $t('slurm.general.description') }}</p>
-    <loading :show="loading"></loading>
-    <error-display :error="error"></error-display>
-    <b-card v-if="slurm">
-      <json-object :object="slurm"></json-object>
-    </b-card>
+  <b-container fluid>
+    <b-row class="my-3">
+      <b-col>
+        <h1>{{ $t('slurm.general.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <p>{{ $t('slurm.general.description') }}</p>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <loading :show="loading"></loading>
+        <error-display :error="error"></error-display>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <b-card v-if="slurm">
+          <json-object :object="slurm"></json-object>
+        </b-card>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 

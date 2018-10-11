@@ -1,9 +1,18 @@
 <template>
-    <div class="container mt-2 mx-4">
-      <h1>{{ $t('repository.title') }}</h1>
-      <loading :show="loading"></loading>
-      <error-display :error="error"></error-display>
-      <span v-if="tal">
+  <b-container fluid>
+    <b-row class="my-3">
+      <b-col>
+        <h1>{{ $t('repository.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <loading :show="loading"></loading>
+        <error-display :error="error"></error-display>
+      </b-col>
+    </b-row>
+    <b-row v-if="tal">
+      <b-col>
         <h2>Detail</h2>
         <h3>URIs</h3>
         <p v-for="uri in tal.uris" :key="uri.location">
@@ -32,9 +41,14 @@
             <b-col>{{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}</b-col>
           </b-row>
         </b-container>
-      </span>
-      <b-button @click="back">{{ $t('general.return') }}</b-button>
-    </div>
+      </b-col>
+    </b-row>
+    <b-col>
+      <b-row>
+        <b-button @click="back">{{ $t('general.return') }}</b-button>
+      </b-row>
+    </b-col>
+  </b-container>
 </template>
 
 <script>

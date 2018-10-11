@@ -1,43 +1,57 @@
 <template>
-  <b-container class="mt-2 mx-4">
-    <h1>{{ $t('roa.title') }}</h1>
-    <loading :show="loading"></loading>
-    <error-display :error="error"></error-display>
-    <span v-if="roa">
-      <b-card :title="$t('roa.general.title')">
-        <b-container>
-          <b-row>
-            <b-col><b>{{ $t('common.asn') }}</b></b-col>
-            <b-col>{{ roa.asn }}</b-col>
-          </b-row>
-          <b-row>
-            <b-col><b>{{ $t('common.prefix') }}</b></b-col>
-            <b-col>{{ roa.prefix }}</b-col>
-          </b-row>
-          <b-row>
-            <b-col><b>{{ $t('common.prefixMaxLength') }}</b></b-col>
-            <b-col>{{ roa.prefixMaxLength }}</b-col>
-          </b-row>
-          <b-row>
-            <b-col><b>{{ $t('common.prefixFamily') }}</b></b-col>
-            <b-col>{{ roa.prefixFamily }}</b-col>
-          </b-row>
-          <b-row>
-            <b-col><b>{{ $t('roa.general.cms') }}</b></b-col>
-            <b-col>
-              <json-object :object="roa.cms"></json-object>
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-card>
-      <b-card :title="$t('roa.eecert.title')">
-        <json-object :object="roa.cms.content.certificates[0]"></json-object>
-      </b-card>
-      <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :title="$t('roa.gbr.title')">
-        <json-array :array="roa.gbrs"></json-array>
-      </b-card>
-    </span>
-    <b-button @click="back">{{ $t('general.return') }}</b-button>
+  <b-container fluid>
+    <b-row class="my-3">
+      <b-col>
+        <h1>{{ $t('roa.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <loading :show="loading"></loading>
+        <error-display :error="error"></error-display>
+      </b-col>
+    </b-row>
+    <b-row v-if="roa">
+      <b-col>
+        <b-card :title="$t('roa.general.title')">
+          <b-container>
+            <b-row>
+              <b-col><b>{{ $t('common.asn') }}</b></b-col>
+              <b-col>{{ roa.asn }}</b-col>
+            </b-row>
+            <b-row>
+              <b-col><b>{{ $t('common.prefix') }}</b></b-col>
+              <b-col>{{ roa.prefix }}</b-col>
+            </b-row>
+            <b-row>
+              <b-col><b>{{ $t('common.prefixMaxLength') }}</b></b-col>
+              <b-col>{{ roa.prefixMaxLength }}</b-col>
+            </b-row>
+            <b-row>
+              <b-col><b>{{ $t('common.prefixFamily') }}</b></b-col>
+              <b-col>{{ roa.prefixFamily }}</b-col>
+            </b-row>
+            <b-row>
+              <b-col><b>{{ $t('roa.general.cms') }}</b></b-col>
+              <b-col>
+                <json-object :object="roa.cms"></json-object>
+              </b-col>
+            </b-row>
+          </b-container>
+        </b-card>
+        <b-card :title="$t('roa.eecert.title')">
+          <json-object :object="roa.cms.content.certificates[0]"></json-object>
+        </b-card>
+        <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :title="$t('roa.gbr.title')">
+          <json-array :array="roa.gbrs"></json-array>
+        </b-card>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <b-button @click="back">{{ $t('general.return') }}</b-button>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 

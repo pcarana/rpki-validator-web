@@ -1,18 +1,26 @@
 <template>
-  <b-container>
-    <b-button-group>
-      <b-button
-        v-for="tab in tabs"
-        :key="tab"
-        :class="{active: currentTab === tab}"
-        v-on:click="currentTab = tab"
-        variant="outline-secondary">
-        {{ $t('slurm.' + tab + '.title') }}
-      </b-button>
-    </b-button-group>
-    <keep-alive>
-      <component :is="selectedTab"></component>
-    </keep-alive>
+  <b-container fluid>
+    <b-row>
+      <b-col>
+        <b-button-group>
+          <b-button
+            v-for="tab in tabs"
+            :key="tab"
+            :class="{active: currentTab === tab}"
+            v-on:click="currentTab = tab"
+            variant="outline-secondary">
+            {{ $t('slurm.' + tab + '.title') }}
+          </b-button>
+        </b-button-group>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <keep-alive>
+          <component :is="selectedTab"></component>
+        </keep-alive>
+      </b-col>
+    </b-row>
   </b-container>
 </template>
 

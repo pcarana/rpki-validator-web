@@ -1,16 +1,28 @@
 <template>
-    <div class="container mt-2 mx-4">
-      <h1>{{ $t('roas.title') }}</h1>
-      <p>{{ $t('roas.description') }}</p>
-      <custom-table :items="loadRoas"
-                    :tableFields="tableFields"
-                    :filterFunction="filterFunction"
-                    :searchFilterOpts="searchFilterOpts"
-                    :showDetailButton="true"
-                    :error="error"
-                    :loading="loading">
-      </custom-table>
-    </div>
+  <b-container fluid>
+    <b-row class="my-3">
+      <b-col>
+        <h1>{{ $t('roas.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <p>{{ $t('roas.description') }}</p>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <custom-table :items="loadRoas"
+                      :tableFields="tableFields"
+                      :filterFunction="filterFunction"
+                      :searchFilterOpts="searchFilterOpts"
+                      :showDetailButton="true"
+                      :error="error"
+                      :loading="loading">
+        </custom-table>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>

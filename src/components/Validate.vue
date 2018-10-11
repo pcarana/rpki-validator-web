@@ -1,74 +1,93 @@
 <template>
-    <b-container class="mt-2 mx-4">
-      <h1>{{ $t('validate.title') }}</h1>
-      <p>{{ $t('validate.description') }}</p>
-      <b-form @submit="onSubmit">
-        <b-form-group horizontal :label="$t('common.asn')" label-for="asn">
-          <b-form-input id="asn" type="number" v-model.trim="asn" />
-        </b-form-group>
-        <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix">
-          <b-form-input id="prefix" type="text" v-model.trim="prefix" />
-        </b-form-group>
-        <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength">
-          <b-form-input id="prefixLength" type="number" v-model.trim="prefixLength" />
-        </b-form-group>
-        <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
-      </b-form>
-      <br />
-      <loading :show="loading"></loading>
-      <error-display :error="error"></error-display>
-      <b-container v-if="validationResult">
-        <b>{{ $t('validate.validityState') }}</b>
-        <b-alert show :variant="statusVariant">
-          {{ $t('validate.state.' + validationResult.validityState) }}
-        </b-alert>
-        <b-container>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-              <b-row>
-                <b-col></b-col>
-                <b-col>{{ $t('common.asn') }}</b-col>
-              </b-row>
-              <b-row>
-                <b-col></b-col>
-                <b-col>{{ $t('validate.validityMatrix.matchAs') }}</b-col>
-                <b-col>{{ $t('validate.validityMatrix.nonMatchAs') }}</b-col>
-              </b-row>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col>{{ $t('common.prefix') }}</b-col>
-            <b-col>
-              <b-row>
-                <b-col>{{ $t('validate.validityMatrix.nonIntersecting') }}</b-col>
-                <b-col><img v-if="asnMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                <b-col><img v-if="asnNoMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-              </b-row>
-              <b-row>
-                <b-col>{{ $t('validate.validityMatrix.coveringAggregate') }}</b-col>
-                <b-col><img v-if="asnMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                <b-col><img v-if="asnNoMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-              </b-row>
-              <b-row>
-                <b-col>{{ $t('validate.validityMatrix.matchRoa') }}</b-col>
-                <b-col><img v-if="asnMatchPrefixState('match-roa-prefix')" src="@/assets/green_check.svg" alt="X" /></b-col>
-                <b-col><img v-if="asnNoMatchPrefixState('match-roa-prefix')" src="@/assets/red_check.svg" alt="X" /></b-col>
-              </b-row>
-              <b-row>
-                <b-col>{{ $t('validate.validityMatrix.moreSpecific') }}</b-col>
-                <b-col><img v-if="asnMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
-                <b-col><img v-if="asnNoMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
-              </b-row>
-            </b-col>
-          </b-row>
+  <b-container fluid>
+    <b-row class="my-3">
+      <b-col>
+        <h1>{{ $t('validate.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <p>{{ $t('validate.description') }}</p>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <b-form @submit="onSubmit">
+          <b-form-group horizontal :label="$t('common.asn')" label-for="asn">
+            <b-form-input id="asn" type="number" v-model.trim="asn" />
+          </b-form-group>
+          <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix">
+            <b-form-input id="prefix" type="text" v-model.trim="prefix" />
+          </b-form-group>
+          <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength">
+            <b-form-input id="prefixLength" type="number" v-model.trim="prefixLength" />
+          </b-form-group>
+          <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
+        </b-form>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <loading :show="loading"></loading>
+        <error-display :error="error"></error-display>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col>
+        <b-container v-if="validationResult">
+          <b>{{ $t('validate.validityState') }}</b>
+          <b-alert show :variant="statusVariant">
+            {{ $t('validate.state.' + validationResult.validityState) }}
+          </b-alert>
+          <b-container>
+            <b-row>
+              <b-col></b-col>
+              <b-col>
+                <b-row>
+                  <b-col></b-col>
+                  <b-col>{{ $t('common.asn') }}</b-col>
+                </b-row>
+                <b-row>
+                  <b-col></b-col>
+                  <b-col>{{ $t('validate.validityMatrix.matchAs') }}</b-col>
+                  <b-col>{{ $t('validate.validityMatrix.nonMatchAs') }}</b-col>
+                </b-row>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col>{{ $t('common.prefix') }}</b-col>
+              <b-col>
+                <b-row>
+                  <b-col>{{ $t('validate.validityMatrix.nonIntersecting') }}</b-col>
+                  <b-col><img v-if="asnMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
+                  <b-col><img v-if="asnNoMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
+                </b-row>
+                <b-row>
+                  <b-col>{{ $t('validate.validityMatrix.coveringAggregate') }}</b-col>
+                  <b-col><img v-if="asnMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
+                  <b-col><img v-if="asnNoMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
+                </b-row>
+                <b-row>
+                  <b-col>{{ $t('validate.validityMatrix.matchRoa') }}</b-col>
+                  <b-col><img v-if="asnMatchPrefixState('match-roa-prefix')" src="@/assets/green_check.svg" alt="X" /></b-col>
+                  <b-col><img v-if="asnNoMatchPrefixState('match-roa-prefix')" src="@/assets/red_check.svg" alt="X" /></b-col>
+                </b-row>
+                <b-row>
+                  <b-col>{{ $t('validate.validityMatrix.moreSpecific') }}</b-col>
+                  <b-col><img v-if="asnMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
+                  <b-col><img v-if="asnNoMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
+                </b-row>
+              </b-col>
+            </b-row>
+          </b-container>
+          <b-container v-if="validationResult && validationResult.match">
+            <h3>{{ $t(matchTitle) }}</h3>
+            <json-object :object="validationResult.match"></json-object>
+          </b-container>
         </b-container>
-        <b-container v-if="validationResult && validationResult.match">
-          <h3>{{ $t(matchTitle) }}</h3>
-          <json-object :object="validationResult.match"></json-object>
-        </b-container>
-      </b-container>
-    </b-container>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>

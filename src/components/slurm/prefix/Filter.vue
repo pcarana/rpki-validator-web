@@ -1,15 +1,19 @@
 <template>
-  <b-container class="mt-2 mx-4">
-    <custom-table :items="loadFilters"
-                  :tableFields="tableFields"
-                  :filterFunction="filterFunction"
-                  :searchFilterOpts="searchFilterOpts"
-                  :showDeleteButton="true"
-                  :deleteCallback="confirmDelete"
-                  :error="error"
-                  :loading="loading"
-                  :tableId="tableId">
-    </custom-table>
+  <b-container fluid>
+    <b-row>
+      <b-col>
+        <custom-table :items="loadFilters"
+                      :tableFields="tableFields"
+                      :filterFunction="filterFunction"
+                      :searchFilterOpts="searchFilterOpts"
+                      :showDeleteButton="true"
+                      :deleteCallback="confirmDelete"
+                      :error="error"
+                      :loading="loading"
+                      :tableId="tableId">
+        </custom-table>
+      </b-col>
+    </b-row>
     <add-prefix :successCallback="actionSuccessCb"
                 prefixType="filter"
                 addButtonLabel="slurm.filter.addNew"
