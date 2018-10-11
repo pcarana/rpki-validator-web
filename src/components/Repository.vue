@@ -1,46 +1,51 @@
 <template>
   <b-container fluid>
     <b-row class="my-3">
-      <b-col>
+      <b-col cols="12">
         <h1>{{ $t('repository.title') }}</h1>
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
+      <b-col cols="10">
         <loading :show="loading"></loading>
         <error-display :error="error"></error-display>
       </b-col>
     </b-row>
     <b-row v-if="tal">
-      <b-col>
-        <h2>Detail</h2>
-        <h3>URIs</h3>
-        <p v-for="uri in tal.uris" :key="uri.location">
-          {{ uri.location}}
-        </p>
-        <h3>Public key</h3>
-        <p>{{ tal.publicKey }}</p>
-        <h3>Loaded certificate</h3>
-        <b-container>
+      <b-col cols="8">
+        <b-card :title="$t('repository.general.title')">
+          <h5>{{ $t('repository.general.uris') }}</h5>
+          <p v-for="uri in tal.uris" :key="uri.location">
+            {{ uri.location}}
+          </p>
+          <h5>{{ $t('common.publicKey') }}</h5>
+          <p>{{ tal.publicKey }}</p>
+          <h5>{{ $t('repository.general.loadedCer') }}</h5>
           <json-object :object="tal.loadedCer"></json-object>
-        </b-container>
-        <h3>Files summary</h3>
-        <b-container>
-          <b-row>
-            <b-col></b-col>
-            <b-col>Valid</b-col>
-            <b-col>Warning</b-col>
-            <b-col>Error</b-col>
-            <b-col>Total</b-col>
-          </b-row>
-          <b-row v-for="fileSummary in Array.from(filesSummary)" :key="fileSummary[0]">
-            <b-col>{{fileSummary[0]}}</b-col>
-            <b-col>{{fileSummary[1].valid}}</b-col>
-            <b-col>{{fileSummary[1].warning}}</b-col>
-            <b-col>{{fileSummary[1].error}}</b-col>
-            <b-col>{{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}</b-col>
-          </b-row>
-        </b-container>
+        </b-card>
+      </b-col>
+      <b-col cols="4">
+        <b-card :title="$t('repository.files.title')">
+          <b-container>
+            <b-row class="text-center h5">
+              <b-col></b-col>
+              <b-col>{{ $t('repository.files.valid') }}</b-col>
+              <b-col>{{ $t('repository.files.warning') }}</b-col>
+              <b-col>{{ $t('repository.files.error') }}</b-col>
+              <b-col>{{ $t('repository.files.total') }}</b-col>
+            </b-row>
+            <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
+                   v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
+              <b-col class="text-right h5">{{fileSummary[0]}}</b-col>
+              <b-col class="border">{{fileSummary[1].valid}}</b-col>
+              <b-col class="border">{{fileSummary[1].warning}}</b-col>
+              <b-col class="border">{{fileSummary[1].error}}</b-col>
+              <b-col class="border font-weight-bold">
+                {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
+              </b-col>
+            </b-row>
+          </b-container>
+        </b-card>
       </b-col>
     </b-row>
     <b-col>

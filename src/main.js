@@ -37,7 +37,19 @@ const messages = {
       uris: 'URIs'
     },
     repository: {
-      title: 'TAL detail'
+      title: 'TAL detail',
+      general: {
+        title: 'General data',
+        uris: 'URIs',
+        loadedCer: 'Loaded certificate'
+      },
+      files: {
+        title: 'Files summary',
+        valid: 'Valid',
+        warning: 'Warning',
+        error: 'Error',
+        total: 'Total'
+      }
     },
     roas: {
       title: 'ROA List',
