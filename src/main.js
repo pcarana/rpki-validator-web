@@ -37,7 +37,7 @@ const messages = {
       uris: 'URIs'
     },
     repository: {
-      title: 'TAL {name} detail'
+      title: 'TAL detail'
     },
     roas: {
       title: 'ROA List',
