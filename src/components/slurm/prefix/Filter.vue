@@ -53,6 +53,7 @@ export default {
         { text: 'common.comment', value: 'comment' }
       ],
       error: null,
+      loading: false,
       deleteItem: null
     }
   },
