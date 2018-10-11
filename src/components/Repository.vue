@@ -1,40 +1,45 @@
 <template>
     <div class="container mt-2 mx-4">
-      <h1>{{ $t('repository.title', { name: tal.name }) }}</h1>
-      <p v-if="error">{{ error }}</p>
-      <h2>Detail</h2>
-      <h3>URIs</h3>
-      <p v-for="uri in tal.uris" :key="uri.location">
-        {{ uri.location}}
-      </p>
-      <h3>Public key</h3>
-      <p>{{ tal.publicKey }}</p>
-      <h3>Loaded certificate</h3>
-      <b-container>
-        <json-object :object="tal.loadedCer"></json-object>
-      </b-container>
-      <h3>Files summary</h3>
-      <b-container>
-        <b-row>
-          <b-col></b-col>
-          <b-col>Valid</b-col>
-          <b-col>Warning</b-col>
-          <b-col>Error</b-col>
-          <b-col>Total</b-col>
-        </b-row>
-        <b-row v-for="fileSummary in Array.from(filesSummary)" :key="fileSummary[0]">
-          <b-col>{{fileSummary[0]}}</b-col>
-          <b-col>{{fileSummary[1].valid}}</b-col>
-          <b-col>{{fileSummary[1].warning}}</b-col>
-          <b-col>{{fileSummary[1].error}}</b-col>
-          <b-col>{{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}</b-col>
-        </b-row>
-      </b-container>
+      <h1>{{ $t('repository.title') }}</h1>
+      <loading :show="loading"></loading>
+      <error-display :error="error"></error-display>
+      <span v-if="tal">
+        <h2>Detail</h2>
+        <h3>URIs</h3>
+        <p v-for="uri in tal.uris" :key="uri.location">
+          {{ uri.location}}
+        </p>
+        <h3>Public key</h3>
+        <p>{{ tal.publicKey }}</p>
+        <h3>Loaded certificate</h3>
+        <b-container>
+          <json-object :object="tal.loadedCer"></json-object>
+        </b-container>
+        <h3>Files summary</h3>
+        <b-container>
+          <b-row>
+            <b-col></b-col>
+            <b-col>Valid</b-col>
+            <b-col>Warning</b-col>
+            <b-col>Error</b-col>
+            <b-col>Total</b-col>
+          </b-row>
+          <b-row v-for="fileSummary in Array.from(filesSummary)" :key="fileSummary[0]">
+            <b-col>{{fileSummary[0]}}</b-col>
+            <b-col>{{fileSummary[1].valid}}</b-col>
+            <b-col>{{fileSummary[1].warning}}</b-col>
+            <b-col>{{fileSummary[1].error}}</b-col>
+            <b-col>{{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}</b-col>
+          </b-row>
+        </b-container>
+      </span>
       <b-button @click="back">{{ $t('general.return') }}</b-button>
     </div>
 </template>
 
 <script>
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
+import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -42,8 +47,13 @@ export default {
   data () {
     return {
       tal: null,
-      error: null
+      error: null,
+      loading: false
     }
+  },
+  components: {
+    'error-display': ErrorDisplay,
+    'loading': Loading
   },
   methods: {
     back () {
@@ -54,6 +64,9 @@ export default {
     },
     errorCb (error) {
       this.error = error
+    },
+    finallyCb () {
+      this.loading = false
     },
     addToSummaryMap (check, fileMap, property) {
       let split = check.location.split('.')
@@ -66,6 +79,7 @@ export default {
     }
   },
   created: function () {
+    this.loading = true
     const service = config.api.services.get.talDetail.replace(
       ':id',
       this.$route.params.talId
@@ -74,7 +88,8 @@ export default {
       this.$root.$i18n.locale,
       service,
       this.successCb,
-      this.errorCb
+      this.errorCb,
+      this.finallyCb
     )
   },
   computed: {

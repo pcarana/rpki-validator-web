@@ -15,7 +15,8 @@
         <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
       </b-form>
       <br />
-      <p v-if="error">{{ error }}</p>
+      <loading :show="loading"></loading>
+      <error-display :error="error"></error-display>
       <b-container v-if="validationResult">
         <b>{{ $t('validate.validityState') }}</b>
         <b-alert show :variant="statusVariant">
@@ -71,6 +72,8 @@
 </template>
 
 <script>
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
+import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -81,8 +84,13 @@ export default {
       prefix: null,
       prefixLength: null,
       validationResult: null,
-      error: null
+      error: null,
+      loading: false
     }
+  },
+  components: {
+    'error-display': ErrorDisplay,
+    'loading': Loading
   },
   methods: {
     successCb (response) {
@@ -93,8 +101,12 @@ export default {
       this.error = error
       this.validationResult = null
     },
+    finallyCb () {
+      this.loading = false
+    },
     onSubmit (evt) {
       evt.preventDefault()
+      this.loading = true
       let service = config.api.services.get.validate
       service = service.replace(':asn', this.asn)
       service = service.replace(':prefix-length', this.prefixLength)
@@ -103,7 +115,8 @@ export default {
         this.$root.$i18n.locale,
         service,
         this.successCb,
-        this.errorCb
+        this.errorCb,
+        this.finallyCb
       )
     },
     asnMatchPrefixState (prefixState) {
