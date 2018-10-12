@@ -1,5 +1,5 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <json-value v-for="(value, key) in object"
                 :key="key"
                 :property="key"
