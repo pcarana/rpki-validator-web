@@ -48,9 +48,7 @@ export default {
     loadData () {
       this.error = null
       this.loading = true
-      let promise = this.promiseCb(this.$root.$i18n.locale,
-        config.api.services.get.slurmGeneral,
-        null)
+      let promise = this.promiseCb(null)
       axios.processPromise(promise,
         this.successCb,
         this.errorCb,
