@@ -19,7 +19,9 @@
                       :showDetailButton="true"
                       :error="error"
                       :loading="loading"
-                      tableId="repositoriesTable">
+                      :tableId="tableId"
+                      :ref="tableId"
+                      :callLogin="callLogin">
         </custom-table>
       </b-col>
     </b-row>
@@ -37,6 +39,7 @@ export default {
   },
   data () {
     return {
+      tableId: 'repositoriesTable',
       tableFields: [
         {key: 'name', label: 'repositories.name', sortable: true},
         {
@@ -59,19 +62,24 @@ export default {
         { text: 'repositories.uris', value: 'uris' }
       ],
       error: null,
-      loading: false
+      loading: false,
+      auth: {}
     }
   },
   methods: {
     loadTals (ctx) {
       let me = this
-      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.talList)
+      let promise = axios.getPromise(
+        axios.methods.get,
+        me.$root.$i18n.locale,
+        config.api.services.get.talList,
+        me.auth)
       me.loading = true
       return promise.then(function (response) {
         me.error = null
         return response.data
       }).catch(function (error) {
-        me.error = error
+        me.errorCb(error)
         return []
       }).finally(function () {
         me.loading = false
@@ -98,6 +106,24 @@ export default {
             return uri.location
           }).toString().match(regexp)
       }
+    },
+    promiseCb (auth) {
+      this.auth = auth
+      return axios.getPromise(
+        axios.methods.head,
+        this.$root.$i18n.locale,
+        config.api.services.get.talList,
+        auth)
+    },
+    successCb (response) {
+      this.$refs[this.tableId].refresh()
+    },
+    errorCb (error) {
+      this.error = error
+      this.callLogin()
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     }
   }
 }
