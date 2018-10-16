@@ -5,6 +5,7 @@ import config from '@/config'
 export default {
     methods: {
         get: 'get',
+        head: 'head',
         post: 'post',
         delete: 'delete'
     },
@@ -25,6 +26,8 @@ export default {
         switch (method) {
             case this.methods.get:
                 return axiosInst.get(service)
+            case this.methods.head:
+                return axiosInst.head(service)
             case this.methods.post:
                 return axiosInst.post(service, data)
             case this.methods.delete:
