@@ -13,7 +13,7 @@
     <b-row>
       <b-col>
         <loading :show="loading"></loading>
-        <error-display :error="error"></error-display>
+        <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row>
@@ -45,26 +45,41 @@ export default {
     'loading': Loading
   },
   methods: {
-    loadData () {
+    loadData (auth) {
+      this.error = null
       this.loading = true
-      axios.get(this.$root.$i18n.locale,
+      let promise = this.promiseCb(this.$root.$i18n.locale,
         config.api.services.get.slurmGeneral,
+        auth)
+      axios.processPromise(promise,
         this.successCb,
         this.errorCb,
         this.finallyCb)
     },
     successCb (response) {
       this.slurm = response.data
+      this.error = null
     },
     errorCb (error) {
       this.error = error
+      this.callLogin()
     },
     finallyCb () {
       this.loading = false
+    },
+    promiseCb (auth) {
+      return axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        config.api.services.get.slurmGeneral,
+        auth)
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     }
   },
   created: function () {
-    this.loadData()
+    this.loadData(null)
   }
 }
 </script>

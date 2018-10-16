@@ -136,6 +136,10 @@ const messages = {
       maxResults: 'Max rows',
       showDetail: 'Show detail'
     },
+    login: {
+      username: 'Username',
+      password: 'Password'
+    },
     errors: {
       noDataFound: 'No data found',
       asnOrPrefixRequired: 'An ASN or a prefix is required',
@@ -148,10 +152,18 @@ const messages = {
       skiInvalid: 'Must be a valid hexadecimal value of 40 characters',
       routerPublicKeyInvalid: 'Must be a valid public key in DER format base64 encoded',
       commentInvalid: 'Must have between {min} and {max} characters',
+      usernameRequired: 'Username required',
+      passwordRequired: 'Password required',
+      invalidCredentials: 'Invalid username/password',
+      tryLogin: 'try to login',
       http: {
         badRequest: {
           title: 'Bad request to the server',
           message: 'The request made to the server isn\'t valid'
+        },
+        unauthorized: {
+          title: 'Unauthorized',
+          message: 'The requested service needs authentication'
         },
         notFound: {
           title: 'Object not found',
@@ -208,6 +220,7 @@ const i18n = new VueI18n({
 Vue.mixin({
   data: function () {
     return {
+      loginModalId: 'loginModal',
       apiPropsMap: {
         SlurmPrefix: {
           asn: 'common.asn',
@@ -262,6 +275,21 @@ Vue.mixin({
     },
     getActiveLang () {
       return i18n.locale
+    },
+    checkAuth (error, promiseCallback, successCallback, errorCallback) {
+      if (error && error.response && error.response.status === 401) {
+        this.showLogin(promiseCallback, successCallback, errorCallback)
+      }
+    },
+    showLogin (promiseCallback, successCallback, errorCallback) {
+      let parentComponent = this.$root.$children[0]
+      let loginComponent = parentComponent.$refs.loginComponent
+      loginComponent.callbackSet = {
+        promiseCallback: promiseCallback,
+        successCallback: successCallback,
+        errorCallback: errorCallback
+      }
+      loginComponent.$refs[this.loginModalId].show()
     }
   }
 })

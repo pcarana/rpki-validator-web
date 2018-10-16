@@ -5,6 +5,9 @@
       dismissible
       :show="showAlert">
       <p><b>{{ $t(title) }}:</b> {{ $t(message) }}
+      <span v-if="error && error.response && error.response.status === 401">
+        , <a href="#" @click="callLogin">{{ $t('errors.tryLogin') }}</a>
+      </span>
       <span v-if="error && error.response && error.response.data">
         . {{ $t('errors.serverMessage', {serverMessage: error.response.data.message}) }}
       </span></p>
@@ -18,7 +21,8 @@ export default {
     error: {
       type: [Object, Error],
       default: null
-    }
+    },
+    callLogin: Function
   },
   data () {
     return {
@@ -37,6 +41,9 @@ export default {
           case 400:
             // Bad request
             return 'errors.http.badRequest.title'
+          case 401:
+            // Unauthorized
+            return 'errors.http.unauthorized.title'
           case 404:
             // Not found
             return 'errors.http.notFound.title'
@@ -69,6 +76,9 @@ export default {
           case 400:
             // Bad request
             return 'errors.http.badRequest.message'
+          case 401:
+            // Unauthorized
+            return 'errors.http.unauthorized.message'
           case 404:
             // Not found
             return 'errors.http.notFound.message'
