@@ -7,7 +7,7 @@
     </b-row>
     <b-row align-h="center">
       <b-col cols="10">
-        <error-display :error="error"></error-display>
+        <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row align-h="between">
@@ -41,6 +41,7 @@
       <b-col cols="12">
         <b-table striped hover responsive show-empty
           :id="tableId"
+          :ref="tableId"
           :items="items"
           :fields="tableFields"
           :per-page="perPage"
@@ -98,7 +99,8 @@ export default {
     deleteCallback: Function,
     error: [Object, Error],
     loading: Boolean,
-    tableId: String
+    tableId: String,
+    callLogin: Function
   },
   data () {
     return {
@@ -129,6 +131,9 @@ export default {
       var searchFilterOpt = this.searchFilter === null ? '' : this.searchFilter.trim()
       var filterItemTxt = this.filterItem === null ? '' : this.filterItem.trim()
       return this.filterFunction(item, searchFilterOpt, filterItemTxt)
+    },
+    refresh () {
+      this.$root.$emit('bv::refresh::table', this.tableId)
     }
   },
   computed: {
