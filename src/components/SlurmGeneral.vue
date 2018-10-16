@@ -45,12 +45,12 @@ export default {
     'loading': Loading
   },
   methods: {
-    loadData (auth) {
+    loadData () {
       this.error = null
       this.loading = true
       let promise = this.promiseCb(this.$root.$i18n.locale,
         config.api.services.get.slurmGeneral,
-        auth)
+        null)
       axios.processPromise(promise,
         this.successCb,
         this.errorCb,
@@ -79,7 +79,7 @@ export default {
     }
   },
   created: function () {
-    this.loadData(null)
+    this.loadData()
   }
 }
 </script>
