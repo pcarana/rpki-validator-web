@@ -15,7 +15,9 @@
       <b-container fluid>
         <b-row class="mb-1" v-if="createError">
           <b-col>
-            <b-alert show variant="danger"><span v-html="createErrorMessage"></span></b-alert>
+            <b-alert show variant="danger">
+              <span v-html="createErrorMessage"></span>
+            </b-alert>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -216,7 +218,14 @@ export default {
         if (error.response.data.errors && error.response.data.errors.length > 0) {
           let list = '<ul>'
           for (let currErr of error.response.data.errors) {
-            list += '<li><b>' + this.i18n.t(this.apiPropsMap.SlurmPrefix[currErr.title.split('.')[1]])
+            let errorSplit = currErr.title.split('.')
+            let message = ''
+            if (errorSplit.length > 1) {
+              message = this.i18n.t(this.apiPropsMap.SlurmPrefix[errorSplit[1]])
+            } else {
+              message = this.i18n.t(this.apiPropsMap.SlurmPrefix.object)
+            }
+            list += '<li><b>' + message
             list += ':</b> ' + currErr.description + '</li>'
           }
           list += '</ul>'

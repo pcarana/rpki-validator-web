@@ -77,6 +77,10 @@ const messages = {
         title: 'Assertion',
         addNew: 'Add new assertion'
       },
+      object: {
+        bgpsec: 'BGPsec object',
+        prefix: 'Prefix object'
+      },
       general: {
         title: 'SLURM loaded',
         description: 'This is a preview of the SLURM loaded at the validator'
@@ -223,12 +227,14 @@ Vue.mixin({
       loginModalId: 'loginModal',
       apiPropsMap: {
         SlurmPrefix: {
+          object: 'slurm.object.prefix',
           asn: 'common.asn',
           prefix: 'common.prefix',
           maxPrefixLength: 'common.prefixMaxLength',
           comment: 'common.comment'
         },
         SlurmBgpsec: {
+          object: 'slurm.object.bgpsec',
           asn: 'common.asn',
           SKI: 'common.ski',
           routerPublicKey: 'common.routerPublicKey',
