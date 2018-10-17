@@ -57,64 +57,139 @@
         </b-form>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="mt-2">
       <b-col>
         <loading :show="loading"></loading>
         <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
-        <b-container v-if="validationResult">
-          <b>{{ $t('validate.validityState') }}</b>
-          <b-alert show :variant="statusVariant">
-            {{ $t('validate.state.' + validationResult.validityState) }}
-          </b-alert>
-          <b-container>
-            <b-row>
-              <b-col></b-col>
-              <b-col>
-                <b-row>
-                  <b-col></b-col>
-                  <b-col>{{ $t('common.asn') }}</b-col>
-                </b-row>
-                <b-row>
-                  <b-col></b-col>
-                  <b-col>{{ $t('validate.validityMatrix.matchAs') }}</b-col>
-                  <b-col>{{ $t('validate.validityMatrix.nonMatchAs') }}</b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col>{{ $t('common.prefix') }}</b-col>
-              <b-col>
-                <b-row>
-                  <b-col>{{ $t('validate.validityMatrix.nonIntersecting') }}</b-col>
-                  <b-col><img v-if="asnMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                  <b-col><img v-if="asnNoMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                </b-row>
-                <b-row>
-                  <b-col>{{ $t('validate.validityMatrix.coveringAggregate') }}</b-col>
-                  <b-col><img v-if="asnMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                  <b-col><img v-if="asnNoMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" /></b-col>
-                </b-row>
-                <b-row>
-                  <b-col>{{ $t('validate.validityMatrix.matchRoa') }}</b-col>
-                  <b-col><img v-if="asnMatchPrefixState('match-roa-prefix')" src="@/assets/green_check.svg" alt="X" /></b-col>
-                  <b-col><img v-if="asnNoMatchPrefixState('match-roa-prefix')" src="@/assets/red_check.svg" alt="X" /></b-col>
-                </b-row>
-                <b-row>
-                  <b-col>{{ $t('validate.validityMatrix.moreSpecific') }}</b-col>
-                  <b-col><img v-if="asnMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
-                  <b-col><img v-if="asnNoMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" /></b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-container>
-          <b-container v-if="validationResult && validationResult.match">
-            <h3>{{ $t(matchTitle) }}</h3>
-            <json-object :object="validationResult.match"></json-object>
-          </b-container>
+      <b-col cols="12">
+        <b-container v-if="validationResult" class="mx-0 px-0">
+          <b-row>
+            <b-col cols="4">
+              <b-card :header="$t('validate.status')"
+                :title="$t('validate.state.' + validationResult.validityState)"
+                :bg-variant="statusVariant"
+                text-variant="white"
+                class="text-center">
+              </b-card>
+            </b-col>
+            <b-col cols="8">
+              <b-card :header="$t('validate.validityState')">
+                <b-container>
+                  <b-row class="my-auto align-middle text-center">
+                    <b-col cols="3"></b-col>
+                    <b-col cols="9">
+                      <b-row>
+                        <b-col cols="4"></b-col>
+                        <b-col cols="8">
+                          <h4>{{ $t('common.asn') }}</h4>
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col></b-col>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': validationResult.asState === 'matching'
+                          }">
+                          {{ $t('validate.validityMatrix.matchAs') }}
+                        </b-col>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': validationResult.asState === 'non-matching'
+                          }">
+                          {{ $t('validate.validityMatrix.nonMatchAs') }}
+                        </b-col>
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="3" class="my-auto align-middle text-right">
+                      <h4>{{ $t('common.prefix') }}</h4>
+                    </b-col>
+                    <b-col class="my-auto align-middle">
+                      <b-row>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': generalPrefixState('non-intersecting')
+                          }">
+                          {{ $t('validate.validityMatrix.nonIntersecting') }}
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" />
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnNoMatchPrefixState('non-intersecting')" src="@/assets/gray_check.svg" alt="X" />
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': generalPrefixState('covering-aggregate')
+                          }">
+                          {{ $t('validate.validityMatrix.coveringAggregate') }}
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" />
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnNoMatchPrefixState('covering-aggregate')" src="@/assets/gray_check.svg" alt="X" />
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': generalPrefixState('match-roa-prefix')
+                          }">
+                          {{ $t('validate.validityMatrix.matchRoa') }}
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnMatchPrefixState('match-roa-prefix')" src="@/assets/green_check.svg" alt="X" />
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnNoMatchPrefixState('match-roa-prefix')" src="@/assets/red_check.svg" alt="X" />
+                        </b-col>
+                      </b-row>
+                      <b-row>
+                        <b-col :class="{
+                          'border': true,
+                          'border-black': true,
+                          'bg-light': true,
+                          'font-weight-bold': generalPrefixState('more-specific-than-roa')
+                          }">
+                          {{ $t('validate.validityMatrix.moreSpecific') }}
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" />
+                        </b-col>
+                        <b-col class="text-center border border-black">
+                          <img v-if="asnNoMatchPrefixState('more-specific-than-roa')" src="@/assets/red_check.svg" alt="X" />
+                        </b-col>
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                </b-container>
+              </b-card>
+            </b-col>
+          </b-row>
+          <b-row class="mt-2">
+            <b-col cols="12">
+              <b-card v-if="validationResult && validationResult.match" :header="$t(matchTitle)">
+                <json-object :object="validationResult.match"></json-object>
+              </b-card>
+            </b-col>
+          </b-row>
         </b-container>
       </b-col>
     </b-row>
@@ -146,6 +221,7 @@ export default {
     onSubmit (evt) {
       evt.preventDefault()
       this.error = null
+      this.validationResult = null
       this.loading = true
       let promise = this.promiseCb(null)
       axios.processPromise(promise,
@@ -186,6 +262,9 @@ export default {
     asnNoMatchPrefixState (prefixState) {
       return this.validationResult.asState === 'non-matching' &&
               this.validationResult.prefixState === prefixState
+    },
+    generalPrefixState (prefixState) {
+      return this.asnMatchPrefixState(prefixState) || this.asnNoMatchPrefixState(prefixState)
     }
   },
   computed: {
