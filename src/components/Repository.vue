@@ -8,7 +8,7 @@
     <b-row>
       <b-col cols="10">
         <loading :show="loading"></loading>
-        <error-display :error="error"></error-display>
+        <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row v-if="tal">
@@ -78,14 +78,40 @@ export default {
     back () {
       this.$router.back()
     },
+    loadData () {
+      this.error = null
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      let service = config.api.services.get.talDetail.replace(
+        ':id',
+        this.$route.params.talId
+      )
+      return axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        service,
+        auth)
+    },
     successCb (response) {
+      this.error = null
       this.tal = response.data
     },
     errorCb (error) {
       this.error = error
+      this.tal = null
+      this.callLogin()
     },
     finallyCb () {
       this.loading = false
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     },
     addToSummaryMap (check, fileMap, property) {
       let split = check.location.split('.')
@@ -98,18 +124,7 @@ export default {
     }
   },
   created: function () {
-    this.loading = true
-    const service = config.api.services.get.talDetail.replace(
-      ':id',
-      this.$route.params.talId
-    )
-    axios.get(
-      this.$root.$i18n.locale,
-      service,
-      this.successCb,
-      this.errorCb,
-      this.finallyCb
-    )
+    this.loadData()
   },
   computed: {
     filesSummary: function () {
