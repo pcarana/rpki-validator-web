@@ -36,33 +36,6 @@ export default {
                 return Promise.reject(new Error('Method not supported - ' + method))
         }
     },
-    getAsPromise: function (lang, service, auth) {
-        var axiosInst = this.createAxios(lang, auth)
-        return axiosInst.get(service)
-    },
-    get: function (lang, service, auth, successCb, errorCb) {
-        this.get(lang, service, auth, successCb, errorCb, null)
-    },
-    get: function (lang, service, auth, successCb, errorCb, finallyCb) {
-        let promise = this.getAsPromise(lang, service, auth)
-        this.processPromise(promise, successCb, errorCb, finallyCb)
-    },
-    post: function (lang, service, content, auth, successCb, errorCb) {
-        this.post(lang, service, content, auth, successCb, errorCb, null)
-    },
-    post: function (lang, service, content, auth, successCb, errorCb, finallyCb) {
-        var axiosInst = this.createAxios(lang, auth)
-        let promise = axiosInst.post(service, content)
-        this.processPromise(promise, successCb, errorCb, finallyCb)
-    },
-    delete: function (lang, service, auth, successCb, errorCb) {
-        this.delete(lang, service, auth, successCb, errorCb, null)
-    },
-    delete: function (lang, service, auth, successCb, errorCb, finallyCb) {
-        var axiosInst = this.createAxios(lang, auth)
-        let promise = axiosInst.delete(service)
-        this.processPromise(promise, successCb, errorCb, finallyCb)
-    },
     processPromise: function (promise, thenCb, errorCb, finallyCb) {
         if (!promise) {
             return
