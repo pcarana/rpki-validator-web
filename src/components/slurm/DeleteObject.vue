@@ -6,9 +6,15 @@
       :title="$t('common.confirm')"
       :ok-title="$t('common.delete')"
       :cancel-title="$t('common.cancel')"
+      @shown="deleteError = null"
       @ok="sendRequest">
       <b-container fluid>
-        <b-row class="mb-1" v-if="deleteError">
+        <b-row>
+          <b-col>
+            <loading :show="loading"></loading>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1" v-if="deleteErrorMessage">
           <b-col>
             <b-alert show variant="danger">
               <span v-html="deleteErrorMessage"></span>
@@ -18,7 +24,9 @@
         <b-row class="mb-1">
           <b-col>
             {{ $t('common.confirmDelete') }}<br />
-            <json-object :object="item"></json-object>
+            <b-card>
+              <json-object :object="item"></json-object>
+            </b-card>
           </b-col>
         </b-row>
       </b-container>
@@ -33,6 +41,7 @@
 </template>
 
 <script>
+import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -50,17 +59,33 @@ export default {
   },
   data () {
     return {
-      deleteError: null
+      deleteError: null,
+      loading: false,
+      auth: {}
     }
+  },
+  components: {
+    'loading': Loading
   },
   methods: {
     sendRequest (event) {
       event.preventDefault()
-      const service = this.deleteService.replace(':id', this.item.id)
-      axios.delete(this.$root.$i18n.locale,
-        service,
+      this.deleteError = null
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
         this.deleteSuccessCb,
-        this.deleteErrorCb)
+        this.deleteErrorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      this.auth = auth
+      let service = this.deleteService.replace(':id', this.item.id)
+      return axios.getPromise(
+        axios.methods.delete,
+        this.$root.$i18n.locale,
+        service,
+        auth)
     },
     deleteSuccessCb (response) {
       this.$refs[this.id].hide()
@@ -69,6 +94,13 @@ export default {
     },
     deleteErrorCb (error) {
       this.deleteError = error
+      this.callLogin()
+    },
+    finallyCb () {
+      this.loading = false
+    },
+    callLogin () {
+      this.checkAuth(this.deleteError, this.promiseCb, this.deleteSuccessCb, this.deleteErrorCb)
     }
   },
   computed: {
@@ -93,7 +125,7 @@ export default {
       } else if (error.validationMessage) {
         return this.i18n.t(error.validationMessage)
       }
-      return error
+      return null
     },
     deleteService: function () {
       if (this.type === 'prefix') {

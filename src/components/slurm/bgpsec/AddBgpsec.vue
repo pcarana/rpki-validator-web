@@ -13,7 +13,12 @@
       @ok="sendRequest"
       no-close-on-backdrop>
       <b-container fluid>
-        <b-row class="mb-1" v-if="createError">
+        <b-row>
+          <b-col>
+            <loading :show="loading"></loading>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1" v-if="createErrorMessage">
           <b-col>
             <b-alert show variant="danger">
               <span v-html="createErrorMessage"></span>
@@ -108,6 +113,7 @@
 </template>
 
 <script>
+import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 
 export default {
@@ -125,16 +131,17 @@ export default {
         routerPublicKey: null,
         comment: null
       },
-      createError: null
+      createError: null,
+      loading: false,
+      auth: {},
+      newBgpsec: {}
     }
+  },
+  components: {
+    'loading': Loading
   },
   methods: {
     focusFirstField () {
-      this.createError = null
-      this.newObject.asn = null
-      this.newObject.ski = null
-      this.newObject.routerPublicKey = null
-      this.newObject.comment = null
       this.$refs.asn.focus()
     },
     sendRequest (event) {
@@ -148,32 +155,57 @@ export default {
         this.createError = { validationMessage: validationMessage }
         return
       }
-      let newBgpsec = {}
+      this.newBgpsec = {}
       if (newObject.asn) {
-        newBgpsec.asn = parseInt(newObject.asn)
+        this.newBgpsec.asn = parseInt(newObject.asn)
       }
       if (newObject.ski) {
-        newBgpsec.SKI = btoa(newObject.ski).replace(/=/g, '')
+        this.newBgpsec.SKI = btoa(newObject.ski).replace(/=/g, '')
       }
       if (this.showRouterPublicKey && newObject.routerPublicKey) {
-        newBgpsec.routerPublicKey = newObject.routerPublicKey
+        this.newBgpsec.routerPublicKey = newObject.routerPublicKey
       }
       if (newObject.comment) {
-        newBgpsec.comment = newObject.comment
+        this.newBgpsec.comment = newObject.comment
       }
-      axios.post(this.$root.$i18n.locale,
-        this.postService,
-        newBgpsec,
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
         this.createSuccessCb,
-        this.createErrorCb)
+        this.createErrorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      this.auth = auth
+      return axios.getPromise(
+        axios.methods.post,
+        this.$root.$i18n.locale,
+        this.postService,
+        auth,
+        this.newBgpsec)
     },
     createSuccessCb (response) {
+      this.createError = null
+      this.newObject.asn = null
+      this.newObject.ski = null
+      this.newObject.routerPublicKey = null
+      this.newObject.comment = null
       this.$refs.createModal.hide()
       this.successCallback(response)
       this.$refs.successModal.show()
     },
     createErrorCb (error) {
       this.createError = error
+      if (!this.$refs.createModal.visible) {
+        this.$refs.createModal.show()
+      }
+      this.callLogin()
+    },
+    finallyCb () {
+      this.loading = false
+    },
+    callLogin () {
+      this.checkAuth(this.createError, this.promiseCb, this.createSuccessCb, this.createErrorCb)
     }
   },
   computed: {
@@ -208,7 +240,7 @@ export default {
       } else if (error.validationMessage) {
         return this.i18n.t(error.validationMessage)
       }
-      return error
+      return null
     },
     asnState: function () {
       if (this.newObject.asn) {

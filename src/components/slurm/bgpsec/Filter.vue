@@ -10,7 +10,9 @@
                       :deleteCallback="confirmDelete"
                       :error="error"
                       :loading="loading"
-                      :tableId="tableId">
+                      :tableId="tableId"
+                      :ref="tableId"
+                      :callLogin="callLogin">
         </custom-table>
       </b-col>
     </b-row>
@@ -52,7 +54,10 @@ export default {
           label: 'common.ski',
           sortable: true,
           formatter: (value) => {
-            return atob(value)
+            if (value && value !== null) {
+              return atob(value)
+            }
+            return ''
           }
         },
         { key: 'comment', label: 'common.comment', sortable: false },
@@ -65,19 +70,24 @@ export default {
       ],
       error: null,
       loading: false,
-      deleteItem: null
+      deleteItem: null,
+      auth: {}
     }
   },
   methods: {
     loadFilters () {
       let me = this
-      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.slurmBgpsecFilterList)
+      let promise = axios.getPromise(
+        axios.methods.get,
+        me.$root.$i18n.locale,
+        config.api.services.get.slurmBgpsecFilterList,
+        me.auth)
       me.loading = true
       return promise.then(function (response) {
         me.error = null
         return response.data
       }).catch(function (error) {
-        me.error = error
+        me.errorCb(error)
         return []
       }).finally(function () {
         me.loading = false
@@ -104,8 +114,23 @@ export default {
                  item.comment.match(regexp)
       }
     },
+    promiseCb (auth) {
+      this.auth = auth
+      return axios.getPromise(
+        axios.methods.head,
+        this.$root.$i18n.locale,
+        config.api.services.get.slurmBgpsecFilterList,
+        auth)
+    },
     actionSuccessCb (response) {
-      this.$root.$emit('bv::refresh::table', this.tableId)
+      this.$refs[this.tableId].refresh()
+    },
+    errorCb (error) {
+      this.error = error
+      this.callLogin()
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.actionSuccessCb, this.errorCb)
     },
     confirmDelete (item) {
       this.deleteItem = item
