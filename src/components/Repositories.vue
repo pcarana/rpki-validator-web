@@ -40,6 +40,7 @@ export default {
   data () {
     return {
       tableId: 'repositoriesTable',
+      getListService: config.api.services.get.talList,
       tableFields: [
         {key: 'name', label: 'repositories.name', sortable: true},
         {
@@ -72,7 +73,7 @@ export default {
       let promise = axios.getPromise(
         axios.methods.get,
         me.$root.$i18n.locale,
-        config.api.services.get.talList,
+        this.getListService,
         me.auth)
       me.loading = true
       return promise.then(function (response) {
@@ -112,7 +113,7 @@ export default {
       return axios.getPromise(
         axios.methods.head,
         this.$root.$i18n.locale,
-        config.api.services.get.talList,
+        this.getListService,
         auth)
     },
     successCb (response) {

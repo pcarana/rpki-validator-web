@@ -46,6 +46,7 @@ export default {
     return {
       tableId: 'assertionTable',
       postService: config.api.services.post.slurmBgpsecAssertion,
+      getListService: config.api.services.get.slurmBgpsecAssertionList,
       confirmDeleteModalId: 'confirmDelete',
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
@@ -85,7 +86,7 @@ export default {
       let promise = axios.getPromise(
         axios.methods.get,
         me.$root.$i18n.locale,
-        config.api.services.get.slurmBgpsecAssertionList,
+        this.getListService,
         me.auth)
       me.loading = true
       return promise.then(function (response) {
@@ -124,7 +125,7 @@ export default {
       return axios.getPromise(
         axios.methods.head,
         this.$root.$i18n.locale,
-        config.api.services.get.slurmBgpsecAssertionList,
+        this.getListService,
         auth)
     },
     actionSuccessCb (response) {

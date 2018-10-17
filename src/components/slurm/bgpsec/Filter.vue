@@ -46,6 +46,7 @@ export default {
     return {
       tableId: 'filterTable',
       postService: config.api.services.post.slurmBgpsecFilter,
+      getListService: config.api.services.get.slurmBgpsecFilterList,
       confirmDeleteModalId: 'confirmDelete',
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
@@ -80,7 +81,7 @@ export default {
       let promise = axios.getPromise(
         axios.methods.get,
         me.$root.$i18n.locale,
-        config.api.services.get.slurmBgpsecFilterList,
+        this.getListService,
         me.auth)
       me.loading = true
       return promise.then(function (response) {
@@ -119,7 +120,7 @@ export default {
       return axios.getPromise(
         axios.methods.head,
         this.$root.$i18n.locale,
-        config.api.services.get.slurmBgpsecFilterList,
+        this.getListService,
         auth)
     },
     actionSuccessCb (response) {
