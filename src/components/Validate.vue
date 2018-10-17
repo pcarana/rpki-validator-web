@@ -112,6 +112,26 @@ export default {
     'loading': Loading
   },
   methods: {
+    onSubmit (evt) {
+      evt.preventDefault()
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      let service = config.api.services.get.validate
+      service = service.replace(':asn', this.asn)
+      service = service.replace(':prefix-length', this.prefixLength)
+      service = service.replace(':prefix', this.prefix)
+      return axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        service,
+        auth)
+    },
     successCb (response) {
       this.error = null
       this.validationResult = response.data
@@ -119,24 +139,13 @@ export default {
     errorCb (error) {
       this.error = error
       this.validationResult = null
+      this.callLogin()
     },
     finallyCb () {
       this.loading = false
     },
-    onSubmit (evt) {
-      evt.preventDefault()
-      this.loading = true
-      let service = config.api.services.get.validate
-      service = service.replace(':asn', this.asn)
-      service = service.replace(':prefix-length', this.prefixLength)
-      service = service.replace(':prefix', this.prefix)
-      axios.get(
-        this.$root.$i18n.locale,
-        service,
-        this.successCb,
-        this.errorCb,
-        this.finallyCb
-      )
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     },
     asnMatchPrefixState (prefixState) {
       return this.validationResult.asState === 'matching' &&
