@@ -14,13 +14,44 @@
       <b-col>
         <b-form @submit="onSubmit">
           <b-form-group horizontal :label="$t('common.asn')" label-for="asn">
-            <b-form-input id="asn" type="number" v-model.trim="asn" />
+            <b-form-input id="asn"
+              ref="asn"
+              type="number"
+              v-model.trim="asn"
+              required
+              :min="validationRules.asn.min"
+              :max="validationRules.asn.max"
+              :state="asnState">
+            </b-form-input>
+            <b-form-invalid-feedback>
+              {{ $t('errors.asnInvalid') }}
+            </b-form-invalid-feedback>
           </b-form-group>
           <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix">
-            <b-form-input id="prefix" type="text" v-model.trim="prefix" />
+            <b-form-input id="prefix"
+              ref="prefix"
+              type="text"
+              v-model.trim="prefix"
+              required
+              :state="prefixState">
+            </b-form-input>
+            <b-form-invalid-feedback>
+              {{ $t('errors.prefixInvalid') }}
+            </b-form-invalid-feedback>
           </b-form-group>
           <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength">
-            <b-form-input id="prefixLength" type="number" v-model.trim="prefixLength" />
+            <b-form-input id="prefixLength"
+              ref="prefixLength"
+              type="number"
+              v-model.trim="prefixLength"
+              required
+              :min="prefixLengthMin"
+              :max="prefixLengthMax"
+              :state="prefixLengthState">
+            </b-form-input>
+            <b-form-invalid-feedback>
+              {{ $t('errors.prefixLengthInvalid', { min: prefixLengthMin, max: prefixLengthMax }) }}
+            </b-form-invalid-feedback>
           </b-form-group>
           <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
         </b-form>
@@ -114,6 +145,7 @@ export default {
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
+      this.error = null
       this.loading = true
       let promise = this.promiseCb(null)
       axios.processPromise(promise,
@@ -157,6 +189,39 @@ export default {
     }
   },
   computed: {
+    asnState: function () {
+      if (this.asn) {
+        return this.asn >= this.validationRules.asn.min &&
+               this.asn <= this.validationRules.asn.max
+      }
+      return null
+    },
+    prefixState: function () {
+      if (this.prefix && this.prefix.length > 0) {
+        return this.validationRules.prefix.ipv4Regex.test(this.prefix) ||
+               this.validationRules.prefix.ipv6Regex.test(this.prefix)
+      }
+      return null
+    },
+    prefixLengthState: function () {
+      if (this.prefixLength) {
+        return this.prefixLength >= this.prefixLengthMin &&
+               this.prefixLength <= this.prefixLengthMax
+      }
+      return this.prefix && this.prefix.length > 0 ? false : null
+    },
+    prefixLengthMin: function () {
+      // Use a common value, if any of the 'min' changes then add here the rules
+      return this.validationRules.prefixLength.v4.min
+    },
+    prefixLengthMax: function () {
+      if (this.prefix && this.prefix.length > 0) {
+        if (this.validationRules.prefix.ipv4Regex.test(this.prefix)) {
+          return this.validationRules.prefixLength.v4.max
+        }
+      }
+      return this.validationRules.prefixLength.v6.max
+    },
     statusVariant: function () {
       if (this.validationResult) {
         switch (this.validationResult.validityState) {
