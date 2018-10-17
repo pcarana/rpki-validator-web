@@ -29,7 +29,7 @@
     <b-row>
       <b-col>
         <loading :show="loading"></loading>
-        <error-display :error="error"></error-display>
+        <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row>
