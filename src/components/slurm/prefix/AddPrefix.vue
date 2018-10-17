@@ -13,7 +13,12 @@
       @ok="sendRequest"
       no-close-on-backdrop>
       <b-container fluid>
-        <b-row class="mb-1" v-if="createError">
+        <b-row>
+          <b-col>
+            <loading :show="loading"></loading>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1" v-if="createErrorMessage">
           <b-col>
             <b-alert show variant="danger">
               <span v-html="createErrorMessage"></span>
@@ -126,6 +131,7 @@
 </template>
 
 <script>
+import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 
 export default {
@@ -144,17 +150,17 @@ export default {
         prefixMaxLength: null,
         comment: null
       },
-      createError: null
+      createError: null,
+      loading: false,
+      auth: {},
+      newPrefix: {}
     }
+  },
+  components: {
+    'loading': Loading
   },
   methods: {
     focusFirstField () {
-      this.createError = null
-      this.newObject.asn = null
-      this.newObject.prefix = null
-      this.newObject.prefixLength = null
-      this.newObject.prefixMaxLength = null
-      this.newObject.comment = null
       this.$refs.asn.focus()
     },
     sendRequest (event) {
@@ -168,9 +174,9 @@ export default {
         this.createError = { validationMessage: validationMessage }
         return
       }
-      let newPrefix = {}
+      this.newPrefix = {}
       if (newObject.asn) {
-        newPrefix.asn = parseInt(newObject.asn)
+        this.newPrefix.asn = parseInt(newObject.asn)
       }
       let prefix = ''
       if (newObject.prefix) {
@@ -180,27 +186,53 @@ export default {
         prefix += '/' + newObject.prefixLength
       }
       if (prefix.length > 0) {
-        newPrefix.prefix = prefix
+        this.newPrefix.prefix = prefix
       }
       if (this.showMaxLength && newObject.prefixMaxLength) {
-        newPrefix.maxPrefixLength = parseInt(newObject.prefixMaxLength)
+        this.newPrefix.maxPrefixLength = parseInt(newObject.prefixMaxLength)
       }
       if (newObject.comment) {
-        newPrefix.comment = newObject.comment
+        this.newPrefix.comment = newObject.comment
       }
-      axios.post(this.$root.$i18n.locale,
-        this.postService,
-        newPrefix,
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
         this.createSuccessCb,
-        this.createErrorCb)
+        this.createErrorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      this.auth = auth
+      return axios.getPromise(
+        axios.methods.post,
+        this.$root.$i18n.locale,
+        this.postService,
+        auth,
+        this.newPrefix)
     },
     createSuccessCb (response) {
+      this.createError = null
+      this.newObject.asn = null
+      this.newObject.prefix = null
+      this.newObject.prefixLength = null
+      this.newObject.prefixMaxLength = null
+      this.newObject.comment = null
       this.$refs.createModal.hide()
       this.successCallback(response)
       this.$refs.successModal.show()
     },
     createErrorCb (error) {
       this.createError = error
+      if (!this.$refs.createModal.visible) {
+        this.$refs.createModal.show()
+      }
+      this.callLogin()
+    },
+    finallyCb () {
+      this.loading = false
+    },
+    callLogin () {
+      this.checkAuth(this.createError, this.promiseCb, this.createSuccessCb, this.createErrorCb)
     }
   },
   computed: {
@@ -235,7 +267,7 @@ export default {
       } else if (error.validationMessage) {
         return this.i18n.t(error.validationMessage)
       }
-      return error
+      return null
     },
     asnState: function () {
       if (this.newObject.asn) {
