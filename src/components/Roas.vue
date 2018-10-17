@@ -18,7 +18,10 @@
                       :searchFilterOpts="searchFilterOpts"
                       :showDetailButton="true"
                       :error="error"
-                      :loading="loading">
+                      :loading="loading"
+                      :tableId="tableId"
+                      :ref="tableId"
+                      :callLogin="callLogin">
         </custom-table>
       </b-col>
     </b-row>
@@ -36,6 +39,8 @@ export default {
   },
   data () {
     return {
+      tableId: 'roasTable',
+      getListService: config.api.services.get.roaList,
       tableFields: [
         {key: 'asn', label: 'common.asn', sortable: true},
         {key: 'prefix', label: 'common.prefix', sortable: true},
@@ -50,19 +55,24 @@ export default {
         { text: 'common.prefixFamily', value: 'prefixFamily' }
       ],
       error: null,
-      loading: false
+      loading: false,
+      auth: {}
     }
   },
   methods: {
     loadRoas (ctx) {
       let me = this
-      let promise = axios.getAsPromise(me.$root.$i18n.locale, config.api.services.get.roaList)
+      let promise = axios.getPromise(
+        axios.methods.get,
+        me.$root.$i18n.locale,
+        this.getListService,
+        me.auth)
       me.loading = true
       return promise.then(function (response) {
         me.error = null
         return response.data
       }).catch(function (error) {
-        me.error = error
+        me.errorCb(error)
         return []
       }).finally(function () {
         me.loading = false
@@ -91,6 +101,24 @@ export default {
                  regexp.test(item.prefixMaxLength) ||
                  regexp.test(item.prefixFamily)
       }
+    },
+    promiseCb (auth) {
+      this.auth = auth
+      return axios.getPromise(
+        axios.methods.head,
+        this.$root.$i18n.locale,
+        this.getListService,
+        auth)
+    },
+    successCb (response) {
+      this.$refs[this.tableId].refresh()
+    },
+    errorCb (error) {
+      this.error = error
+      this.callLogin()
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     }
   }
 }
