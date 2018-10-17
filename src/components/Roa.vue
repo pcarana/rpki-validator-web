@@ -8,7 +8,7 @@
     <b-row>
       <b-col>
         <loading :show="loading"></loading>
-        <error-display :error="error"></error-display>
+        <error-display :error="error" :callLogin="callLogin"></error-display>
       </b-col>
     </b-row>
     <b-row v-if="roa">
@@ -77,29 +77,44 @@ export default {
     back () {
       this.$router.back()
     },
+    loadData () {
+      this.error = null
+      this.loading = true
+      let promise = this.promiseCb(null)
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
+    },
+    promiseCb (auth) {
+      let service = config.api.services.get.roaDetail.replace(
+        ':id',
+        this.$route.params.roaId
+      )
+      return axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        service,
+        auth)
+    },
     successCb (response) {
+      this.error = null
       this.roa = response.data
     },
     errorCb (error) {
       this.error = error
+      this.roa = null
+      this.callLogin()
     },
     finallyCb () {
       this.loading = false
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
     }
   },
   created: function () {
-    this.loading = true
-    const service = config.api.services.get.roaDetail.replace(
-      ':id',
-      this.$route.params.roaId
-    )
-    axios.get(
-      this.$root.$i18n.locale,
-      service,
-      this.successCb,
-      this.errorCb,
-      this.finallyCb
-    )
+    this.loadData()
   }
 }
 </script>
