@@ -3,11 +3,7 @@
     <b-row align-h="center">
       <b-col cols="10">
         <loading :show="loading"></loading>
-      </b-col>
-    </b-row>
-    <b-row align-h="center">
-      <b-col cols="10">
-        <error-display :error="error" :callLogin="callLogin"></error-display>
+        <error-display :error="error" :callLogin="callLogin" :callRetry="refresh"></error-display>
       </b-col>
     </b-row>
     <b-row align-h="between">

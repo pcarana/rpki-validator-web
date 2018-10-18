@@ -9,7 +9,7 @@
       <b-row>
         <b-col>
           <loading :show="loading"></loading>
-          <error-display :error="error" :callLogin="callLogin"></error-display>
+          <error-display :error="error" :callLogin="callLogin" :callRetry="loadData"></error-display>
         </b-col>
       </b-row>
     </b-container>
