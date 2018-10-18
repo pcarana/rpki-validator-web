@@ -93,7 +93,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': validationResult.asState === 'matching'
+                          'font-weight-bold': validationResult.asState === 'matching',
+                          'shadow': validationResult.asState === 'matching'
                           }">
                           {{ $t('validate.validityMatrix.matchAs') }}
                         </b-col>
@@ -101,7 +102,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': validationResult.asState === 'non-matching'
+                          'font-weight-bold': validationResult.asState === 'non-matching',
+                          'shadow': validationResult.asState === 'non-matching'
                           }">
                           {{ $t('validate.validityMatrix.nonMatchAs') }}
                         </b-col>
@@ -118,7 +120,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': generalPrefixState('non-intersecting')
+                          'font-weight-bold': generalPrefixState('non-intersecting'),
+                          'shadow': generalPrefixState('non-intersecting')
                           }">
                           {{ $t('validate.validityMatrix.nonIntersecting') }}
                         </b-col>
@@ -134,7 +137,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': generalPrefixState('covering-aggregate')
+                          'font-weight-bold': generalPrefixState('covering-aggregate'),
+                          'shadow': generalPrefixState('covering-aggregate')
                           }">
                           {{ $t('validate.validityMatrix.coveringAggregate') }}
                         </b-col>
@@ -150,7 +154,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': generalPrefixState('match-roa-prefix')
+                          'font-weight-bold': generalPrefixState('match-roa-prefix'),
+                          'shadow': generalPrefixState('match-roa-prefix')
                           }">
                           {{ $t('validate.validityMatrix.matchRoa') }}
                         </b-col>
@@ -166,7 +171,8 @@
                           'border': true,
                           'border-black': true,
                           'bg-light': true,
-                          'font-weight-bold': generalPrefixState('more-specific-than-roa')
+                          'font-weight-bold': generalPrefixState('more-specific-than-roa'),
+                          'shadow': generalPrefixState('more-specific-than-roa')
                           }">
                           {{ $t('validate.validityMatrix.moreSpecific') }}
                         </b-col>
