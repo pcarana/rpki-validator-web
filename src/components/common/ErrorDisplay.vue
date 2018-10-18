@@ -2,7 +2,6 @@
   <b-container>
     <b-alert
       variant="danger"
-      dismissible
       :show="showAlert">
       <p><b>{{ $t(title) }}:</b> {{ $t(message) }}
       <span v-if="showLogin && callLogin">
