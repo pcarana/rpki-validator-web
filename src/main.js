@@ -170,6 +170,7 @@ const messages = {
       passwordRequired: 'Password required',
       invalidCredentials: 'Invalid username/password',
       tryLogin: 'try to login',
+      tryAgain: 'try again',
       http: {
         badRequest: {
           title: 'Bad request to the server',
@@ -189,21 +190,21 @@ const messages = {
         },
         conflict: {
           title: 'Conflict',
-          message: 'There was a conflict performing the action, try again'
+          message: 'There was a conflict performing the action'
         },
         internalServer: {
           title: 'Server error',
-          message: 'There was an error at the server, try again'
+          message: 'There was an error at the server'
         },
         default: {
           title: 'Communication error',
-          message: 'There was an error communicating with the server, try again'
+          message: 'There was an error communicating with the server'
         }
       },
       request: {
         incomplete: {
           title: 'Local error',
-          message: 'There was a local error before sending the request to the server, try again'
+          message: 'There was a local error before sending the request to the server'
         }
       },
       serverMessage: 'The server sent the message: \'{serverMessage}\''
