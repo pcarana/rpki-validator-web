@@ -2,7 +2,6 @@
   <b-container>
     <b-alert
       variant="info"
-      dismissible
       :show="show">
       <i>{{ $t('common.loading') }}</i>
       <b-progress :value="100"
