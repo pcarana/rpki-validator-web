@@ -1,6 +1,7 @@
 <template>
-  <b-container>
-      <span v-if="type === null">
+  <b-row class="my-auto align-middle">
+    <b-col cols="12" class="text-left">
+      <span v-if="type === null" class="value">
         {{ value }}
       </span>
       <span v-else>
@@ -8,9 +9,11 @@
                   :pressed.sync="togglePressed"
                   v-b-toggle="toggleId"
                   size="sm"
-                  variant="outline-primary">
-          <img v-if="!togglePressed" src="@/assets/plus_icon.svg" width="12" height="12" alt="+" />
-          <img v-else src="@/assets/less_icon.svg" width="12" height="12" alt="-" />
+                  variant="link"
+                  class="arrayProp pl-0">
+          <img v-if="!togglePressed" src="@/assets/plus_icon.svg" width="8" height="8" alt="+" />
+          <img v-else src="@/assets/less_icon.svg" width="8" height="8" alt="-" />
+          {{ $t('common.element', { n: index + 1 }) }}
         </b-button>
         <b-collapse :id="toggleId">
           <json-array v-if="type === 'array'"
@@ -23,7 +26,8 @@
           </json-object>
         </b-collapse>
       </span>
-  </b-container>
+    </b-col>
+  </b-row>
 </template>
 
 <script>
@@ -59,4 +63,13 @@ export default {
 </script>
 
 <style>
+.arrayProp {
+  font-weight: bold;
+  font-style: italic;
+  color: black;
+  font-size: 0.9em
+}
+.value {
+  font-size: 0.9em;
+}
 </style>

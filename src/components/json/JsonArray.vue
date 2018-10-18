@@ -1,11 +1,10 @@
 <template>
-  <b-container>
+  <b-container fluid>
     <span v-for="(value, index) in array" :key="index">
       <json-array-value :index="index"
                         :value="value"
-                        :father="father">
+                        :father="getFatherId(index)">
       </json-array-value>
-      <span v-if="index < array.length - 1">, </span>
     </span>
   </b-container>
 </template>
@@ -21,6 +20,11 @@ export default {
   },
   data () {
     return {}
+  },
+  methods: {
+    getFatherId: function (index) {
+      return this.father !== null ? this.father + '.' + index : index
+    }
   }
 }
 </script>

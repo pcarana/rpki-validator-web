@@ -1,22 +1,22 @@
 <template>
-    <b-row>
-      <b-col cols="1" class="text-right">
+    <b-row class="my-auto align-middle">
+      <b-col cols="12" class="text-left">
         <span v-if="type !== null">
           <b-button :id="'btn.' + toggleId"
                     :pressed.sync="togglePressed"
                     v-b-toggle="toggleId"
                     size="sm"
-                    variant="outline-primary">
-            <img v-if="!togglePressed" src="@/assets/plus_icon.svg" width="12" height="12" alt="+" />
-            <img v-else src="@/assets/less_icon.svg" width="12" height="12" alt="-" />
+                    variant="link"
+                    class="prop pl-0">
+            <img v-if="!togglePressed" src="@/assets/plus_icon.svg" width="8" height="8" alt="+" />
+            <img v-else src="@/assets/less_icon.svg" width="8" height="8" alt="-" />
+            {{ property }}
           </b-button>
         </span>
-        <div v-else class="emptyBlock">
-        </div>
-      </b-col>
-      <b-col cols="11">
-        <b>{{ property }}</b>
-        <span v-if="type === null">: {{ value }}</span>
+        <span v-else class="prop">
+          {{ property }}
+        </span>
+        <span v-if="type === null" class="value">: {{ value }}</span>
         <span v-else>
           <b-collapse :id="toggleId">
             <json-array v-if="type === 'array'"
@@ -66,9 +66,12 @@ export default {
 </script>
 
 <style>
-.emptyBlock {
-  display: block;
-  height: 12;
-  width: 12;
+.prop {
+  font-weight: bold;
+  color: black;
+  font-size: 0.9em
+}
+.value {
+  font-size: 0.9em;
 }
 </style>
