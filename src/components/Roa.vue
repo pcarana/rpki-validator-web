@@ -52,8 +52,8 @@
         <json-object :object="roa.cms.content.certificates[0]"></json-object>
       </b-card>
     </b-card-group>
-    <b-card-group deck class="mx-0 my-2">
-      <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :header="$t('roa.gbr.title')">
+    <b-card-group deck class="mx-0 my-2" v-if="roa && roa.gbrs && roa.gbrs.length > 0">
+      <b-card :header="$t('roa.gbr.title')">
         <json-array :array="roa.gbrs"></json-array>
       </b-card>
     </b-card-group>
