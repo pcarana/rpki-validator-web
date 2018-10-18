@@ -74,8 +74,8 @@ export default {
         this.getListService,
         me.auth)
       me.loading = true
+      me.error = null
       return promise.then(function (response) {
-        me.error = null
         return response.data
       }).catch(function (error) {
         me.errorCb(error)
