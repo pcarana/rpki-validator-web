@@ -4,10 +4,10 @@
       variant="danger"
       :show="showAlert">
       <p><b>{{ $t(title) }}:</b> {{ $t(message) }}
-      <span v-if="showLogin && callLogin">
+      <span v-if="tryLogin && callLogin">
         , <a href="#" @click="callLogin">{{ $t('errors.tryLogin') }}</a>
       </span>
-      <span v-if="showRetry && callRetry">
+      <span v-if="tryAgain && callRetry">
         , <a href="#" @click="callRetry">{{ $t('errors.tryAgain') }}</a>
       </span>
       <span v-if="error && error.response && error.response.data">
@@ -46,10 +46,10 @@ export default {
     showAlert: function () {
       return this.error !== null
     },
-    showLogin: function () {
+    tryLogin: function () {
       return this.error && this.error.response && this.error.response.status === 401
     },
-    showRetry: function () {
+    tryAgain: function () {
       let errorType = this.errorType
       return this.retryErrors.includes(errorType)
     },
