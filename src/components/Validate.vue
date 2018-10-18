@@ -1,19 +1,19 @@
 <template>
   <b-container fluid>
     <b-row class="my-3">
-      <b-col>
+      <b-col cols="12">
         <h1>{{ $t('validate.title') }}</h1>
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
+      <b-col cols="12">
         <p>{{ $t('validate.description') }}</p>
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
+      <b-col cols="6">
         <b-form @submit="onSubmit">
-          <b-form-group horizontal :label="$t('common.asn')" label-for="asn">
+          <b-form-group horizontal :label="$t('common.asn')" label-for="asn" label-class="font-weight-bold">
             <b-form-input id="asn"
               ref="asn"
               type="number"
@@ -27,7 +27,7 @@
               {{ $t('errors.asnInvalid') }}
             </b-form-invalid-feedback>
           </b-form-group>
-          <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix">
+          <b-form-group horizontal :label="$t('common.prefix')" label-for="prefix" label-class="font-weight-bold">
             <b-form-input id="prefix"
               ref="prefix"
               type="text"
@@ -39,7 +39,7 @@
               {{ $t('errors.prefixInvalid') }}
             </b-form-invalid-feedback>
           </b-form-group>
-          <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength">
+          <b-form-group horizontal :label="$t('common.prefixLength')" label-for="prefixLength" label-class="font-weight-bold">
             <b-form-input id="prefixLength"
               ref="prefixLength"
               type="number"
