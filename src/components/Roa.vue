@@ -1,58 +1,64 @@
 <template>
-  <b-container fluid>
-    <b-row class="my-3">
-      <b-col>
-        <h1>{{ $t('roa.title') }}</h1>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <loading :show="loading"></loading>
-        <error-display :error="error" :callLogin="callLogin"></error-display>
-      </b-col>
-    </b-row>
-    <b-row v-if="roa">
-      <b-col>
-        <b-card :title="$t('roa.general.title')">
-          <b-container>
-            <b-row>
-              <b-col><b>{{ $t('common.asn') }}</b></b-col>
-              <b-col>{{ roa.asn }}</b-col>
-            </b-row>
-            <b-row>
-              <b-col><b>{{ $t('common.prefix') }}</b></b-col>
-              <b-col>{{ roa.prefix }}</b-col>
-            </b-row>
-            <b-row>
-              <b-col><b>{{ $t('common.prefixMaxLength') }}</b></b-col>
-              <b-col>{{ roa.prefixMaxLength }}</b-col>
-            </b-row>
-            <b-row>
-              <b-col><b>{{ $t('common.prefixFamily') }}</b></b-col>
-              <b-col>{{ roa.prefixFamily }}</b-col>
-            </b-row>
-            <b-row>
-              <b-col><b>{{ $t('roa.general.cms') }}</b></b-col>
-              <b-col>
-                <json-object :object="roa.cms"></json-object>
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-card>
-        <b-card :title="$t('roa.eecert.title')">
-          <json-object :object="roa.cms.content.certificates[0]"></json-object>
-        </b-card>
-        <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :title="$t('roa.gbr.title')">
-          <json-array :array="roa.gbrs"></json-array>
-        </b-card>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <b-button @click="back">{{ $t('general.return') }}</b-button>
-      </b-col>
-    </b-row>
-  </b-container>
+  <div>
+    <b-container fluid>
+      <b-row class="my-3">
+        <b-col>
+          <h1>{{ $t('roa.title') }}</h1>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <loading :show="loading"></loading>
+          <error-display :error="error" :callLogin="callLogin"></error-display>
+        </b-col>
+      </b-row>
+    </b-container>
+    <b-card-group deck class="mx-0" v-if="roa">
+      <b-card :header="$t('roa.general.title')">
+        <b-container>
+          <b-row>
+            <b-col>
+              <b>{{ $t('common.asn') }}</b>
+              <p class="pl-2 mb-1">{{ roa.asn }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('common.prefix') }}</b>
+              <p class="pl-2 mb-1">{{ roa.prefix }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('common.prefixMaxLength') }}</b>
+              <p class="pl-2 mb-1">{{ roa.prefixMaxLength }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('common.prefixFamily') }}</b>
+              <p class="pl-2 mb-1">{{ roa.prefixFamily }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('roa.general.cms') }}</b>
+              <json-object :object="roa.cms"></json-object>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-card>
+      <b-card :header="$t('roa.eecert.title')">
+        <json-object :object="roa.cms.content.certificates[0]"></json-object>
+      </b-card>
+    </b-card-group>
+    <b-card-group deck class="mx-0 my-2">
+      <b-card v-if="roa.gbrs && roa.gbrs.length > 0" :header="$t('roa.gbr.title')">
+        <json-array :array="roa.gbrs"></json-array>
+      </b-card>
+    </b-card-group>
+    <b-button class="ml-2 mt-2" @click="back">{{ $t('general.return') }}</b-button>
+  </div>
 </template>
 
 <script>
