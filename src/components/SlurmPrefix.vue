@@ -1,5 +1,15 @@
 <template>
   <b-container fluid>
+    <b-row class="my-3">
+      <b-col cols="12">
+        <h1>{{ $t('slurm.prefix.title') }}</h1>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="12">
+        <p>{{ $t('slurm.prefix.description') }}</p>
+      </b-col>
+    </b-row>
     <b-row>
       <b-col>
         <b-button-group>
@@ -12,12 +22,8 @@
             {{ $t('slurm.' + tab + '.title') }}
           </b-button>
         </b-button-group>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
         <keep-alive>
-          <component :is="selectedTab"></component>
+          <component :is="selectedTab" class="tab px-0 py-2"></component>
         </keep-alive>
       </b-col>
     </b-row>
@@ -51,4 +57,7 @@ export default {
 </script>
 
 <style>
+.tab {
+  border: 1px solid #bbbbbb;
+}
 </style>

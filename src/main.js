@@ -69,6 +69,14 @@ const messages = {
       }
     },
     slurm: {
+      prefix: {
+        title: 'SLURM Prefix',
+        description: 'These are the prefixes configured at the SLURM file, either as Filters or Assertions'
+      },
+      bgpsec: {
+        title: 'SLURM BGPsec',
+        description: 'These are the BGPsec rules configured at the SLURM file, either as Filters or Assertions'
+      },
       filter: {
         title: 'Filter',
         addNew: 'Add new filter'
