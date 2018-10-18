@@ -1,59 +1,67 @@
 <template>
-  <b-container fluid>
-    <b-row class="my-3">
-      <b-col cols="12">
-        <h1>{{ $t('repository.title') }}</h1>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col cols="10">
-        <loading :show="loading"></loading>
-        <error-display :error="error" :callLogin="callLogin"></error-display>
-      </b-col>
-    </b-row>
-    <b-row v-if="tal">
-      <b-col cols="8">
-        <b-card :title="$t('repository.general.title')">
-          <h5>{{ $t('repository.general.uris') }}</h5>
-          <p v-for="uri in tal.uris" :key="uri.location">
-            {{ uri.location}}
-          </p>
-          <h5>{{ $t('common.publicKey') }}</h5>
-          <p>{{ tal.publicKey }}</p>
-          <h5>{{ $t('repository.general.loadedCer') }}</h5>
-          <json-object :object="tal.loadedCer"></json-object>
-        </b-card>
-      </b-col>
-      <b-col cols="4">
-        <b-card :title="$t('repository.files.title')">
-          <b-container>
-            <b-row class="text-center h5">
-              <b-col></b-col>
-              <b-col>{{ $t('repository.files.valid') }}</b-col>
-              <b-col>{{ $t('repository.files.warning') }}</b-col>
-              <b-col>{{ $t('repository.files.error') }}</b-col>
-              <b-col>{{ $t('repository.files.total') }}</b-col>
-            </b-row>
-            <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
-                   v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
-              <b-col class="text-right h5">{{fileSummary[0]}}</b-col>
-              <b-col class="border">{{fileSummary[1].valid}}</b-col>
-              <b-col class="border">{{fileSummary[1].warning}}</b-col>
-              <b-col class="border">{{fileSummary[1].error}}</b-col>
-              <b-col class="border font-weight-bold">
-                {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-card>
-      </b-col>
-    </b-row>
-    <b-col>
-      <b-row>
-        <b-button @click="back">{{ $t('general.return') }}</b-button>
+  <div>
+    <b-container fluid>
+      <b-row class="my-3">
+        <b-col cols="12">
+          <h1>{{ $t('repository.title') }}</h1>
+        </b-col>
       </b-row>
-    </b-col>
-  </b-container>
+      <b-row>
+        <b-col cols="10">
+          <loading :show="loading"></loading>
+          <error-display :error="error" :callLogin="callLogin"></error-display>
+        </b-col>
+      </b-row>
+    </b-container>
+    <b-card-group deck class="mx-0" v-if="tal">
+      <b-card :header="$t('repository.general.title')">
+        <b-container>
+          <b-row>
+            <b-col>
+              <b>{{ $t('repository.general.uris') }}</b>
+              <p class="pl-2 mb-1" v-for="uri in tal.uris" :key="uri.location">
+                {{ uri.location}}
+              </p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('common.publicKey') }}</b>
+              <p class="pl-2 mb-1">{{ tal.publicKey }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b>{{ $t('repository.general.loadedCer') }}</b>
+              <json-object :object="tal.loadedCer"></json-object>
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-card>
+      <b-card :header="$t('repository.files.title')">
+        <b-container fluid>
+          <b-row class="text-center h5">
+            <b-col></b-col>
+            <b-col>{{ $t('repository.files.valid') }}</b-col>
+            <b-col>{{ $t('repository.files.warning') }}</b-col>
+            <b-col>{{ $t('repository.files.error') }}</b-col>
+            <b-col>{{ $t('repository.files.total') }}</b-col>
+          </b-row>
+          <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
+                v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
+            <b-col class="text-right h5">{{fileSummary[0]}}</b-col>
+            <b-col class="border">{{fileSummary[1].valid}}</b-col>
+            <b-col class="border">{{fileSummary[1].warning}}</b-col>
+            <b-col class="border">{{fileSummary[1].error}}</b-col>
+            <b-col class="border font-weight-bold">
+              {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
+            </b-col>
+          </b-row>
+        </b-container>
+      </b-card>
+    </b-card-group>
+    <b-button class="ml-2 mt-2" @click="back">{{ $t('general.return') }}</b-button>
+  </div>
 </template>
 
 <script>
