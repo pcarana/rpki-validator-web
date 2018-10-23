@@ -16,13 +16,7 @@
         <b-row>
           <b-col>
             <loading :show="loading"></loading>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1" v-if="createErrorMessage">
-          <b-col>
-            <b-alert show variant="danger">
-              <span v-html="createErrorMessage"></span>
-            </b-alert>
+            <error-display :error="createError" :apiObject="apiPropsMap.SlurmBgpsec"></error-display>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -113,6 +107,7 @@
 </template>
 
 <script>
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 
@@ -138,6 +133,7 @@ export default {
     }
   },
   components: {
+    'error-display': ErrorDisplay,
     'loading': Loading
   },
   methods: {
@@ -211,36 +207,6 @@ export default {
   computed: {
     showRouterPublicKey: function () {
       return this.bgpsecType === 'assertion'
-    },
-    createErrorMessage: function () {
-      let error = this.createError
-      if (!error) {
-        return null
-      }
-      // Get code
-      if (error.response && error.response.status === 400 && error.response.data.message) {
-        let createErrorMessage = error.response.data.message
-        if (error.response.data.errors && error.response.data.errors.length > 0) {
-          let list = '<ul>'
-          for (let currErr of error.response.data.errors) {
-            let errorSplit = currErr.title.split('.')
-            let message = ''
-            if (errorSplit.length > 1) {
-              message = this.i18n.t(this.apiPropsMap.SlurmBgpsec[errorSplit[1]])
-            } else {
-              message = this.i18n.t(this.apiPropsMap.SlurmBgpsec.object)
-            }
-            list += '<li><b>' + message
-            list += ':</b> ' + currErr.description + '</li>'
-          }
-          list += '</ul>'
-          createErrorMessage += list
-        }
-        return createErrorMessage
-      } else if (error.validationMessage) {
-        return this.i18n.t(error.validationMessage)
-      }
-      return null
     },
     asnState: function () {
       if (this.newObject.asn) {

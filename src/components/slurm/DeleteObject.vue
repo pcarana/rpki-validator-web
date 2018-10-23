@@ -6,19 +6,12 @@
       :title="$t('common.confirm')"
       :ok-title="$t('common.delete')"
       :cancel-title="$t('common.cancel')"
-      @shown="deleteError = null"
       @ok="sendRequest">
       <b-container fluid>
         <b-row>
           <b-col>
             <loading :show="loading"></loading>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1" v-if="deleteErrorMessage">
-          <b-col>
-            <b-alert show variant="danger">
-              <span v-html="deleteErrorMessage"></span>
-            </b-alert>
+            <error-display :error="deleteError" :apiObject="apiObject"></error-display>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -41,6 +34,7 @@
 </template>
 
 <script>
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
@@ -65,6 +59,7 @@ export default {
     }
   },
   components: {
+    'error-display': ErrorDisplay,
     'loading': Loading
   },
   methods: {
@@ -88,6 +83,7 @@ export default {
         auth)
     },
     deleteSuccessCb (response) {
+      this.deleteError = null
       this.$refs[this.id].hide()
       this.successCallback(response)
       this.$refs.successModal.show()
@@ -104,28 +100,8 @@ export default {
     }
   },
   computed: {
-    deleteErrorMessage: function () {
-      let error = this.deleteError
-      if (!error) {
-        return null
-      }
-      // Get code
-      if (error.response && error.response.status === 400 && error.response.data.message) {
-        let deleteErrorMessage = error.response.data.message
-        if (error.response.data.errors && error.response.data.errors.length > 0) {
-          let list = '<ul>'
-          for (let currErr of error.response.data.errors) {
-            list += '<li><b>' + this.i18n.t(this.apiPropsMap.SlurmPrefix[currErr.title.split('.')[1]])
-            list += ':</b> ' + currErr.description + '</li>'
-          }
-          list += '</ul>'
-          deleteErrorMessage += list
-        }
-        return deleteErrorMessage
-      } else if (error.validationMessage) {
-        return this.i18n.t(error.validationMessage)
-      }
-      return null
+    apiObject: function () {
+      return this.type === 'prefix' ? this.apiPropsMap.SlurmPrefix : this.apiPropsMap.SlurmBgpsec
     },
     deleteService: function () {
       if (this.type === 'prefix') {
