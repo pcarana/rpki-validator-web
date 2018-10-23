@@ -32,14 +32,13 @@ const messages = {
     },
     repositories: {
       title: 'TAL List',
-      description: 'These are the TALs configured at the validator',
-      name: 'Name',
-      uris: 'URIs'
+      description: 'These are the TALs configured at the validator'
     },
     repository: {
       title: 'TAL detail',
       general: {
         title: 'General data',
+        name: 'Name',
         uris: 'URIs',
         loadedCer: 'Loaded certificate'
       },
@@ -49,6 +48,13 @@ const messages = {
         warning: 'Warning',
         error: 'Error',
         total: 'Total'
+      },
+      validations: {
+        title: 'Files validation',
+        fileType: 'File type',
+        location: 'Location',
+        status: 'Status',
+        message: 'Message'
       }
     },
     roas: {

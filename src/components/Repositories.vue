@@ -42,10 +42,10 @@ export default {
       tableId: 'repositoriesTable',
       getListService: config.api.services.get.talList,
       tableFields: [
-        {key: 'name', label: 'repositories.name', sortable: true},
+        {key: 'name', label: 'repository.general.name', sortable: true},
         {
           key: 'uris',
-          label: 'repositories.uris',
+          label: 'repository.general.uris',
           sortable: true,
           formatter: (value) => {
             let formatted = ''
@@ -59,8 +59,8 @@ export default {
         {key: 'action', label: 'common.action', sortable: false}
       ],
       searchFilterOpts: [
-        { text: 'repositories.name', value: 'name' },
-        { text: 'repositories.uris', value: 'uris' }
+        { text: 'repository.general.name', value: 'name' },
+        { text: 'repository.general.uris', value: 'uris' }
       ],
       error: null,
       loading: false,

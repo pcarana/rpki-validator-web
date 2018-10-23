@@ -18,6 +18,12 @@
         <b-container>
           <b-row>
             <b-col>
+              <b>{{ $t('repository.general.name') }}</b>
+              <p class="pl-2 mb-1">{{ tal.name }}</p>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
               <b>{{ $t('repository.general.uris') }}</b>
               <p class="pl-2 mb-1" v-for="uri in tal.uris" :key="uri.location">
                 {{ uri.location}}
@@ -42,14 +48,32 @@
         <b-container fluid>
           <b-row class="text-center h5">
             <b-col></b-col>
-            <b-col>{{ $t('repository.files.valid') }}</b-col>
-            <b-col>{{ $t('repository.files.warning') }}</b-col>
-            <b-col>{{ $t('repository.files.error') }}</b-col>
-            <b-col>{{ $t('repository.files.total') }}</b-col>
+            <b-col>
+              <b-badge variant="success">
+                {{ $t('repository.files.valid') }}
+              </b-badge>
+            </b-col>
+            <b-col>
+              <b-badge variant="warning">
+                {{ $t('repository.files.warning') }}
+              </b-badge>
+            </b-col>
+            <b-col>
+              <b-badge variant="danger">
+                {{ $t('repository.files.error') }}
+              </b-badge>
+            </b-col>
+            <b-col>
+              <b-badge variant="dark">
+                {{ $t('repository.files.total') }}
+              </b-badge>
+            </b-col>
           </b-row>
           <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
                 v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
-            <b-col class="text-right h5">{{fileSummary[0]}}</b-col>
+            <b-col class="text-right h6">
+              {{fileSummary[0]}}
+            </b-col>
             <b-col class="border">{{fileSummary[1].valid}}</b-col>
             <b-col class="border">{{fileSummary[1].warning}}</b-col>
             <b-col class="border">{{fileSummary[1].error}}</b-col>
@@ -60,11 +84,23 @@
         </b-container>
       </b-card>
     </b-card-group>
+    <b-card-group deck class="mx-0 my-2">
+      <b-card :header="$t('repository.validations.title')">
+        <custom-table :items="validations"
+                      :tableFields="tableFields"
+                      :filterFunction="filterFunction"
+                      :searchFilterOpts="searchFilterOpts"
+                      :tableId="tableId"
+                      :ref="tableId">
+        </custom-table>
+      </b-card>
+    </b-card-group>
     <b-button class="ml-2 mt-2" @click="back">{{ $t('general.return') }}</b-button>
   </div>
 </template>
 
 <script>
+import CustomTable from '@/components/common/CustomTable.vue'
 import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
@@ -75,10 +111,24 @@ export default {
     return {
       tal: null,
       error: null,
-      loading: false
+      loading: false,
+      tableId: 'validationsTable',
+      tableFields: [
+        { key: 'fileType', label: 'repository.validations.fileType', sortable: true },
+        { key: 'location', label: 'repository.validations.location', sortable: true },
+        { key: 'status', label: 'repository.validations.status', sortable: true },
+        { key: 'message', label: 'repository.validations.message', sortable: true }
+      ],
+      searchFilterOpts: [
+        { value: 'fileType', text: 'repository.validations.fileType' },
+        { value: 'location', text: 'repository.validations.location' },
+        { value: 'status', text: 'repository.validations.status' },
+        { value: 'message', text: 'repository.validations.message' }
+      ]
     }
   },
   components: {
+    'custom-table': CustomTable,
     'error-display': ErrorDisplay,
     'loading': Loading
   },
@@ -129,6 +179,32 @@ export default {
         fileMap.set(fileType, values)
       }
       fileMap.get(fileType)[property] += 1
+    },
+    addCheckToArray (sourceArr, status, destArr) {
+      sourceArr.map((check) => {
+        let split = check.location.split('.')
+        let fileType = split[split.length - 1]
+        destArr.push({
+          fileType: fileType,
+          location: check.location,
+          status: status,
+          message: check.message ? check.message : ''
+        })
+      })
+    },
+    filterFunction (item, searchFilterOpt, filterItemTxt) {
+      var regexp
+      try {
+        regexp = new RegExp(filterItemTxt, 'i')
+      } catch (e) {
+        // Wait until the regexp is valid
+        return null
+      }
+      if (item[searchFilterOpt]) {
+        return item[searchFilterOpt].match(regexp)
+      }
+      return item.fileType.match(regexp) || item.location.match(regexp) ||
+        item.status.match(regexp) || item.message.match(regexp)
     }
   },
   created: function () {
@@ -137,6 +213,9 @@ export default {
   computed: {
     filesSummary: function () {
       const fileMap = new Map()
+      if (!this.tal) {
+        return fileMap
+      }
       this.tal.validations.filter((v) => {
         return v.status !== 'RUNNING'
       }).map((validation) => {
@@ -157,6 +236,20 @@ export default {
         fileMap.set('', object)
       })
       return fileMap
+    },
+    validations: function () {
+      let all = []
+      if (!this.tal) {
+        return all
+      }
+      this.tal.validations.filter((v) => {
+        return v.status !== 'RUNNING'
+      }).map((validation) => {
+        this.addCheckToArray(validation.checks.error, 'error', all)
+        this.addCheckToArray(validation.checks.warning, 'warning', all)
+        this.addCheckToArray(validation.checks.passed, 'valid', all)
+      })
+      return all
     }
   }
 }
