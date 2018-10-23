@@ -96,7 +96,6 @@ export default {
         me.$refs[me.loginModalId].hide()
         me.callbackSet.successCallback(response)
       }).catch(function (error) {
-        console.log(error)
         if (error.response && error.response.status === 401) {
           me.loginError = error
         } else {
