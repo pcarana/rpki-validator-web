@@ -1,7 +1,12 @@
 /* eslint-disable */
-export default {
+const repository = 'pcarana/rpki-validator-web'
+const data = {
+    appVersion: 'v1.0.0',
+    githubLatest: 'https://api.github.com/repos/' + repository + '/releases/latest',
+    githubRepo: 'https://github.com/' + repository + '/releases/latest',
+    checkAppUpdatesMs: 600000,
     api: {
-        url: 'http://localhost:9090/rpki-validator-api-0.0.1-SNAPSHOT',
+        url: 'http://localhost/rpki-validator-api',
         services: {
             get: {
                 talList: '/tal',
@@ -32,3 +37,5 @@ export default {
         }
     }
 }
+
+export default data

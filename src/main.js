@@ -24,7 +24,8 @@ const messages = {
         prefix: 'Prefix',
         bgpsec: 'BGPsec'
       },
-      validate: 'Validate'
+      validate: 'Validate',
+      appUpdate: 'Update available'
     },
     home: {
       title: 'Welcome to the RPKI Validator!',
