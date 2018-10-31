@@ -70,29 +70,12 @@ export default {
         if (data.found === data.returned) {
           return data.results
         }
-        return me.getNext(myAxios, data, data.results, me.getListService)
+        return me.getNextPage(myAxios, data, data.results, me.getListService)
       }).catch(function (error) {
         me.errorCb(error)
         return []
       }).finally(function () {
         me.loading = false
-      })
-    },
-    getNext (myAxios, prevData, finalResults, service) {
-      let me = this
-      return myAxios.get(service, {
-        params: {
-          limit: prevData.page.limit,
-          offset: prevData.page.limit + (prevData.page.offset ? prevData.page.offset : 0)
-        }
-      }).then(function (response) {
-        let data = response.data
-        if (data.page.offset + data.page.limit > data.found) {
-          return finalResults.concat(data.results)
-        }
-        return me.getNext(myAxios, data, finalResults.concat(data.results), service)
-      }).catch(function (error) {
-        throw error
       })
     },
     filterFunction (item, searchFilterOpt, filterItemTxt) {
