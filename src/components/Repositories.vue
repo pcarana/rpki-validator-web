@@ -88,15 +88,15 @@ export default {
   methods: {
     loadTals (ctx) {
       let me = this
-      let promise = axios.getPromise(
-        axios.methods.get,
-        me.$root.$i18n.locale,
-        this.getListService,
-        me.auth)
+      let myAxios = axios.createAxios(me.$root.$i18n.locale, me.auth)
       me.loading = true
       me.error = null
-      return promise.then(function (response) {
-        return response.data.results
+      return myAxios.get(me.getListService).then(function (response) {
+        let data = response.data
+        if (data.found === data.returned) {
+          return data.results
+        }
+        return me.getNextPage(myAxios, data, data.results, me.getListService)
       }).catch(function (error) {
         me.errorCb(error)
         return []
