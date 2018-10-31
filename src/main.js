@@ -318,6 +318,23 @@ Vue.mixin({
         errorCallback: errorCallback
       }
       loginComponent.$refs[this.loginModalId].show()
+    },
+    getNextPage (myAxios, prevData, finalResults, service) {
+      let me = this
+      return myAxios.get(service, {
+        params: {
+          limit: prevData.page.limit,
+          offset: prevData.page.limit + (prevData.page.offset ? prevData.page.offset : 0)
+        }
+      }).then(function (response) {
+        let data = response.data
+        if (data.page.offset + data.page.limit > data.found) {
+          return finalResults.concat(data.results)
+        }
+        return me.getNextPage(myAxios, data, finalResults.concat(data.results), service)
+      }).catch(function (error) {
+        throw error
+      })
     }
   }
 })
