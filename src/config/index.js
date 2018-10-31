@@ -25,6 +25,7 @@ const data = {
                 validate: '/validate/:asn/:prefix/:prefix-length'
             },
             post: {
+                talSync: '/tal/sync/:id',
                 slurmPrefixFilter: '/slurm/prefix/filter',
                 slurmPrefixAssertion: '/slurm/prefix/assertion',
                 slurmBgpsecFilter: '/slurm/bgpsec/filter',

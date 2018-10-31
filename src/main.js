@@ -33,7 +33,9 @@ const messages = {
     },
     repositories: {
       title: 'TAL List',
-      description: 'These are the TALs configured at the validator'
+      description: 'These are the TALs configured at the validator',
+      sync: 'Synchronize',
+      syncing: 'Synchronizing'
     },
     repository: {
       title: 'TAL detail',
@@ -143,6 +145,8 @@ const messages = {
       confirm: 'Confirmation',
       confirmDelete: 'Do you wish to delete the following object?',
       deleteSuccess: 'Object successfully deleted!',
+      syncSuccess: 'Synchronization successfully requested!',
+      syncError: 'The synchronization was requested, but there was an error executing it at the server; try again.',
       loading: 'Loading...',
       element: 'Element #{n}'
     },
