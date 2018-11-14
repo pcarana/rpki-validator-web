@@ -85,6 +85,11 @@
       </b-card>
     </b-card-group>
     <b-card-group deck class="mx-0 my-2">
+      <b-card :header="$t('repository.general.certificationTree')">
+        <tree-explorer :tal="tal"></tree-explorer>
+      </b-card>
+    </b-card-group>
+    <b-card-group deck class="mx-0 my-2">
       <b-card :header="$t('repository.validations.title')">
         <custom-table :items="validations"
                       :tableFields="tableFields"
@@ -103,6 +108,7 @@
 import CustomTable from '@/components/common/CustomTable.vue'
 import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
+import Explorer from '@/components/tree/Explorer.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -130,7 +136,8 @@ export default {
   components: {
     'custom-table': CustomTable,
     'error-display': ErrorDisplay,
-    'loading': Loading
+    'loading': Loading,
+    'tree-explorer': Explorer
   },
   methods: {
     back () {

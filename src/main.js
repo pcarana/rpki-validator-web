@@ -43,7 +43,11 @@ const messages = {
         title: 'General data',
         name: 'Name',
         uris: 'URIs',
-        loadedCer: 'Loaded certificate'
+        loadedCer: 'Loaded certificate',
+        showTree: 'Show certification tree',
+        certificationTree: 'Certification tree',
+        childCount: 'Child count',
+        resources: 'Resources'
       },
       files: {
         title: 'Files summary',
@@ -135,6 +139,7 @@ const messages = {
       ski: 'SKI',
       publicKey: 'Public key',
       routerPublicKey: 'Router public key',
+      vCard: 'vCard',
       hexValue: 'Hexadecimal value',
       derFormat: 'DER format base64 encoded',
       comment: 'Comment',
@@ -343,6 +348,9 @@ Vue.component('json-value', () => import('./components/json/JsonValue.vue'))
 Vue.component('json-object', () => import('./components/json/JsonObject.vue'))
 Vue.component('json-array', () => import('./components/json/JsonArray.vue'))
 Vue.component('json-array-value', () => import('./components/json/JsonArrayValue.vue'))
+
+Vue.component('tree-element', () => import('./components/tree/TreeElement.vue'))
+Vue.component('tree-branch', () => import('./components/tree/TreeBranch.vue'))
 
 /* eslint-disable no-new */
 var vm = new Vue({

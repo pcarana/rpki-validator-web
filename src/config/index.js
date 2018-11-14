@@ -11,6 +11,8 @@ const data = {
             get: {
                 talList: '/tal',
                 talDetail: '/tal/:id',
+                treeRoot: '/tree/root/:id',
+                treeChild: '/tree/child/:id',
                 roaList: '/roa',
                 roaDetail: '/roa/:id',
                 slurmGeneral: '/slurm',
