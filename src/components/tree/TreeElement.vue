@@ -66,8 +66,9 @@
             </div>
           </b-col>
           <b-col cols="2" class="p-0" v-if="hasChilds">
-            <b-button @click="localClick" class="w-100 h-100 h4" variant="dark" :disabled="selected">
-              &gt;
+            <b-button @click="localClick" class="w-100 h-100 h4" variant="dark" :disabled="loading || selected">
+              <span v-if="!loading">&gt;</span>
+              <img v-else src="@/assets/circular_spinner.gif" alt="..." height="16" width="16" />
             </b-button>
           </b-col>
         </b-row>
@@ -96,6 +97,10 @@ export default {
       }
     },
     selected: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
       type: Boolean,
       default: false
     },
@@ -135,6 +140,9 @@ export default {
   },
   watch: {
     selected: function (val, oldVal) {
+      return val
+    },
+    loading: function (val, oldVal) {
       return val
     }
   }

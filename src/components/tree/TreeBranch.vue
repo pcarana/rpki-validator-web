@@ -1,9 +1,8 @@
 <template>
   <b-col class="branch" :cols="cols">
     <b-container fluid :key="level">
-      <b-row v-if="error || loading">
+      <b-row v-if="error">
         <b-col>
-          <loading :show="loading"></loading>
           <error-display :error="error"></error-display>
         </b-col>
       </b-row>
@@ -11,7 +10,8 @@
                     :index="index"
                     :object="element"
                     :onClick="expandElement"
-                    :selected="element.selected ? true : false">
+                    :selected="element.selected ? true : false"
+                    :loading="element.loading ? true : false">
       </tree-element>
     </b-container>
   </b-col>
@@ -19,7 +19,6 @@
 
 <script>
 import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
-import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -43,20 +42,19 @@ export default {
   data () {
     return {
       error: null,
-      loading: false,
       childElements: null,
       selected: []
     }
   },
   components: {
-    'error-display': ErrorDisplay,
-    'loading': Loading
+    'error-display': ErrorDisplay
   },
   methods: {
     expandElement (event, index, parentId) {
       for (let i = 0; i < this.elements.length; i++) {
         this.$set(this.elements[i], 'selected', false)
       }
+      this.$set(this.elements[index], 'loading', true)
       if (!this.elements[index].childs) {
         let me = this
         let service = config.api.services.get.treeChild.replace(
@@ -64,7 +62,6 @@ export default {
           parentId
         )
         me.error = null
-        me.loading = true
         let promise = axios.getPromise(
           axios.methods.get,
           this.$root.$i18n.locale,
@@ -80,11 +77,12 @@ export default {
           console.log(error)
           me.error = error
         }).finally(function () {
-          me.loading = false
+          me.$set(me.elements[index], 'loading', false)
         })
       } else {
         this.childElements = this.elements[index].childs
         this.$set(this.elements[index], 'selected', true)
+        this.$set(this.elements[index], 'loading', false)
         this.$emit('add-branch', { level: this.level + 1, elements: this.childElements })
       }
     }
