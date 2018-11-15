@@ -3,65 +3,65 @@
     <b-col>
       <b-container fluid class="p-0">
         <b-row class="border rounded p-0 rowClass" :class="{ selected: selected }">
-          <b-col cols="2" class="text-center align-middle" :class="typeClass">
-            <span class="font-weight-light">
-              {{ $t('repository.validations.fileType') }}
-            </span>
-            <br />
-            <span class="h5">
-              {{ object.type}}
-            </span>
-          </b-col>
-          <b-col :cols="hasChilds ? 8 : 10">
-            <div class="label">
-              {{ $t('repository.validations.location') }}
-            </div>
-            <div class="value">
-              <span v-for="(location, index) in object.locations" :key="index">
-                {{ location }}<span v-if="index < object.locations.length - 1">, </span>
+          <b-col :cols="hasChilds ? 10 : 12" class="p-0">
+            <div class="text-center align-middle" :class="typeClass">
+              <span class="h5">
+                .{{ object.type}}
               </span>
             </div>
-            <div v-if="object.subjectKeyIdentifier">
-              <div class="label" >
-                {{ $t('common.ski') }}
-              </div>
-              <div class="value">
-                {{ object.subjectKeyIdentifier }}
-              </div>
-            </div>
-            <div v-if="hasChilds">
+            <div class="p-2">
               <div class="label">
-                {{ $t('repository.general.childCount') }}
+                {{ $t('repository.validations.location') }}
               </div>
               <div class="value">
-                {{ object.childCount }}
+                <span v-for="(location, index) in object.locations" :key="index">
+                  {{ location }}<span v-if="index < object.locations.length - 1">, </span>
+                </span>
               </div>
-            </div>
-            <div v-if="object.type === 'ROA'">
-              <div class="label">
-                {{ $t('repository.general.resources') }}
+              <div v-if="object.subjectKeyIdentifier">
+                <div class="label" >
+                  {{ $t('common.ski') }}
+                </div>
+                <div class="value">
+                  {{ object.subjectKeyIdentifier }}
+                </div>
               </div>
-              <div class="value">
-                <ul>
-                  <li v-for="resource in object.resources" :key="resource.roaId">
-                    {{ $t('common.asn') }}: {{ resource.asn }}<br/>
-                    {{ $t('common.prefix') }}: {{ resource.prefix }}<br/>
-                    <span v-if="resource.maxPrefixLength">
-                      {{ $t('common.prefixMaxLength') }}: {{ resource.maxPrefixLength }}<br/>
-                    </span>
-                    <b-link :to="roaLink(resource.roaId)" target="_blank">
-                      {{ $t('general.showDetail') }}
-                    </b-link>
-                  </li>
-                </ul>
+              <div v-if="hasChilds">
+                <div class="label">
+                  {{ $t('repository.general.childCount') }}
+                </div>
+                <div class="value">
+                  {{ object.childCount }}
+                </div>
               </div>
-            </div>
-            <div v-if="object.type === 'GBR'">
-              <div class="label">
-                {{ $t('common.vCard') }}:
+              <div v-if="object.type === 'ROA'">
+                <div class="label">
+                  {{ $t('repository.general.resources') }}
+                </div>
+                <div class="value">
+                  <ul>
+                    <li v-for="resource in object.resources" :key="resource.roaId">
+                      <div>
+                        <b>{{ $t('common.asn') }}:</b> {{ resource.asn }}<br/>
+                        <b>{{ $t('common.prefix') }}:</b> {{ resource.prefix }}<br/>
+                        <span v-if="resource.maxPrefixLength">
+                          <b>{{ $t('common.prefixMaxLength') }}:</b> {{ resource.maxPrefixLength }}<br/>
+                        </span>
+                        <b-link :to="roaLink(resource.roaId)" target="_blank">
+                          {{ $t('general.showDetail') }}
+                        </b-link>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div class="value">
-                {{ object.vcard }}
+              <div v-if="object.type === 'GBR'">
+                <div class="label">
+                  {{ $t('common.vCard') }}:
+                </div>
+                <div class="value">
+                  {{ object.vcard }}
+                </div>
               </div>
             </div>
           </b-col>
