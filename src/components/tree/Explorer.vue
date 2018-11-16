@@ -8,12 +8,16 @@
       </b-col>
       <tree-branch
         v-on:add-branch="addBranch"
+        v-on:error="grandsonErrorCb"
         v-for="(grandson, index) in grandsons"
         :key="index + 1"
         :elements="grandson"
         :level="index + 1"
         :cols="branchCols(index)">
       </tree-branch>
+      <b-col v-if="grandsonError" :cols="branchCols(grandsons.length)">
+        <error-display :error="grandsonError"></error-display>
+      </b-col>
     </b-row>
   </b-container>
 </template>
@@ -36,7 +40,8 @@ export default {
       error: null,
       loading: false,
       root: null,
-      grandsons: []
+      grandsons: [],
+      grandsonError: null
     }
   },
   components: {
@@ -45,7 +50,7 @@ export default {
   },
   methods: {
     loadData () {
-      this.error = null
+      this.grandsonError = null
       this.loading = true
       let promise = this.promiseCb(null)
       axios.processPromise(promise,
@@ -65,14 +70,14 @@ export default {
         auth)
     },
     successCb (response) {
-      this.error = null
+      this.grandsonError = null
       this.root = response.data
       if (response.data.childs) {
         this.addBranch({ level: 1, elements: response.data.childs })
       }
     },
     errorCb (error) {
-      this.error = error
+      this.grandsonError = error
     },
     finallyCb () {
       this.loading = false
@@ -87,9 +92,17 @@ export default {
         }
       }
     },
+    grandsonErrorCb (levelData) {
+      this.grandsonError = levelData.error
+      let removeLevels = this.grandsons.length - levelData.level
+      while (removeLevels >= 0) {
+        this.grandsons.pop()
+        removeLevels--
+      }
+    },
     branchCols (index) {
       // Consider the root element
-      let totalLength = this.grandsons.length + 1
+      let totalLength = this.grandsons.length + 1 + (this.grandsonError ? 1 : 0)
       let mod = 12 % totalLength
       if (mod === 0) {
         return 12 / totalLength

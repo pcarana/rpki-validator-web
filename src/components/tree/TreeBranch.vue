@@ -1,11 +1,6 @@
 <template>
   <b-col class="branch" :cols="cols">
     <b-container fluid :key="level">
-      <b-row v-if="error">
-        <b-col>
-          <error-display :error="error"></error-display>
-        </b-col>
-      </b-row>
       <tree-element v-for="(element, index) in elements" :key="element.subjectKeyIdentifier"
                     :index="index"
                     :object="element"
@@ -18,7 +13,6 @@
 </template>
 
 <script>
-import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import axios from '@/axios'
 import config from '@/config'
 
@@ -41,13 +35,9 @@ export default {
   },
   data () {
     return {
-      error: null,
       childElements: null,
       selected: []
     }
-  },
-  components: {
-    'error-display': ErrorDisplay
   },
   methods: {
     expandElement (event, index, parentId) {
@@ -61,21 +51,18 @@ export default {
           ':id',
           parentId
         )
-        me.error = null
         let promise = axios.getPromise(
           axios.methods.get,
           this.$root.$i18n.locale,
           service,
           null)
         promise.then(function (response) {
-          me.error = null
           me.elements[index].childs = response.data.childs
           me.$set(me.elements[index], 'selected', true)
           me.childElements = response.data.childs
           me.$emit('add-branch', { level: me.level + 1, elements: me.childElements })
         }).catch(function (error) {
-          console.log(error)
-          me.error = error
+          me.$emit('error', { level: me.level + 1, error: error })
         }).finally(function () {
           me.$set(me.elements[index], 'loading', false)
         })
