@@ -28,7 +28,7 @@ const messages = {
       appUpdate: 'Update available'
     },
     home: {
-      title: 'Welcome to the RPKI Validator!',
+      title: 'Welcome to the RPKI Validator Web client!',
       welcome: 'Visit the modules to perform distinct actions'
     },
     repositories: {
