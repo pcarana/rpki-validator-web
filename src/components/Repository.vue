@@ -44,45 +44,6 @@
           </b-row>
         </b-container>
       </b-card>
-      <b-card :header="$t('repository.files.title')">
-        <b-container fluid>
-          <b-row class="text-center h5">
-            <b-col></b-col>
-            <b-col>
-              <b-badge variant="success">
-                {{ $t('repository.files.valid') }}
-              </b-badge>
-            </b-col>
-            <b-col>
-              <b-badge variant="warning">
-                {{ $t('repository.files.warning') }}
-              </b-badge>
-            </b-col>
-            <b-col>
-              <b-badge variant="danger">
-                {{ $t('repository.files.error') }}
-              </b-badge>
-            </b-col>
-            <b-col>
-              <b-badge variant="dark">
-                {{ $t('repository.files.total') }}
-              </b-badge>
-            </b-col>
-          </b-row>
-          <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
-                v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
-            <b-col class="text-right h6">
-              {{fileSummary[0]}}
-            </b-col>
-            <b-col class="border">{{fileSummary[1].valid}}</b-col>
-            <b-col class="border">{{fileSummary[1].warning}}</b-col>
-            <b-col class="border">{{fileSummary[1].error}}</b-col>
-            <b-col class="border font-weight-bold">
-              {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
-            </b-col>
-          </b-row>
-        </b-container>
-      </b-card>
     </b-card-group>
     <b-card-group deck class="mx-0 my-2">
       <b-card :header="$t('repository.general.certificationTree')">
@@ -91,13 +52,67 @@
     </b-card-group>
     <b-card-group deck class="mx-0 my-2">
       <b-card :header="$t('repository.validations.title')">
-        <custom-table :items="validations"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
-                      :searchFilterOpts="searchFilterOpts"
-                      :tableId="tableId"
-                      :ref="tableId">
-        </custom-table>
+        <b-container fluid>
+          <b-row class="mb-4">
+            <b-col cols="2"></b-col>
+            <b-col cols="8">
+              <b-container fluid>
+                <b-row class="text-center h5">
+                  <b-col cols="12">
+                    {{ $t('repository.files.title') }}
+                  </b-col>
+                </b-row>
+                <b-row class="text-center h5">
+                  <b-col></b-col>
+                  <b-col>
+                    <b-badge variant="success">
+                      {{ $t('repository.files.valid') }}
+                    </b-badge>
+                  </b-col>
+                  <b-col>
+                    <b-badge variant="warning">
+                      {{ $t('repository.files.warning') }}
+                    </b-badge>
+                  </b-col>
+                  <b-col>
+                    <b-badge variant="danger">
+                      {{ $t('repository.files.error') }}
+                    </b-badge>
+                  </b-col>
+                  <b-col>
+                    <b-badge variant="dark">
+                      {{ $t('repository.files.total') }}
+                    </b-badge>
+                  </b-col>
+                </b-row>
+                <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
+                      v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
+                  <b-col class="text-right h6">
+                    {{fileSummary[0]}}
+                  </b-col>
+                  <b-col class="border">{{fileSummary[1].valid}}</b-col>
+                  <b-col class="border">{{fileSummary[1].warning}}</b-col>
+                  <b-col class="border">{{fileSummary[1].error}}</b-col>
+                  <b-col class="border font-weight-bold">
+                    {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-col>
+            <b-col cols="2"></b-col>
+          </b-row>
+          <b-row>
+            <b-col cols="12">
+              <custom-table :items="validations"
+                            :tableFields="tableFields"
+                            :filterFunction="filterFunction"
+                            :searchFilterOpts="searchFilterOpts"
+                            :tableId="tableId"
+                            :ref="tableId">
+              </custom-table>
+            </b-col>
+          </b-row>
+        </b-container>
       </b-card>
     </b-card-group>
     <b-button class="ml-2 mt-2" @click="back">{{ $t('general.return') }}</b-button>
