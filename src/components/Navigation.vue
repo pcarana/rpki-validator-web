@@ -24,7 +24,7 @@
       <b-navbar-nav class="ml-auto" v-if="langItems && langItems.length > 1">
         <b-nav-item-dropdown :text="$t('language')" href="#">
           <b-dropdown-item v-for="lang in langItems" :key="lang.id" :active=isActiveLang(lang.id) href="#" @click="switchLang(lang.id)">
-            {{ lang.lang }}
+            {{ lang.label }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -65,7 +65,7 @@ export default {
         },
         { to: '/validate', name: 'modules.validate' }
       ],
-      langItems: [{ id: 'en', lang: 'EN' }, { id: 'es', lang: 'ES' }],
+      langItems: config.supportedLangs,
       needsUpdate: false
     }
   },

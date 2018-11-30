@@ -5,6 +5,12 @@ const data = {
     githubLatest: 'https://api.github.com/repos/' + repository + '/releases/latest',
     githubRepo: 'https://github.com/' + repository + '/releases/latest',
     checkAppUpdatesMs: 600000,
+    supportedLangs: [
+        { id: 'en', label: 'EN' },
+        { id: 'es', label: 'ES' }
+    ],
+    locale: 'en',
+    fallbackLocale: 'en',
     api: {
         url: 'http://localhost/rpki-validator-api',
         services: {
