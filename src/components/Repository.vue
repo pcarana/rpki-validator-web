@@ -26,7 +26,7 @@
           </b-button-group>
           <transition name="fade">
             <keep-alive>
-              <component :is="currentTab" :tal="tal" class="tab px-0 py-2"></component>
+              <component :is="currentTab" :tal="tal" class="tab px-2 py-2"></component>
             </keep-alive>
           </transition>
         </b-col>
