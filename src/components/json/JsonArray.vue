@@ -1,6 +1,9 @@
 <template>
   <b-container fluid>
-    <span v-for="(value, index) in array" :key="index">
+    <span v-if="!array || array.length < 1" class="noElements">
+      {{ $t('common.noElements') }}
+    </span>
+    <span v-else v-for="(value, index) in array" :key="index">
       <json-array-value :index="index"
                         :value="value"
                         :father="getFatherId(index)">
@@ -30,4 +33,8 @@ export default {
 </script>
 
 <style>
+.noElements {
+  font-style: italic;
+  font-size: 0.9em
+}
 </style>
