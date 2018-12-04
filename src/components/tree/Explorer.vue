@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="d-inline-block">
+  <b-container fluid class="d-inline-block general">
     <b-row v-if="root" class="explorer">
       <b-col :cols="branchCols(0)">
         <b-container fluid>
@@ -114,6 +114,9 @@ export default {
       return col + 1
     }
   },
+  mounted () {
+    this.loadData()
+  },
   watch: {
     tal: function (newTal, oldTal) {
       this.loadData()
@@ -125,5 +128,8 @@ export default {
 <style>
 .explorer {
   height: 400px;
+}
+.general {
+  word-wrap: break-word
 }
 </style>
