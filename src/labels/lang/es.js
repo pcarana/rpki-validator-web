@@ -138,7 +138,8 @@ const messages = {
     syncSuccess: '¡Sincronización solicitada exitosamente!',
     syncError: 'La sincronización se solicitó, pero hubo un error ejecutándola en el servidor; intente nuevamente.',
     loading: 'Cargando...',
-    element: 'Elemento #{n}'
+    element: 'Elemento #{n}',
+    noElements: 'Sin elementos'
   },
   filter: {
     placeholder: 'Filtro...',
