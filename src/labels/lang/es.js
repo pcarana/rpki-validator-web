@@ -99,7 +99,7 @@ const messages = {
     status: 'Estatus',
     validityState: 'Estatus de Validez de Ruta',
     roaMatch: 'ROA encontrado',
-    roaClosestMatch: 'ROA más cercanod encontrado',
+    roaClosestMatch: 'ROA más cercano encontrado',
     state: {
       valid: 'Válido',
       invalid: 'Inválido',
