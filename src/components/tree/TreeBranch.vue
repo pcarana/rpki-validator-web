@@ -3,6 +3,7 @@
     <b-container fluid :key="level">
       <tree-element v-for="(element, index) in elements" :key="element.subjectKeyIdentifier"
                     :index="index"
+                    :parentIndex="level"
                     :object="element"
                     :onClick="expandElement"
                     :selected="element.selected ? true : false"
@@ -80,6 +81,7 @@ export default {
 <style>
 .branch {
   height: inherit;
+  max-height: inherit;
   overflow-y: auto;
 }
 </style>

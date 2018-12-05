@@ -3,7 +3,7 @@
     <b-row v-if="root" class="explorer">
       <b-col :cols="branchCols(0)">
         <b-container fluid>
-          <tree-element :index="0" :object="root" selected></tree-element>
+          <tree-element :index="0" :parentIndex="0" :object="root" selected />
         </b-container>
       </b-col>
       <tree-branch
@@ -13,8 +13,7 @@
         :key="index + 1"
         :elements="grandson"
         :level="index + 1"
-        :cols="branchCols(index)">
-      </tree-branch>
+        :cols="branchCols(index + 1)" />
       <b-col v-if="grandsonError" :cols="branchCols(grandsons.length)">
         <error-display :error="grandsonError"></error-display>
       </b-col>
@@ -103,11 +102,15 @@ export default {
     branchCols (index) {
       // Consider the root element
       let totalLength = this.grandsons.length + 1 + (this.grandsonError ? 1 : 0)
+      // Default value
+      if (totalLength < 5) {
+        return 3
+      }
       let mod = 12 % totalLength
       if (mod === 0) {
         return 12 / totalLength
       }
-      let col = Math.abs(12 / totalLength)
+      let col = Math.floor(12 / totalLength)
       if (index < totalLength - mod) {
         return col
       }
@@ -127,7 +130,7 @@ export default {
 
 <style>
 .explorer {
-  height: 400px;
+  max-height: 800px;
 }
 .general {
   word-wrap: break-word

@@ -5,34 +5,13 @@
         <b-row class="border rounded p-0 rowClass" :class="{ selected: selected }">
           <b-col :cols="hasChilds ? 10 : 12" class="p-0">
             <div class="text-center align-middle" :class="typeClass">
-              <span class="h5">
+              <span class="h6">
                 .{{ object.type}}
               </span>
             </div>
             <div class="p-2">
-              <div class="label">
-                {{ $t('repository.validations.location') }}
-              </div>
-              <div class="value">
-                <span v-for="(location, index) in object.locations" :key="index">
-                  {{ location }}<span v-if="index < object.locations.length - 1">, </span>
-                </span>
-              </div>
-              <div v-if="object.subjectKeyIdentifier">
-                <div class="label" >
-                  {{ $t('common.ski') }}
-                </div>
-                <div class="value">
-                  {{ object.subjectKeyIdentifier }}
-                </div>
-              </div>
-              <div v-if="hasChilds">
-                <div class="label">
-                  {{ $t('repository.general.childCount') }}
-                </div>
-                <div class="value">
-                  {{ object.childCount }}
-                </div>
+              <div>
+                {{ fileName }} <span class="childs" v-if="hasChilds">({{ $t('common.nChilds', {n: object.childCount}) }})</span>
               </div>
               <div v-if="object.type === 'ROA'">
                 <div class="label">
@@ -47,9 +26,6 @@
                         <span v-if="resource.maxPrefixLength">
                           <b>{{ $t('common.prefixMaxLength') }}:</b> {{ resource.maxPrefixLength }}<br/>
                         </span>
-                        <b-link :to="roaLink(resource.roaId)" target="_blank">
-                          {{ $t('general.showDetail') }}
-                        </b-link>
                       </div>
                     </li>
                   </ul>
@@ -63,6 +39,11 @@
                   {{ object.vcard }}
                 </div>
               </div>
+              <div>
+                <b-btn :id="'detailBtn.' + parentIndex + '.' + index" variant="link" size="sm" class="p-0 detailLink">
+                  {{ $t('general.showDetail') }}
+                </b-btn>
+              </div>
             </div>
           </b-col>
           <b-col cols="2" class="p-0" v-if="hasChilds">
@@ -74,6 +55,52 @@
         </b-row>
       </b-container>
     </b-col>
+    <b-tooltip :target="'detailBtn.' + parentIndex + '.' + index"
+                placement="auto"
+                boundary="window">
+      <div class="detailLabel">
+        {{ $t('repository.validations.location') }}
+      </div>
+      <div class="detailValue">
+        <span v-for="(location, index) in object.locations" :key="index">
+          {{ location }}<span v-if="index < object.locations.length - 1">, </span>
+        </span>
+      </div>
+      <div v-if="object.subjectKeyIdentifier">
+        <div class="detailLabel" >
+          {{ $t('common.ski') }}
+        </div>
+        <div class="detailValue">
+          {{ object.subjectKeyIdentifier }}
+        </div>
+      </div>
+      <div v-if="object.type === 'ROA'">
+        <div class="detailLabel">
+          {{ $t('repository.general.resources') }}
+        </div>
+        <div class="detailValue">
+          <ul>
+            <li v-for="resource in object.resources" :key="resource.roaId">
+              <div>
+                <b>{{ $t('common.asn') }}:</b> {{ resource.asn }}<br/>
+                <b>{{ $t('common.prefix') }}:</b> {{ resource.prefix }}<br/>
+                <span v-if="resource.maxPrefixLength">
+                  <b>{{ $t('common.prefixMaxLength') }}:</b> {{ resource.maxPrefixLength }}<br/>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div v-if="object.type === 'GBR'">
+        <div class="detailLabel">
+          {{ $t('common.vCard') }}:
+        </div>
+        <div class="detailValue">
+          {{ object.vcard }}
+        </div>
+      </div>
+    </b-tooltip>
   </b-row>
 </template>
 
@@ -83,6 +110,10 @@ import config from '@/config'
 export default {
   props: {
     index: {
+      type: Number,
+      default: 0
+    },
+    parentIndex: {
       type: Number,
       default: 0
     },
@@ -136,6 +167,13 @@ export default {
     },
     hasChilds: function () {
       return this.object.childCount && this.object.childCount > 0
+    },
+    fileName: function () {
+      if (!this.object.locations || this.object.locations.length < 1) {
+        return 'N/A'
+      }
+      let arr = this.object.locations[0].split('/')
+      return arr[arr.length - 1]
     }
   },
   watch: {
@@ -150,18 +188,47 @@ export default {
 </script>
 
 <style>
-.element-row {
-  font-size: 0.9em;
+.element-row, .detail-link {
+  font-size: 0.8em;
+}
+
+.childs {
+  font-style: italic;
+  font-size: 0.8em;
 }
 
 .label {
   font-weight: bold;
-  padding: 0px;
 }
 
 .value {
+  margin-left: 1rem;
+}
+
+.value ul {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0.5rem;
+}
+
+.value ul li {
+  list-style: square;
+}
+
+.detailLabel {
+  font-weight: bold;
+  padding: 0px;
+  text-align: left;
+}
+
+.detailValue {
   padding-left: 4px;
   padding-bottom: 1px;
+  text-align: left;
+}
+
+.tooltip-inner {
+  max-width: 400px;
 }
 
 .rowClass {

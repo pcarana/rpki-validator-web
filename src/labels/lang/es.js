@@ -139,7 +139,8 @@ const messages = {
     syncError: 'La sincronización se solicitó, pero hubo un error ejecutándola en el servidor; intente nuevamente.',
     loading: 'Cargando...',
     element: 'Elemento #{n}',
-    noElements: 'Sin elementos'
+    noElements: 'Sin elementos',
+    nChilds: '{n} hijos'
   },
   filter: {
     placeholder: 'Filtro...',
