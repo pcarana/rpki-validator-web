@@ -25,8 +25,14 @@ export default {
         var axiosInst = this.createAxios(lang, auth)
         switch (method) {
             case this.methods.get:
+                if (data) {
+                    return axiosInst.get(service, {params: data})
+                }
                 return axiosInst.get(service)
             case this.methods.head:
+                if (data) {
+                    return axiosInst.head(service, {params: data})
+                }
                 return axiosInst.head(service)
             case this.methods.post:
                 return axiosInst.post(service, data)
