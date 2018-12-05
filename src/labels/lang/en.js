@@ -96,6 +96,11 @@ const messages = {
     title: 'Validate',
     description: 'Simulate the validation result of a route announcement according to the rules of RFC 6483, the result will be the Route\'s Validity State',
     request: 'Validate',
+    requestDetail: {
+      p1: 'There isn\'t a ROA that matches the prefix, the validation status could be \'Unknown\' or \'Invalid\'.',
+      p2: 'If you wish to know the validation detail, press the following button (the request could be slow).'
+    },
+    fullRequest: 'Validation detail',
     status: 'Status',
     validityState: 'Route\'s Validity State',
     roaMatch: 'ROA matched',

@@ -96,6 +96,11 @@ const messages = {
     title: 'Validación',
     description: 'Simule el resultado de la validación de un anuncio de ruta, siguiendo las reglas del RFC 6483, el resultado será el Estatus de Validez de Ruta',
     request: 'Validar',
+    requestDetail: {
+      p1: 'No se encontró un ROA que cubra el prefijo, por lo tanto el estatus puede ser \'Desconocido\' o \'Inválido\'.',
+      p2: 'Si desea saber con más detalle el resultado de la validación, presione el siguiente botón (la consulta puede tardar).'
+    },
+    fullRequest: 'Detalle de validación',
     status: 'Estatus',
     validityState: 'Estatus de Validez de Ruta',
     roaMatch: 'ROA encontrado',

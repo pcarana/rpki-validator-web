@@ -53,7 +53,7 @@
               {{ $t('errors.prefixLengthInvalid', { min: prefixLengthMin, max: prefixLengthMax }) }}
             </b-form-invalid-feedback>
           </b-form-group>
-          <b-button type="submit" variant="primary">{{ $t('validate.request') }}</b-button>
+          <b-button type="submit" variant="primary" :disabled="loading">{{ $t('validate.request') }}</b-button>
         </b-form>
       </b-col>
     </b-row>
@@ -65,7 +65,7 @@
     </b-row>
     <b-row>
       <b-col cols="12">
-        <b-container v-if="validationResult" class="mx-0 px-0">
+        <b-container v-if="validationResult && validationResult.validityState != null" class="mx-0 px-0">
           <b-row>
             <b-col cols="4">
               <b-card :header="$t('validate.status')"
@@ -197,6 +197,25 @@
             </b-col>
           </b-row>
         </b-container>
+        <b-container v-if="validationResult && validationResult.validityState === null" class="mx-0 px-0">
+          <b-row>
+            <b-col cols="4">
+              <b-card :header="$t('validate.status')"
+                :title="$t('validate.state.unknown') + ' / ' + $t('validate.state.invalid')"
+                :bg-variant="statusVariant"
+                text-variant="white"
+                class="text-center">
+              </b-card>
+            </b-col>
+            <b-col cols="8">
+              <b-card :header="$t('validate.validityState')">
+                <p>{{ $t('validate.requestDetail.p1') }}</p>
+                <p>{{ $t('validate.requestDetail.p2') }}</p>
+                <b-button @click="doFullCheck" variant="secondary">{{ $t('validate.fullRequest') }}</b-button>
+              </b-card>
+            </b-col>
+          </b-row>
+        </b-container>
       </b-col>
     </b-row>
   </b-container>
@@ -216,7 +235,8 @@ export default {
       prefixLength: null,
       validationResult: null,
       error: null,
-      loading: false
+      loading: false,
+      fullCheck: false
     }
   },
   components: {
@@ -244,7 +264,8 @@ export default {
         axios.methods.get,
         this.$root.$i18n.locale,
         service,
-        auth)
+        auth,
+        {fullCheck: this.fullCheck})
     },
     successCb (response) {
       this.error = null
@@ -257,9 +278,14 @@ export default {
     },
     finallyCb () {
       this.loading = false
+      this.fullCheck = false
     },
     callLogin () {
       this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+    },
+    doFullCheck (evt) {
+      this.fullCheck = true
+      this.onSubmit(evt)
     },
     asnMatchPrefixState (prefixState) {
       return this.validationResult.asState === 'matching' &&
