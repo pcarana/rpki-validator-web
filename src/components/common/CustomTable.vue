@@ -12,7 +12,7 @@
           <b-input-group-prepend>
             <b-form-select id="searchFilter" v-model="searchFilter">
               <option value=null>
-                {{ $t('filter.all') }}
+                {{ listService ? $t('filter.select') : $t('filter.all') }}
               </option>
               <option v-for="opt in searchFilterOpts" :key="opt.value" :value="opt.value">
                 {{ $t(opt.text) }}
@@ -21,7 +21,11 @@
           </b-input-group-prepend>
           <b-form-input v-model="filterItem" :placeholder="$t('filter.placeholder')"></b-form-input>
           <b-input-group-append>
-            <b-btn :disabled="!customFilter" @click="filterItem = ''" variant="outline-primary">{{ $t('filter.clean') }}</b-btn>
+            <b-btn :disabled="listService ? !filterItem : !customFilter"
+                   @click="filterItem = ''"
+                   variant="outline-primary">
+              {{ $t('filter.clean') }}
+            </b-btn>
           </b-input-group-append>
         </b-input-group>
       </b-col>
@@ -38,17 +42,17 @@
         <b-table striped hover responsive show-empty
           :id="tableId"
           :ref="tableId"
-          :items="items"
+          :items="listService ? loadItems : items"
           :fields="tableFields"
           :per-page="perPage"
           :total-rows="totalRows"
           :current-page="tableCurrentPage"
-          :filter="customFilter"
+          :filter="listService ? filterItem : customFilter"
           @filtered="onFiltered"
           :empty-filtered-text="$t('errors.noDataFound')"
-          no-provider-paging
-          no-provider-sorting
-          no-provider-filtering>
+          :no-provider-paging = "!listService"
+          :no-provider-sorting = "!listService"
+          :no-provider-filtering = "!listService">
           <template v-for="field in tableFields" :slot="'HEAD_' + field.key" slot-scope="data">
             {{ $t(data.label) }}
           </template>
@@ -87,6 +91,7 @@
 <script>
 import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
+import axios from '@/axios'
 
 export default {
   props: {
@@ -117,10 +122,14 @@ export default {
       }
     },
     deleteCallback: Function,
-    error: [Object, Error],
-    loading: Boolean,
     tableId: String,
-    callLogin: Function
+    callLogin: Function,
+    listService: {
+      type: String,
+      default: null
+    },
+    context: Object,
+    errorCb: Function
   },
   data () {
     return {
@@ -134,7 +143,9 @@ export default {
         { text: 25, value: 25 },
         { text: 50, value: 50 },
         { text: 100, value: 100 }
-      ]
+      ],
+      error: null,
+      loading: false
     }
   },
   components: {
@@ -154,6 +165,36 @@ export default {
     },
     refresh () {
       this.$root.$emit('bv::refresh::table', this.tableId)
+    },
+    loadItems (ctx) {
+      let me = this
+      let callerCtx = me.context
+      let myAxios = axios.createAxios(me.$root.$i18n.locale, callerCtx.auth)
+      let myParams = {}
+      if (me.searchFilter && me.filterItem && me.searchFilter.trim().length > 0 && me.filterItem.trim().length > 0) {
+        myParams.filterQuery = me.filterItem.trim()
+        myParams.filterField = me.searchFilter.trim()
+      }
+      myParams.limit = ctx.perPage
+      myParams.offset = (ctx.currentPage - 1) * ctx.perPage
+      if (ctx.sortBy) {
+        myParams.sort = (ctx.sortDesc ? '-' : '+') + ctx.sortBy
+      }
+      me.loading = true
+      me.error = null
+      return myAxios.get(me.listService, {
+        params: myParams
+      }).then(function (response) {
+        let data = response.data
+        me.totalRows = data.found
+        return data.results
+      }).catch(function (error) {
+        me.errorCb(error)
+        me.error = error
+        return []
+      }).finally(function () {
+        me.loading = false
+      })
     }
   },
   computed: {

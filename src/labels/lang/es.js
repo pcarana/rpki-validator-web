@@ -150,7 +150,8 @@ const messages = {
   filter: {
     placeholder: 'Filtro...',
     clean: 'Limpiar',
-    all: 'Todos'
+    all: 'Todos',
+    select: 'Seleccione'
   },
   general: {
     return: 'Regresar',
