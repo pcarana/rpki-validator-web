@@ -2,17 +2,15 @@
   <b-container fluid>
     <b-row>
       <b-col>
-        <custom-table :items="loadAssertions"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
+        <custom-table :tableFields="tableFields"
                       :searchFilterOpts="searchFilterOpts"
                       :showDeleteButton="true"
                       :deleteCallback="confirmDelete"
-                      :error="error"
-                      :loading="loading"
                       :tableId="tableId"
-                      :ref="tableId"
-                      :callLogin="callLogin">
+                      :callLogin="callLogin"
+                      :listService="getListService"
+                      :context="this"
+                      :errorCb="errorCb">
         </custom-table>
       </b-col>
     </b-row>
@@ -51,65 +49,19 @@ export default {
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
         { key: 'prefix', label: 'common.prefix', sortable: true },
-        { key: 'maxPrefixLength', label: 'common.prefixMaxLength', sortable: true },
+        { key: 'maxPrefixLength', label: 'common.prefixMaxLength', sortable: false },
         { key: 'comment', label: 'common.comment', sortable: false },
         { key: 'action', label: 'common.action', sortable: false }
       ],
       searchFilterOpts: [
         { text: 'common.asn', value: 'asn' },
-        { text: 'common.prefix', value: 'prefix' },
-        { text: 'common.prefixMaxLength', value: 'maxPrefixLength' },
-        { text: 'common.comment', value: 'comment' }
+        { text: 'common.prefix', value: 'prefix' }
       ],
-      error: null,
-      loading: false,
       deleteItem: null,
       auth: {}
     }
   },
   methods: {
-    loadAssertions (ctx) {
-      let me = this
-      let myAxios = axios.createAxios(me.$root.$i18n.locale, me.auth)
-      me.loading = true
-      me.error = null
-      return myAxios.get(me.getListService).then(function (response) {
-        let data = response.data
-        if (data.found === data.returned) {
-          return data.results
-        }
-        return me.getNextPage(myAxios, data, data.results, me.getListService)
-      }).catch(function (error) {
-        me.errorCb(error)
-        return []
-      }).finally(function () {
-        me.loading = false
-      })
-    },
-    filterFunction (item, searchFilterOpt, filterItemTxt) {
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return null
-      }
-      switch (searchFilterOpt) {
-        case 'asn':
-          return regexp.test(item.asn)
-        case 'prefix':
-          return item.prefix.match(regexp)
-        case 'maxPrefixLength':
-          return regexp.test(item.maxPrefixLength)
-        case 'comment':
-          return item.comment.match(regexp)
-        default:
-          return regexp.test(item.asn) ||
-                 item.prefix.match(regexp) ||
-                 regexp.test(item.maxPrefixLength) ||
-                 item.comment.match(regexp)
-      }
-    },
     promiseCb (auth) {
       this.auth = auth
       return axios.getPromise(

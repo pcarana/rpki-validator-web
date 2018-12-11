@@ -2,17 +2,15 @@
   <b-container fluid>
     <b-row>
       <b-col>
-        <custom-table :items="loadFilters"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
+        <custom-table :tableFields="tableFields"
                       :searchFilterOpts="searchFilterOpts"
                       :showDeleteButton="true"
                       :deleteCallback="confirmDelete"
-                      :error="error"
-                      :loading="loading"
                       :tableId="tableId"
-                      :ref="tableId"
-                      :callLogin="callLogin">
+                      :callLogin="callLogin"
+                      :listService="getListService"
+                      :context="this"
+                      :errorCb="errorCb">
         </custom-table>
       </b-col>
     </b-row>
@@ -53,7 +51,7 @@ export default {
         {
           key: 'SKI',
           label: 'common.ski',
-          sortable: true,
+          sortable: false,
           formatter: (value) => {
             if (value && value !== null) {
               return atob(value)
@@ -65,56 +63,13 @@ export default {
         { key: 'action', label: 'common.action', sortable: false }
       ],
       searchFilterOpts: [
-        { text: 'common.asn', value: 'asn' },
-        { text: 'common.ski', value: 'SKI' },
-        { text: 'common.comment', value: 'comment' }
+        { text: 'common.asn', value: 'asn' }
       ],
-      error: null,
-      loading: false,
       deleteItem: null,
       auth: {}
     }
   },
   methods: {
-    loadFilters (ctx) {
-      let me = this
-      let myAxios = axios.createAxios(me.$root.$i18n.locale, me.auth)
-      me.loading = true
-      me.error = null
-      return myAxios.get(me.getListService).then(function (response) {
-        let data = response.data
-        if (data.found === data.returned) {
-          return data.results
-        }
-        return me.getNextPage(myAxios, data, data.results, me.getListService)
-      }).catch(function (error) {
-        me.errorCb(error)
-        return []
-      }).finally(function () {
-        me.loading = false
-      })
-    },
-    filterFunction (item, searchFilterOpt, filterItemTxt) {
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return null
-      }
-      switch (searchFilterOpt) {
-        case 'asn':
-          return regexp.test(item.asn)
-        case 'ski':
-          return item.SKI.match(regexp)
-        case 'comment':
-          return item.comment.match(regexp)
-        default:
-          return regexp.test(item.asn) ||
-                 item.SKI.match(regexp) ||
-                 item.comment.match(regexp)
-      }
-    },
     promiseCb (auth) {
       this.auth = auth
       return axios.getPromise(

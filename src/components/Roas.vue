@@ -12,16 +12,14 @@
     </b-row>
     <b-row>
       <b-col>
-        <custom-table :items="loadRoas"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
+        <custom-table :tableFields="tableFields"
                       :searchFilterOpts="searchFilterOpts"
                       :showDetailButton="true"
-                      :error="error"
-                      :loading="loading"
                       :tableId="tableId"
-                      :ref="tableId"
-                      :callLogin="callLogin">
+                      :callLogin="callLogin"
+                      :listService="getListService"
+                      :context="this"
+                      :errorCb="errorCb">
         </custom-table>
       </b-col>
     </b-row>
@@ -44,64 +42,18 @@ export default {
       tableFields: [
         {key: 'asn', label: 'common.asn', sortable: true},
         {key: 'prefix', label: 'common.prefix', sortable: true},
-        {key: 'prefixMaxLength', label: 'common.prefixMaxLength', sortable: true},
-        {key: 'prefixFamily', label: 'common.prefixFamily', sortable: true},
+        {key: 'prefixMaxLength', label: 'common.prefixMaxLength', sortable: false},
+        {key: 'prefixFamily', label: 'common.prefixFamily', sortable: false},
         {key: 'action', label: 'common.action', sortable: false}
       ],
       searchFilterOpts: [
         { text: 'common.asn', value: 'asn' },
-        { text: 'common.prefix', value: 'prefix' },
-        { text: 'common.prefixMaxLength', value: 'prefixMaxLength' },
-        { text: 'common.prefixFamily', value: 'prefixFamily' }
+        { text: 'common.prefix', value: 'prefix' }
       ],
-      error: null,
-      loading: false,
       auth: {}
     }
   },
   methods: {
-    loadRoas (ctx) {
-      let me = this
-      let myAxios = axios.createAxios(me.$root.$i18n.locale, me.auth)
-      me.loading = true
-      me.error = null
-      return myAxios.get(me.getListService).then(function (response) {
-        let data = response.data
-        if (data.found === data.returned) {
-          return data.results
-        }
-        return me.getNextPage(myAxios, data, data.results, me.getListService)
-      }).catch(function (error) {
-        me.errorCb(error)
-        return []
-      }).finally(function () {
-        me.loading = false
-      })
-    },
-    filterFunction (item, searchFilterOpt, filterItemTxt) {
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return null
-      }
-      switch (searchFilterOpt) {
-        case 'asn':
-          return regexp.test(item.asn)
-        case 'prefix':
-          return item.prefix.match(regexp)
-        case 'prefixMaxLength':
-          return regexp.test(item.prefixMaxLength)
-        case 'prefixFamily':
-          return regexp.test(item.prefixFamily)
-        default:
-          return regexp.test(item.asn) ||
-                 item.prefix.match(regexp) ||
-                 regexp.test(item.prefixMaxLength) ||
-                 regexp.test(item.prefixFamily)
-      }
-    },
     promiseCb (auth) {
       this.auth = auth
       return axios.getPromise(

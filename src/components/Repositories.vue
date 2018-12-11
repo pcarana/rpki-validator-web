@@ -12,18 +12,17 @@
     </b-row>
     <b-row>
       <b-col>
-        <custom-table :items="loadTals"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
+        <custom-table :tableFields="tableFields"
                       :searchFilterOpts="searchFilterOpts"
                       :showDetailButton="true"
-                      :error="error || syncError"
-                      :loading="loading"
                       :tableId="tableId"
-                      :ref="tableId"
                       :callLogin="callLogin"
+                      :listService="getListService"
+                      :context="this"
+                      :errorCb="errorCb"
                       :showAdditionalAction="true"
-                      :additionalAction="syncAction">
+                      :additionalAction="syncAction"
+                      :additionalError="syncError">
         </custom-table>
         <b-modal
           id="syncSuccessModal"
@@ -56,7 +55,7 @@ export default {
         {
           key: 'uris',
           label: 'repository.general.uris',
-          sortable: true,
+          sortable: false,
           formatter: (value) => {
             let formatted = ''
             for (let i = 0; i < value.length; i++) {
@@ -69,11 +68,8 @@ export default {
         {key: 'action', label: 'common.action', sortable: false}
       ],
       searchFilterOpts: [
-        { text: 'repository.general.name', value: 'name' },
-        { text: 'repository.general.uris', value: 'uris' }
+        { text: 'repository.general.name', value: 'name' }
       ],
-      error: null,
-      loading: false,
       auth: {},
       syncAction: {
         onClick: this.syncTal,
@@ -86,46 +82,6 @@ export default {
     }
   },
   methods: {
-    loadTals (ctx) {
-      let me = this
-      let myAxios = axios.createAxios(me.$root.$i18n.locale, me.auth)
-      me.loading = true
-      me.error = null
-      return myAxios.get(me.getListService).then(function (response) {
-        let data = response.data
-        if (data.found === data.returned) {
-          return data.results
-        }
-        return me.getNextPage(myAxios, data, data.results, me.getListService)
-      }).catch(function (error) {
-        me.errorCb(error)
-        return []
-      }).finally(function () {
-        me.loading = false
-      })
-    },
-    filterFunction (item, searchFilterOpt, filterItemTxt) {
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return null
-      }
-      switch (searchFilterOpt) {
-        case 'name':
-          return item.name.match(regexp)
-        case 'uris':
-          // Map the values from the obj to search on those values only
-          return item.uris.map(function (uri) {
-            return uri.location
-          }).toString().match(regexp)
-        default:
-          return item.name.match(regexp) || item.uris.map(function (uri) {
-            return uri.location
-          }).toString().match(regexp)
-      }
-    },
     promiseCb (auth) {
       this.auth = auth
       return axios.getPromise(
