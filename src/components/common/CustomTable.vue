@@ -11,7 +11,7 @@
         <b-input-group>
           <b-input-group-prepend>
             <b-form-select id="searchFilter" v-model="searchFilter">
-              <option value=null>
+              <option :value=null>
                 {{ listService ? $t('filter.select') : $t('filter.all') }}
               </option>
               <option v-for="opt in searchFilterOpts" :key="opt.value" :value="opt.value">
@@ -195,6 +195,7 @@ export default {
       }).catch(function (error) {
         me.errorCb(error)
         me.error = error
+        me.tableCurrentPage = 1
         return []
       }).finally(function () {
         me.loading = false
@@ -211,6 +212,17 @@ export default {
         return toResult
       }
       return this.totalRows
+    }
+  },
+  watch: {
+    filterItem: function (newVal, oldVal) {
+      this.tableCurrentPage = 1
+    },
+    perPage: function (newVal, oldVal) {
+      if (this.tableCurrentPage > 1) {
+        let currStart = (this.tableCurrentPage - 1) * oldVal
+        this.tableCurrentPage = Math.floor(currStart / newVal) + 1
+      }
     }
   }
 }
