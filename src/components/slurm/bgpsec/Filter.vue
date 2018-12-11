@@ -6,6 +6,7 @@
                       :searchFilterOpts="searchFilterOpts"
                       :showDeleteButton="true"
                       :deleteCallback="confirmDelete"
+                      :ref="tableId"
                       :tableId="tableId"
                       :callLogin="callLogin"
                       :listService="getListService"
@@ -45,7 +46,7 @@ export default {
       tableId: 'filterTable',
       postService: config.api.services.post.slurmBgpsecFilter,
       getListService: config.api.services.get.slurmBgpsecFilterList,
-      confirmDeleteModalId: 'confirmDelete',
+      confirmDeleteModalId: 'confirmFilterDelete',
       tableFields: [
         { key: 'asn', label: 'common.asn', sortable: true },
         {

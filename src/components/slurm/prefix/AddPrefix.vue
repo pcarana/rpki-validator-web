@@ -1,11 +1,11 @@
 <template>
   <span>
-    <b-button v-b-modal.createModal>
+    <b-button v-b-modal="modalId">
       {{ $t(addButtonLabel) }}
     </b-button>
     <b-modal
-      id="createModal"
-      ref="createModal"
+      :id="modalId"
+      :ref="modalId"
       @shown="focusFirstField"
       :title="$t(addButtonLabel)"
       :ok-title="$t('common.add')"
@@ -116,8 +116,8 @@
       </b-container>
     </b-modal>
     <b-modal
-      id="successModal"
-      ref="successModal"
+      :id="successModalId"
+      :ref="successModalId"
       ok-only>
       <h2>{{ $t('common.createSuccess') }}</h2>
     </b-modal>
@@ -214,14 +214,14 @@ export default {
       this.newObject.prefixLength = null
       this.newObject.prefixMaxLength = null
       this.newObject.comment = null
-      this.$refs.createModal.hide()
+      this.$refs[this.modalId].hide()
       this.successCallback(response)
-      this.$refs.successModal.show()
+      this.$refs[this.successModalId].show()
     },
     createErrorCb (error) {
       this.createError = error
-      if (!this.$refs.createModal.visible) {
-        this.$refs.createModal.show()
+      if (!this.$refs[this.modalId].visible) {
+        this.$refs[this.modalId].show()
       }
       this.callLogin()
     },
@@ -233,6 +233,12 @@ export default {
     }
   },
   computed: {
+    modalId: function () {
+      return this.prefixType + 'addModal'
+    },
+    successModalId: function () {
+      return this.prefixType + 'successAddModal'
+    },
     showMaxLength: function () {
       return this.prefixType === 'assertion'
     },
