@@ -7,12 +7,12 @@
     </b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
-        <span v-for="item in navItems" :key="item.id">
-          <b-nav-item v-if="!item.sub" :active=$route.path.startsWith(item.to) :to="item.to">
+        <span v-for="item in navItems" :key="item.name">
+          <b-nav-item v-if="!item.sub" :active="$route.path.startsWith(item.to)" :to="item.to">
             {{ $t(item.name) }}
           </b-nav-item>
           <b-nav-item-dropdown v-if="item.sub" :text="$t(item.name)" :class="{active: $route.path.startsWith(item.to)}">
-            <b-dropdown-item v-for="sub in item.sub" :key="sub.id" :active="$route.path === sub.to" :to="sub.to">{{ $t(sub.name) }}</b-dropdown-item>
+            <b-dropdown-item v-for="sub in item.sub" :key="sub.name" :active="$route.path === sub.to" :to="sub.to">{{ $t(sub.name) }}</b-dropdown-item>
           </b-nav-item-dropdown>
         </span>
         <b-nav-item v-if="needsUpdate" :href="githubRepo" target="_blank">
@@ -23,7 +23,7 @@
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto" v-if="langItems && langItems.length > 1">
         <b-nav-item-dropdown :text="$t('language')" href="#">
-          <b-dropdown-item v-for="lang in langItems" :key="lang.id" :active=isActiveLang(lang.id) href="#" @click="switchLang(lang.id)">
+          <b-dropdown-item v-for="lang in langItems" :key="lang.id" :active="isActiveLang(lang.id)" href="#" @click="switchLang(lang.id)">
             {{ lang.label }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
