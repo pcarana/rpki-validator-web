@@ -54,7 +54,8 @@
                       :tableFields="tableFields"
                       :filterFunction="filterFunction"
                       :searchFilterOpts="searchFilterOpts"
-                      :tableId="tableId">
+                      :tableId="tableId"
+                      :ref="tableId">
         </custom-table>
       </b-col>
     </b-row>

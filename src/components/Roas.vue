@@ -16,6 +16,7 @@
                       :searchFilterOpts="searchFilterOpts"
                       :showDetailButton="true"
                       :tableId="tableId"
+                      :ref="tableId"
                       :callLogin="callLogin"
                       :listService="getListService"
                       :context="this"
