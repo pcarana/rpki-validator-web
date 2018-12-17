@@ -30,6 +30,7 @@ const data = {
                 slurmBgpsecDetail: '/slurm/bgpsec/:id',
                 slurmBgpsecFilterList: '/slurm/bgpsec/filter',
                 slurmBgpsecAssertionList: '/slurm/bgpsec/assertion',
+                tokens: '/tokens',
                 validate: '/validate/:asn/:prefix/:prefix-length'
             },
             post: {

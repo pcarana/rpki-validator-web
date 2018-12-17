@@ -7,7 +7,8 @@
       title="Login"
       ok-title="OK"
       cancel-title="Cancel"
-      @ok="sendRequest">
+      @ok="requestToken"
+      @hidden="clearData">
       <b-container fluid>
         <b-row>
           <b-col cols="12">
@@ -46,7 +47,7 @@
                 type="password"
                 v-model.trim="auth.password"
                 :state="passwordState"
-                @keyup.native.enter="sendRequest">
+                @keyup.native.enter="requestToken">
               </b-form-input>
               <b-form-invalid-feedback>
                 {{ $t('errors.passwordRequired') }}
@@ -61,6 +62,8 @@
 
 <script>
 import Loading from '@/components/common/Loading.vue'
+import axios from '@/axios'
+import config from '@/config'
 
 export default {
   data () {
@@ -81,20 +84,20 @@ export default {
   },
   methods: {
     focusFirstField () {
-      this.loginError = null
-      this.auth.username = null
-      this.auth.password = null
+      this.clearData()
       this.$refs.username.focus()
     },
-    sendRequest (event) {
+    requestToken (event) {
       event.preventDefault()
       let me = this
       this.loading = true
       this.loginError = null
-      let promise = this.callbackSet.promiseCallback(this.auth)
-      promise.then(function (response) {
+      let myAxios = axios.createAxios(me.$root.$i18n.locale)
+      axios.setBasicAuth(myAxios, me.auth)
+      myAxios.get(config.api.services.get.tokens).then(function (response) {
         me.$refs[me.loginModalId].hide()
-        me.callbackSet.successCallback(response)
+        localStorage.setItem('t', response.data.token)
+        me.callbackSet.retryCallback(true)
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           me.loginError = error
@@ -105,6 +108,11 @@ export default {
       }).finally(function () {
         me.loading = false
       })
+    },
+    clearData () {
+      this.loginError = null
+      this.auth.username = null
+      this.auth.password = null
     }
   },
   computed: {

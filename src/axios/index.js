@@ -9,20 +9,26 @@ export default {
         post: 'post',
         delete: 'delete'
     },
-    createAxios: function (lang, auth) {
+    createAxios: function (lang) {
         const myaxios = Axios.create();
         myaxios.defaults.headers.common['Accept-Language'] = lang ? lang : 'EN';
         myaxios.defaults.baseURL = config.api.url;
-        if (auth) {
-            myaxios.defaults.auth = auth;
-        }
         return myaxios;
     },
-    getPromise: function (method, lang, service, auth) {
-        return this.getPromise(method, lang, service, auth, null)
+    setBasicAuth(axios, auth) {
+        axios.defaults.auth = auth
     },
-    getPromise: function (method, lang, service, auth, data) {
-        var axiosInst = this.createAxios(lang, auth)
+    setToken(axios, useToken) {
+        if (useToken && localStorage.getItem('t')) {
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('t')
+        }
+    },
+    getPromise: function (method, lang, service, useToken) {
+        return this.getPromise(method, lang, service, useToken, null)
+    },
+    getPromise: function (method, lang, service, useToken, data) {
+        var axiosInst = this.createAxios(lang)
+        this.setToken(axiosInst, useToken)
         switch (method) {
             case this.methods.get:
                 if (data) {
@@ -51,7 +57,6 @@ export default {
                 thenCb(response)
             }
         }).catch(function (error) {
-            console.log(error)
             if (errorCb) {
                 errorCb(error)
             }
