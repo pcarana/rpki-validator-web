@@ -96,7 +96,11 @@ export default {
     title: function () {
       // Log the error at console
       if (this.error) {
-        console.log(JSON.stringify(this.error))
+        if (this.error.response) {
+          console.log(this.error.response.status + ' at ' + this.error.response.config.url)
+        } else {
+          console.log(JSON.stringify(this.error))
+        }
       }
       return this.errorType !== null ? this.errorType + '.title' : ''
     },
