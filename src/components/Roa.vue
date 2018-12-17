@@ -72,7 +72,8 @@ export default {
     return {
       roa: null,
       error: null,
-      loading: false
+      loading: false,
+      useToken: false
     }
   },
   components: {
@@ -83,25 +84,23 @@ export default {
     back () {
       this.$router.back()
     },
-    loadData () {
+    loadData (useToken) {
       this.error = null
       this.loading = true
-      let promise = this.promiseCb(null)
-      axios.processPromise(promise,
-        this.successCb,
-        this.errorCb,
-        this.finallyCb)
-    },
-    promiseCb (auth) {
+      this.useToken = useToken
       let service = config.api.services.get.roaDetail.replace(
         ':id',
         this.$route.params.roaId
       )
-      return axios.getPromise(
+      let promise = axios.getPromise(
         axios.methods.get,
         this.$root.$i18n.locale,
         service,
-        auth)
+        useToken)
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
     },
     successCb (response) {
       this.error = null
@@ -116,11 +115,11 @@ export default {
       this.loading = false
     },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+      this.checkAuth(this.error, this.loadData, this.errorCb)
     }
   },
   created: function () {
-    this.loadData()
+    this.loadData(this.useToken)
   }
 }
 </script>

@@ -55,7 +55,7 @@ export default {
     return {
       deleteError: null,
       loading: false,
-      auth: {}
+      useToken: false
     }
   },
   components: {
@@ -65,22 +65,22 @@ export default {
   methods: {
     sendRequest (event) {
       event.preventDefault()
+      this.tryDelete(this.useToken)
+    },
+    tryDelete (useToken) {
       this.deleteError = null
       this.loading = true
-      let promise = this.promiseCb(null)
+      this.useToken = useToken
+      let service = this.deleteService.replace(':id', this.item.id)
+      let promise = axios.getPromise(
+        axios.methods.delete,
+        this.$root.$i18n.locale,
+        service,
+        useToken)
       axios.processPromise(promise,
         this.deleteSuccessCb,
         this.deleteErrorCb,
         this.finallyCb)
-    },
-    promiseCb (auth) {
-      this.auth = auth
-      let service = this.deleteService.replace(':id', this.item.id)
-      return axios.getPromise(
-        axios.methods.delete,
-        this.$root.$i18n.locale,
-        service,
-        auth)
     },
     deleteSuccessCb (response) {
       this.deleteError = null
@@ -96,7 +96,7 @@ export default {
       this.loading = false
     },
     callLogin () {
-      this.checkAuth(this.deleteError, this.promiseCb, this.deleteSuccessCb, this.deleteErrorCb)
+      this.checkAuth(this.deleteError, this.tryDelete, this.deleteErrorCb)
     }
   },
   computed: {

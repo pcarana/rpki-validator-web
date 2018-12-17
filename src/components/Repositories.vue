@@ -71,7 +71,8 @@ export default {
       searchFilterOpts: [
         { text: 'repository.general.name', value: 'name' }
       ],
-      auth: {},
+      useToken: false,
+      error: null,
       syncAction: {
         onClick: this.syncTal,
         label: 'repositories.sync',
@@ -83,16 +84,8 @@ export default {
     }
   },
   methods: {
-    promiseCb (auth) {
-      this.auth = auth
-      return axios.getPromise(
-        axios.methods.head,
-        this.$root.$i18n.locale,
-        this.getListService,
-        auth)
-    },
-    successCb (response) {
-      this.error = null
+    retryCb (useToken) {
+      this.useToken = useToken
       this.$refs[this.tableId].refresh()
     },
     errorCb (error) {
@@ -101,19 +94,28 @@ export default {
     },
     callLogin () {
       if (this.error) {
-        this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+        this.checkAuth(this.error, this.retryCb, this.errorCb)
       } else {
         this.syncLogin()
       }
     },
     syncTal (tal) {
+      this.syncItemId = tal.id
+      this.trySync(this.useToken)
+    },
+    trySync (useToken) {
       let me = this
       me.syncError = null
-      me.syncItemId = tal.id
+      me.useToken = useToken
       let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + me.syncItemId]
       buttonRef.disabled = true
       buttonRef.innerText = me.i18n.t('repositories.syncing')
-      let promise = this.syncCb(null)
+      let service = me.syncTalService.replace(':id', me.syncItemId)
+      let promise = axios.getPromise(
+        axios.methods.post,
+        me.$root.$i18n.locale,
+        service,
+        useToken)
       promise.then(function (response) {
         me.syncSuccessCb(response)
       }).catch(function (error) {
@@ -122,15 +124,6 @@ export default {
         buttonRef.disabled = false
         buttonRef.innerText = me.i18n.t('repositories.sync')
       })
-    },
-    syncCb (auth) {
-      this.auth = auth
-      let service = this.syncTalService.replace(':id', this.syncItemId)
-      return axios.getPromise(
-        axios.methods.post,
-        this.$root.$i18n.locale,
-        service,
-        this.auth)
     },
     syncSuccessCb (response) {
       this.syncError = null
@@ -143,7 +136,7 @@ export default {
       this.syncLogin()
     },
     syncLogin () {
-      this.checkAuth(this.syncError, this.syncCb, this.syncSuccessCb, this.syncErrorCb)
+      this.checkAuth(this.syncError, this.trySync, this.syncErrorCb)
     }
   }
 }

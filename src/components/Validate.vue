@@ -236,7 +236,8 @@ export default {
       validationResult: null,
       error: null,
       loading: false,
-      fullCheck: false
+      fullCheck: false,
+      useToken: false
     }
   },
   components: {
@@ -246,26 +247,26 @@ export default {
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
+      this.tryValidate(this.useToken)
+    },
+    tryValidate (useToken) {
       this.error = null
       this.validationResult = null
       this.loading = true
-      let promise = this.promiseCb(null)
-      axios.processPromise(promise,
-        this.successCb,
-        this.errorCb,
-        this.finallyCb)
-    },
-    promiseCb (auth) {
       let service = config.api.services.get.validate
       service = service.replace(':asn', this.asn)
       service = service.replace(':prefix-length', this.prefixLength)
       service = service.replace(':prefix', this.prefix)
-      return axios.getPromise(
+      let promise = axios.getPromise(
         axios.methods.get,
         this.$root.$i18n.locale,
         service,
-        auth,
+        useToken,
         {fullCheck: this.fullCheck})
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
     },
     successCb (response) {
       this.error = null
@@ -281,7 +282,7 @@ export default {
       this.fullCheck = false
     },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+      this.checkAuth(this.error, this.tryValidate, this.errorCb)
     },
     doFullCheck (evt) {
       this.fullCheck = true

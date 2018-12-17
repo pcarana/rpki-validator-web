@@ -37,7 +37,8 @@ export default {
     return {
       slurm: null,
       error: null,
-      loading: false
+      loading: false,
+      useToken: false
     }
   },
   components: {
@@ -45,10 +46,15 @@ export default {
     'loading': Loading
   },
   methods: {
-    loadData () {
+    loadData (useToken) {
       this.error = null
       this.loading = true
-      let promise = this.promiseCb(null)
+      this.useToken = useToken
+      let promise = axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        config.api.services.get.slurmGeneral,
+        useToken)
       axios.processPromise(promise,
         this.successCb,
         this.errorCb,
@@ -60,24 +66,18 @@ export default {
     },
     errorCb (error) {
       this.error = error
+      this.slurm = null
       this.callLogin()
     },
     finallyCb () {
       this.loading = false
     },
-    promiseCb (auth) {
-      return axios.getPromise(
-        axios.methods.get,
-        this.$root.$i18n.locale,
-        config.api.services.get.slurmGeneral,
-        auth)
-    },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+      this.checkAuth(this.error, this.loadData, this.errorCb)
     }
   },
   created: function () {
-    this.loadData()
+    this.loadData(this.useToken)
   }
 }
 </script>

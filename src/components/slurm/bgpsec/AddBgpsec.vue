@@ -128,7 +128,7 @@ export default {
       },
       createError: null,
       loading: false,
-      auth: {},
+      useToken: false,
       newBgpsec: {}
     }
   },
@@ -164,21 +164,22 @@ export default {
       if (newObject.comment) {
         this.newBgpsec.comment = newObject.comment
       }
+      this.tryCreate(this.useToken)
+    },
+    tryCreate (useToken) {
       this.loading = true
-      let promise = this.promiseCb(null)
+      this.createError = null
+      this.useToken = useToken
+      let promise = axios.getPromise(
+        axios.methods.post,
+        this.$root.$i18n.locale,
+        this.postService,
+        useToken,
+        this.newBgpsec)
       axios.processPromise(promise,
         this.createSuccessCb,
         this.createErrorCb,
         this.finallyCb)
-    },
-    promiseCb (auth) {
-      this.auth = auth
-      return axios.getPromise(
-        axios.methods.post,
-        this.$root.$i18n.locale,
-        this.postService,
-        auth,
-        this.newBgpsec)
     },
     createSuccessCb (response) {
       this.createError = null
@@ -201,7 +202,7 @@ export default {
       this.loading = false
     },
     callLogin () {
-      this.checkAuth(this.createError, this.promiseCb, this.createSuccessCb, this.createErrorCb)
+      this.checkAuth(this.createError, this.tryCreate, this.createErrorCb)
     }
   },
   computed: {

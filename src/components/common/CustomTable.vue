@@ -173,8 +173,9 @@ export default {
     loadItems (ctx) {
       let me = this
       let callerCtx = me.context
-      let myAxios = axios.createAxios(me.$root.$i18n.locale, callerCtx.auth)
+      let myAxios = axios.createAxios(me.$root.$i18n.locale)
       let myParams = {}
+      axios.setToken(myAxios, callerCtx.useToken)
       if (me.searchFilter && me.filterItem && me.searchFilter.trim().length > 0 && me.filterItem.trim().length > 0) {
         myParams.filterQuery = me.filterItem.trim()
         myParams.filterField = me.searchFilter.trim()

@@ -32,7 +32,6 @@
 import AddBgpsec from '@/components/slurm/bgpsec/AddBgpsec.vue'
 import CustomTable from '@/components/common/CustomTable.vue'
 import DeleteObject from '@/components/slurm/DeleteObject.vue'
-import axios from '@/axios'
 import config from '@/config'
 
 export default {
@@ -67,19 +66,16 @@ export default {
         { text: 'common.asn', value: 'asn' }
       ],
       deleteItem: null,
-      auth: {}
+      useToken: false,
+      error: null
     }
   },
   methods: {
-    promiseCb (auth) {
-      this.auth = auth
-      return axios.getPromise(
-        axios.methods.head,
-        this.$root.$i18n.locale,
-        this.getListService,
-        auth)
-    },
     actionSuccessCb (response) {
+      this.$refs[this.tableId].refresh()
+    },
+    retryCb (useToken) {
+      this.useToken = useToken
       this.$refs[this.tableId].refresh()
     },
     errorCb (error) {
@@ -87,7 +83,7 @@ export default {
       this.callLogin()
     },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.actionSuccessCb, this.errorCb)
+      this.checkAuth(this.error, this.retryCb, this.errorCb)
     },
     confirmDelete (item) {
       this.deleteItem = item

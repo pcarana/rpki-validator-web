@@ -52,7 +52,8 @@ export default {
       error: null,
       loading: false,
       currentTab: null,
-      tabs: ['files-validation', 'general', 'tree-explorer']
+      tabs: ['files-validation', 'general', 'tree-explorer'],
+      useToken: false
     }
   },
   components: {
@@ -78,25 +79,23 @@ export default {
           return ''
       }
     },
-    loadData () {
+    loadData (useToken) {
       this.error = null
       this.loading = true
-      let promise = this.promiseCb(null)
-      axios.processPromise(promise,
-        this.successCb,
-        this.errorCb,
-        this.finallyCb)
-    },
-    promiseCb (auth) {
+      this.useToken = useToken
       let service = config.api.services.get.talDetail.replace(
         ':id',
         this.$route.params.talId
       )
-      return axios.getPromise(
+      let promise = axios.getPromise(
         axios.methods.get,
         this.$root.$i18n.locale,
         service,
-        auth)
+        useToken)
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
     },
     successCb (response) {
       this.error = null
@@ -111,11 +110,11 @@ export default {
       this.loading = false
     },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+      this.checkAuth(this.error, this.loadData, this.errorCb)
     }
   },
   created: function () {
-    this.loadData()
+    this.loadData(this.useToken)
     this.currentTab = 'files-validation'
   }
 }

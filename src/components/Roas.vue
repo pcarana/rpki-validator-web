@@ -29,7 +29,6 @@
 
 <script>
 import CustomTable from '@/components/common/CustomTable.vue'
-import axios from '@/axios'
 import config from '@/config'
 
 export default {
@@ -51,19 +50,13 @@ export default {
         { text: 'common.asn', value: 'asn' },
         { text: 'common.prefix', value: 'prefix' }
       ],
-      auth: {}
+      useToken: false,
+      error: null
     }
   },
   methods: {
-    promiseCb (auth) {
-      this.auth = auth
-      return axios.getPromise(
-        axios.methods.head,
-        this.$root.$i18n.locale,
-        this.getListService,
-        auth)
-    },
-    successCb (response) {
+    retryCb (useToken) {
+      this.useToken = useToken
       this.$refs[this.tableId].refresh()
     },
     errorCb (error) {
@@ -71,7 +64,7 @@ export default {
       this.callLogin()
     },
     callLogin () {
-      this.checkAuth(this.error, this.promiseCb, this.successCb, this.errorCb)
+      this.checkAuth(this.error, this.retryCb, this.errorCb)
     }
   }
 }
