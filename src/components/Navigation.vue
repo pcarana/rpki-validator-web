@@ -79,7 +79,13 @@ export default {
       promise.then((response) => {
         this.needsUpdate = response.data.tag_name !== config.appVersion
       }).catch((error) => {
-        console.warn('Couldn\'t check for updates, got the error: ' + JSON.stringify(error))
+        let logMsg = ''
+        if (error.response) {
+          logMsg = error.response.status + ' at ' + error.response.config.url
+        } else {
+          logMsg = JSON.stringify(this.error)
+        }
+        console.warn('Couldn\'t check for updates, got the error: ' + logMsg)
       })
     }
   },
