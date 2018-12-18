@@ -1,5 +1,5 @@
 <template>
-  <b-container class="d-inline-block general p-4">
+  <b-container fluid class="d-inline-block general p-4">
     <b-row>
       <b-col>
         <b>{{ $t('repository.general.name') }}</b>
