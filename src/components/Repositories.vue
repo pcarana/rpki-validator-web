@@ -109,7 +109,7 @@ export default {
       me.useToken = useToken
       let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + me.syncItemId]
       buttonRef.disabled = true
-      buttonRef.innerText = me.i18n.t('repositories.syncing')
+      buttonRef.innerText = me.$root.$i18n.t('repositories.syncing')
       let service = me.syncTalService.replace(':id', me.syncItemId)
       let promise = axios.getPromise(
         axios.methods.post,
@@ -122,7 +122,7 @@ export default {
         me.syncErrorCb(error)
       }).finally(function () {
         buttonRef.disabled = false
-        buttonRef.innerText = me.i18n.t('repositories.sync')
+        buttonRef.innerText = me.$root.$i18n.t('repositories.sync')
       })
     },
     syncSuccessCb (response) {

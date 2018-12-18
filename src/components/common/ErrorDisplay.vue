@@ -128,9 +128,9 @@ export default {
           let errorSplit = currErr.title.split('.')
           let message = ''
           if (errorSplit.length > 1) {
-            message = this.i18n.t(this.apiObject[errorSplit[1]])
+            message = this.$root.$i18n.t(this.apiObject[errorSplit[1]])
           } else {
-            message = this.i18n.t(this.apiObject.object)
+            message = this.$root.$i18n.t(this.apiObject.object)
           }
           list += '<li><b>' + message
           list += ':</b> ' + currErr.description + '</li>'
@@ -140,7 +140,7 @@ export default {
         return htmlErrorMessage
       }
       if (this.error && this.error.validationMessage) {
-        return this.i18n.t(this.error.validationMessage)
+        return this.$root.$i18n.t(this.error.validationMessage)
       }
       return null
     }

@@ -38,6 +38,7 @@ import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
+import apiPropsMixin from '@/mixins/apiPropsMixin.js'
 
 export default {
   props: {
@@ -109,7 +110,8 @@ export default {
       }
       return config.api.services.delete.slurmBgpsec
     }
-  }
+  },
+  mixins: [apiPropsMixin]
 }
 </script>
 

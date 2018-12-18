@@ -128,6 +128,8 @@
 import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
+import apiPropsMixin from '@/mixins/apiPropsMixin.js'
+import validationsMixin from '@/mixins/validationsMixin.js'
 
 export default {
   props: {
@@ -331,7 +333,8 @@ export default {
       }
       return this.commentState === true
     }
-  }
+  },
+  mixins: [apiPropsMixin, validationsMixin]
 }
 </script>
 

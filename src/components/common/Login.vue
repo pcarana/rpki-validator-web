@@ -1,8 +1,8 @@
 <template>
   <span>
     <b-modal
-      :id="loginModalId"
-      :ref="loginModalId"
+      id="loginModal"
+      ref="loginModal"
       @shown="focusFirstField"
       title="Login"
       ok-title="OK"
@@ -95,14 +95,14 @@ export default {
       let myAxios = axios.createAxios(me.$root.$i18n.locale)
       axios.setBasicAuth(myAxios, me.auth)
       myAxios.get(config.api.services.get.tokens).then(function (response) {
-        me.$refs[me.loginModalId].hide()
+        me.$refs.loginModal.hide()
         localStorage.setItem('t', response.data.token)
         me.callbackSet.retryCallback(true)
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           me.loginError = error
         } else {
-          me.$refs[me.loginModalId].hide()
+          me.$refs.loginModal.hide()
           me.callbackSet.errorCallback(error)
         }
       }).finally(function () {
@@ -113,6 +113,9 @@ export default {
       this.loginError = null
       this.auth.username = null
       this.auth.password = null
+    },
+    showLoginModal () {
+      this.$refs.loginModal.show()
     }
   },
   computed: {

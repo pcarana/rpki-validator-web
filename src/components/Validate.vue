@@ -226,6 +226,7 @@ import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
 import Loading from '@/components/common/Loading.vue'
 import axios from '@/axios'
 import config from '@/config'
+import validationsMixin from '@/mixins/validationsMixin.js'
 
 export default {
   data () {
@@ -352,7 +353,8 @@ export default {
       }
       return ''
     }
-  }
+  },
+  mixins: [validationsMixin]
 }
 </script>
 

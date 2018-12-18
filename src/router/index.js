@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import Router from 'vue-router'
 import Home from '@/components/Home'
 import Repositories from '@/components/Repositories'
 import Repository from '@/components/Repository'
@@ -9,10 +7,9 @@ import SlurmGeneral from '@/components/SlurmGeneral'
 import SlurmBgpsec from '@/components/SlurmBgpsec'
 import SlurmPrefix from '@/components/SlurmPrefix'
 import Validate from '@/components/Validate'
+import KeepAlive from '@/components/common/KeepAlive'
 
-Vue.use(Router)
-
-export default new Router({
+export default {
   routes: [
     {
       path: '/',
@@ -21,23 +18,35 @@ export default new Router({
     },
     {
       path: '/repositories',
-      name: 'modules.repositories',
-      component: Repositories
-    },
-    {
-      path: '/repositories/:talId',
-      name: 'modules.repository',
-      component: Repository
+      component: KeepAlive,
+      children: [
+        {
+          path: '',
+          name: 'modules.repositories',
+          component: Repositories
+        },
+        {
+          path: ':talId',
+          name: 'modules.repository',
+          component: Repository
+        }
+      ]
     },
     {
       path: '/roa',
-      name: 'modules.roas',
-      component: Roas
-    },
-    {
-      path: '/roa/:roaId',
-      name: 'modules.roa',
-      component: Roa
+      component: KeepAlive,
+      children: [
+        {
+          path: '',
+          name: 'modules.roas',
+          component: Roas
+        },
+        {
+          path: ':roaId',
+          name: 'modules.roa',
+          component: Roa
+        }
+      ]
     },
     {
       path: '/slurm/general',
@@ -61,4 +70,4 @@ export default new Router({
     }
   ],
   mode: 'history'
-})
+}
