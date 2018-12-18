@@ -19,7 +19,10 @@
               </option>
             </b-form-select>
           </b-input-group-prepend>
-          <b-form-input v-model="filterItem" :placeholder="$t('filter.placeholder')"></b-form-input>
+          <b-form-input v-model="filterItem"
+                        :placeholder="$t('filter.placeholder')"
+                        :disabled="listService ? !searchFilter : false">
+          </b-form-input>
           <b-input-group-append>
             <b-btn :disabled="listService ? !filterItem : !customFilter"
                    @click="filterItem = ''"
