@@ -39,7 +39,8 @@ const messages = {
       valid: 'Valid',
       warning: 'Warning',
       error: 'Error',
-      total: 'Total'
+      total: 'Total',
+      noData: 'The repository doesn\'t have recent validation data or is currently being validated, try accesing this module in a moment'
     },
     validations: {
       title: 'Files validation',

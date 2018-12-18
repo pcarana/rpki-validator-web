@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-row class="mb-4">
+    <b-row v-if="validations.length > 0" class="mb-4">
       <b-col cols="2"></b-col>
       <b-col cols="8">
         <b-container fluid>
@@ -47,6 +47,9 @@
         </b-container>
       </b-col>
       <b-col cols="2"></b-col>
+    </b-row>
+    <b-row v-else class="mb-4 p-4 font-italic">
+      <h5>{{ $t('repository.files.noData') }}</h5>
     </b-row>
     <b-row>
       <b-col cols="12">

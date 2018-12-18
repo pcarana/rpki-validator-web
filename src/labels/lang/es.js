@@ -39,7 +39,8 @@ const messages = {
       valid: 'Válido',
       warning: 'Advertencia',
       error: 'Error',
-      total: 'Total'
+      total: 'Total',
+      noData: 'El repositorio no tiene información reciente de validaciones o está siendo validado, intente accediendo nuevamente al módulo en unos momentos'
     },
     validations: {
       title: 'Validación de archivos',
