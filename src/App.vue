@@ -2,9 +2,7 @@
   <b-container fluid class="py-0 px-0">
     <navigation></navigation>
     <transition name="fade" mode="out-in">
-      <keep-alive>
-        <router-view/>
-      </keep-alive>
+      <router-view/>
     </transition>
     <login ref="loginComponent"></login>
   </b-container>
