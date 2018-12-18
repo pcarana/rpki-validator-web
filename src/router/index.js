@@ -26,9 +26,10 @@ export default {
           component: Repositories
         },
         {
-          path: ':talId',
+          path: ':id',
           name: 'modules.repository',
-          component: Repository
+          component: Repository,
+          props: true
         }
       ]
     },
@@ -42,9 +43,10 @@ export default {
           component: Roas
         },
         {
-          path: ':roaId',
+          path: ':id',
           name: 'modules.roa',
-          component: Roa
+          component: Roa,
+          props: true
         }
       ]
     },

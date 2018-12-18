@@ -46,6 +46,9 @@ import axios from '@/axios'
 import config from '@/config'
 
 export default {
+  props: {
+    id: Number | String
+  },
   data () {
     return {
       tal: null,
@@ -85,7 +88,7 @@ export default {
       this.useToken = useToken
       let service = config.api.services.get.talDetail.replace(
         ':id',
-        this.$route.params.talId
+        this.id
       )
       let promise = axios.getPromise(
         axios.methods.get,
@@ -116,6 +119,12 @@ export default {
   created: function () {
     this.loadData(this.useToken)
     this.currentTab = 'files-validation'
+  },
+  watch: {
+    id: function (newId, oldId) {
+      this.loadData(this.useToken)
+      this.currentTab = 'files-validation'
+    }
   }
 }
 </script>
