@@ -36,11 +36,6 @@ Vue.mixin({
     },
     checkAuth (error, retryCallback, errorCallback) {
       if (error && error.response && error.response.status === 401) {
-        // Go to the root
-        // let parentComponent = this.$parent
-        // while (parentComponent.$parent) {
-        //  parentComponent = parentComponent.$parent
-        // }
         let parentComponent = this.$root.$children[0]
         let loginComponent = parentComponent.$refs.loginComponent
         loginComponent.callbackSet = {
