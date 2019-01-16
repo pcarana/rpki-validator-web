@@ -1,6 +1,12 @@
 <template>
   <b-container fluid>
-    <b-row v-if="validations.length > 0" class="mb-4">
+    <b-row class="mb-4">
+      <b-col>
+        <loading :show="loading"></loading>
+        <error-display :error="error" :callLogin="callLogin" :callRetry="loadData"></error-display>
+      </b-col>
+    </b-row>
+    <b-row v-if="validationSummary" class="mb-4">
       <b-col cols="2"></b-col>
       <b-col cols="8">
         <b-container fluid>
@@ -32,17 +38,21 @@
               </b-badge>
             </b-col>
           </b-row>
-          <b-row :class="{ 'text-center': true, 'font-weight-bold': index === filesSummary.size - 1}"
-                  v-for="(fileSummary, index) in Array.from(filesSummary)" :key="fileSummary[0]">
+          <b-row class='text-center' v-for="(value, fileType) in localSummary" :key="fileType">
             <b-col class="text-right h6">
-              {{fileSummary[0]}}
+              {{ fileType }}
             </b-col>
-            <b-col class="border">{{fileSummary[1].valid}}</b-col>
-            <b-col class="border">{{fileSummary[1].warning}}</b-col>
-            <b-col class="border">{{fileSummary[1].error}}</b-col>
-            <b-col class="border font-weight-bold">
-            {{fileSummary[1].valid + fileSummary[1].warning + fileSummary[1].error}}
-            </b-col>
+            <b-col class="border">{{ localSummary[fileType].passed }}</b-col>
+            <b-col class="border">{{ localSummary[fileType].warning }}</b-col>
+            <b-col class="border">{{ localSummary[fileType].error }}</b-col>
+            <b-col class="border font-weight-bold">{{ localSummary[fileType].total }}</b-col>
+          </b-row>
+          <b-row class='text-center font-weight-bold'>
+            <b-col class="text-right h6"></b-col>
+            <b-col class="border">{{ totalByStatus('passed') }}</b-col>
+            <b-col class="border">{{ totalByStatus('warning') }}</b-col>
+            <b-col class="border">{{ totalByStatus('error') }}</b-col>
+            <b-col class="border font-weight-bold">{{ totalByStatus('total') }}</b-col>
           </b-row>
         </b-container>
       </b-col>
@@ -53,12 +63,14 @@
     </b-row>
     <b-row>
       <b-col cols="12">
-        <custom-table :items="validations"
-                      :tableFields="tableFields"
-                      :filterFunction="filterFunction"
+        <custom-table :tableFields="tableFields"
                       :searchFilterOpts="searchFilterOpts"
                       :tableId="tableId"
-                      :ref="tableId">
+                      :ref="tableId"
+                      :listService="getListService"
+                      :callLogin="callLogin"
+                      :errorCb="errorCb"
+                      :context="this">
         </custom-table>
       </b-col>
     </b-row>
@@ -67,6 +79,10 @@
 
 <script>
 import CustomTable from '@/components/common/CustomTable.vue'
+import ErrorDisplay from '@/components/common/ErrorDisplay.vue'
+import Loading from '@/components/common/Loading.vue'
+import axios from '@/axios'
+import config from '@/config'
 
 export default {
   props: {
@@ -76,7 +92,9 @@ export default {
     }
   },
   components: {
-    'custom-table': CustomTable
+    'custom-table': CustomTable,
+    'error-display': ErrorDisplay,
+    'loading': Loading
   },
   data () {
     return {
@@ -85,97 +103,101 @@ export default {
         { key: 'fileType', label: 'repository.validations.fileType', sortable: true },
         { key: 'location', label: 'repository.validations.location', sortable: true },
         { key: 'status', label: 'repository.validations.status', sortable: true },
-        { key: 'message', label: 'repository.validations.message', sortable: true }
+        { key: 'message', label: 'repository.validations.message', sortable: false }
       ],
       searchFilterOpts: [
         { value: 'fileType', text: 'repository.validations.fileType' },
         { value: 'location', text: 'repository.validations.location' },
-        { value: 'status', text: 'repository.validations.status' },
-        { value: 'message', text: 'repository.validations.message' }
-      ]
+        { value: 'status', text: 'repository.validations.status' }
+      ],
+      loading: false,
+      useToken: false,
+      error: null,
+      validationSummary: null,
+      localSummary: {
+        cer: { passed: 0, warning: 0, error: 0, total: 0 },
+        crl: { passed: 0, warning: 0, error: 0, total: 0 },
+        roa: { passed: 0, warning: 0, error: 0, total: 0 },
+        mft: { passed: 0, warning: 0, error: 0, total: 0 },
+        gbr: { passed: 0, warning: 0, error: 0, total: 0 }
+      },
+      getListService: config.api.services.get.talValidationList.replace(
+        ':id',
+        this.tal.id
+      )
     }
   },
   methods: {
-    addToSummaryMap (check, fileMap, property) {
-      let split = check.location.split('.')
-      let fileType = split[split.length - 1]
-      if (!fileMap.has(fileType)) {
-        let values = { valid: 0, warning: 0, error: 0 }
-        fileMap.set(fileType, values)
+    totalByStatus (status) {
+      let total = 0
+      for (let fileType in this.localSummary) {
+        total += this.localSummary[fileType][status]
       }
-      fileMap.get(fileType)[property] += 1
+      return total
     },
-    addCheckToArray (sourceArr, status, destArr) {
-      sourceArr.map((check) => {
-        let split = check.location.split('.')
-        let fileType = split[split.length - 1]
-        destArr.push({
-          fileType: fileType,
-          location: check.location,
-          status: status,
-          message: check.message ? check.message : ''
-        })
-      })
+    loadData (useToken) {
+      this.error = null
+      this.loading = true
+      this.useToken = useToken
+      let service = this.getListService
+      let promise = axios.getPromise(
+        axios.methods.get,
+        this.$root.$i18n.locale,
+        service,
+        useToken,
+        {summary: true})
+      axios.processPromise(promise,
+        this.successCb,
+        this.errorCb,
+        this.finallyCb)
     },
-    filterFunction (item, searchFilterOpt, filterItemTxt) {
-      var regexp
-      try {
-        regexp = new RegExp(filterItemTxt, 'i')
-      } catch (e) {
-        // Wait until the regexp is valid
-        return null
+    successCb (response) {
+      this.error = null
+      this.validationSummary = response.data
+      this.localSummary = {
+        cer: { passed: 0, warning: 0, error: 0, total: 0 },
+        crl: { passed: 0, warning: 0, error: 0, total: 0 },
+        roa: { passed: 0, warning: 0, error: 0, total: 0 },
+        mft: { passed: 0, warning: 0, error: 0, total: 0 },
+        gbr: { passed: 0, warning: 0, error: 0, total: 0 }
       }
-      if (item[searchFilterOpt]) {
-        return item[searchFilterOpt].match(regexp)
+      let vs = this.validationSummary
+      if (vs) {
+        for (let status in vs) {
+          for (let fileType in vs[status]) {
+            this.localSummary[fileType][status] = vs[status][fileType]
+            this.localSummary[fileType].total += vs[status][fileType]
+          }
+        }
       }
-      return item.fileType.match(regexp) || item.location.match(regexp) ||
-        item.status.match(regexp) || item.message.match(regexp)
+      this.$refs[this.tableId].refresh()
+    },
+    errorCb (error) {
+      this.error = error
+      this.validationSummary = null
+      this.callLogin()
+    },
+    finallyCb () {
+      this.loading = false
+    },
+    retryCb (useToken) {
+      this.useToken = useToken
+      this.$refs[this.tableId].refresh()
+    },
+    callLogin () {
+      this.checkAuth(this.error, this.retryCb, this.errorCb)
     }
   },
-  computed: {
-    filesSummary: function () {
-      const fileMap = new Map()
-      if (!this.tal) {
-        return fileMap
-      }
-      this.tal.validations.filter((v) => {
-        return v.status !== 'RUNNING'
-      }).map((validation) => {
-        validation.checks.passed.map((c) => {
-          this.addToSummaryMap(c, fileMap, 'valid')
-        })
-        validation.checks.warning.map((c) => {
-          this.addToSummaryMap(c, fileMap, 'warning')
-        })
-        validation.checks.error.map((c) => {
-          this.addToSummaryMap(c, fileMap, 'error')
-        })
-        let object = {}
-        object.valid = validation.checks.passed.length
-        object.warning = validation.checks.warning.length
-        object.error = validation.checks.error.length
-        object.total = object.valid + object.warning + object.error
-        fileMap.set('', object)
-      })
-      return fileMap
-    },
-    validations: function () {
-      let all = []
-      if (!this.tal) {
-        return all
-      }
-      this.tal.validations.filter((v) => {
-        return v.status !== 'RUNNING'
-      }).map((validation) => {
-        this.addCheckToArray(validation.checks.error, 'error', all)
-        this.addCheckToArray(validation.checks.warning, 'warning', all)
-        this.addCheckToArray(validation.checks.passed, 'valid', all)
-      })
-      return all
-    }
+  created: function () {
+    this.loadData(this.useToken)
   },
   watch: {
     tal: function (val, oldVal) {
+      this.getListService = config.api.services.get.talValidationList.replace(
+        ':id',
+        val.id
+      )
+      this.loadData(this.useToken)
       return val
     }
   }

@@ -17,6 +17,7 @@ const data = {
             get: {
                 talList: '/tal',
                 talDetail: '/tal/:id',
+                talValidationList: '/tal/validation/:id',
                 treeRoot: '/tree/root/:id',
                 treeChild: '/tree/child/:id',
                 roaList: '/roa',
