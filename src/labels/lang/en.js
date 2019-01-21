@@ -5,9 +5,9 @@ const messages = {
     roa: 'ROA',
     slurm: {
       main: 'SLURM',
-      general: 'Complete',
-      prefix: 'Prefix',
-      bgpsec: 'BGPsec'
+      general: 'Preview',
+      prefix: 'Manage Prefix',
+      bgpsec: 'Manage BGPsec'
     },
     validate: 'Validate',
     appUpdate: 'Update available'
@@ -69,12 +69,12 @@ const messages = {
   },
   slurm: {
     prefix: {
-      title: 'SLURM Prefix',
-      description: 'These are the prefixes configured at the SLURM file, either as Filters or Assertions'
+      title: 'Manage SLURM Prefix',
+      description: 'These are the prefixes configured at the SLURM file, either as Filters or Assertions; you can consult, add, or delete according to your needs.'
     },
     bgpsec: {
-      title: 'SLURM BGPsec',
-      description: 'These are the BGPsec rules configured at the SLURM file, either as Filters or Assertions'
+      title: 'Manage SLURM BGPsec',
+      description: 'These are the BGPsec rules configured at the SLURM file, either as Filters or Assertions; you can consult, add, or delete according to your needs.'
     },
     filter: {
       title: 'Filter',
@@ -89,7 +89,7 @@ const messages = {
       prefix: 'Prefix object'
     },
     general: {
-      title: 'SLURM loaded',
+      title: 'SLURM preview',
       description: 'This is a preview of the SLURM loaded at the validator'
     }
   },

@@ -5,9 +5,9 @@ const messages = {
     roa: 'ROA',
     slurm: {
       main: 'SLURM',
-      general: 'Completo',
-      prefix: 'Prefijos',
-      bgpsec: 'BGPsec'
+      general: 'Vista previa',
+      prefix: 'Administrar Prefijos',
+      bgpsec: 'Administrar BGPsec'
     },
     validate: 'Validación',
     appUpdate: 'Actualización disponible'
@@ -69,12 +69,12 @@ const messages = {
   },
   slurm: {
     prefix: {
-      title: 'Prefijos SLURM',
-      description: 'Estas son las reglas de prefijos configuradas en el archivo SLURM del validador, ya sea como Filtros o Aserciones'
+      title: 'Administrar Prefijos de SLURM',
+      description: 'Estas son las reglas de prefijos configuradas en el archivo SLURM del validador, ya sea como Filtros o Aserciones; puede consultar, añadir, o eliminar según lo necesite.'
     },
     bgpsec: {
-      title: 'Reglas BGPsec SLURM',
-      description: 'Estas son las reglas de BGPsec configuradas en el archivo SLURM del validador, ya sea como Filtros o Aserciones'
+      title: 'Administrar Reglas BGPsec de SLURM',
+      description: 'Estas son las reglas de BGPsec configuradas en el archivo SLURM del validador, ya sea como Filtros o Aserciones; puede consultar, añadir, o eliminar según lo necesite.'
     },
     filter: {
       title: 'Filtro',
@@ -89,7 +89,7 @@ const messages = {
       prefix: 'Objeto Prefijo'
     },
     general: {
-      title: 'SLURM configurado',
+      title: 'Vista previa SLURM',
       description: 'Esta es una vista previa del archivo SLURM configurado en el validador'
     }
   },
