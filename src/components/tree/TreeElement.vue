@@ -47,9 +47,9 @@
             </div>
           </b-col>
           <b-col cols="1" class="p-0" v-if="hasChilds">
-            <b-button @click="localClick" class="w-100 h-100 h4" variant="dark" :disabled="loading || selected">
+            <b-button @click="localClick" class="w-100 h-100 h4 p-0 btn-align" variant="dark" :disabled="loading || selected">
               <span v-if="!loading">&gt;</span>
-              <img v-else src="@/assets/circular_spinner.gif" alt="..." height="16" width="16" />
+              <img v-else src="@/assets/circular_spinner.gif" alt="..." height="14" width="14" />
             </b-button>
           </b-col>
         </b-row>
@@ -285,5 +285,10 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.btn-align {
+  text-align: center;
+  vertical-align: middle;
 }
 </style>
