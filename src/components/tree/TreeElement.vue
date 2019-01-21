@@ -3,12 +3,12 @@
     <b-col>
       <b-container fluid class="p-0">
         <b-row class="border rounded p-0 rowClass" :class="{ selected: selected }">
-          <b-col :cols="hasChilds ? 10 : 12" class="p-0">
-            <div class="text-center align-middle" :class="typeClass">
-              <span class="h6">
-                .{{ object.type}}
-              </span>
+          <b-col cols="1" class="p-0 m-0 h6" :class="typeClass">
+            <div class="vertical-text">
+              {{ object.type}}
             </div>
+          </b-col>
+          <b-col :cols="hasChilds ? 10 : 11" class="p-0">
             <div class="p-2">
               <div>
                 {{ fileName }} <span class="childs" v-if="hasChilds">({{ $t('common.nChilds', {n: object.childCount}) }})</span>
@@ -46,7 +46,7 @@
               </div>
             </div>
           </b-col>
-          <b-col cols="2" class="p-0" v-if="hasChilds">
+          <b-col cols="1" class="p-0" v-if="hasChilds">
             <b-button @click="localClick" class="w-100 h-100 h4" variant="dark" :disabled="loading || selected">
               <span v-if="!loading">&gt;</span>
               <img v-else src="@/assets/circular_spinner.gif" alt="..." height="16" width="16" />
@@ -262,5 +262,28 @@ export default {
 
 .default {
   background-color: #fbc983;
+}
+
+.vertical-text {
+  /* FF3.5+ */
+  -moz-transform: rotate(-90.0deg);
+  -moz-transform-origin: left top 0;
+  /* Opera 10.5 */
+  -o-transform: rotate(-90.0deg);
+  -o-transform-origin: left top 0;
+  /* Saf3.1+, Chrome */
+  -webkit-transform: rotate(-90.0deg);
+  -webkit-transform-origin: left top 0;
+  /* IE6,IE7 */
+  filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=0.083);
+  /* IE8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)";
+  /* Standard */
+  transform: rotate(-90.0deg);
+  transform-origin: left top 0;
+  white-space: nowrap;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 </style>
