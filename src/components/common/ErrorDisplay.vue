@@ -99,7 +99,7 @@ export default {
         if (this.error.response) {
           console.log(this.error.response.status + ' at ' + this.error.response.config.url)
         } else {
-          console.log(JSON.stringify(this.error))
+          console.log(this.error + ' - JSON = ' + JSON.stringify(this.error))
         }
       }
       return this.errorType !== null ? this.errorType + '.title' : ''
