@@ -146,7 +146,8 @@ const messages = {
     loading: 'Cargando...',
     element: 'Elemento #{n}',
     noElements: 'Sin elementos',
-    nChilds: '{n} hijos'
+    nChilds: '{n} hijos',
+    loadMore: 'Ver más'
   },
   filter: {
     placeholder: 'Filtro...',

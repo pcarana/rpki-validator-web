@@ -1,19 +1,28 @@
 <template>
   <b-container fluid class="d-inline-block general">
+    <b-row v-if="loading">
+        <b-col cols="12">
+          <loading :show="loading"></loading>
+        </b-col>
+    </b-row>
     <b-row v-if="root" class="explorer">
       <b-col :cols="branchCols(0)">
         <b-container fluid>
-          <tree-element :index="0" :parentIndex="0" :object="root" selected />
+          <tree-element :index="0" :object="root" selected />
         </b-container>
       </b-col>
       <tree-branch
         v-on:add-branch="addBranch"
         v-on:error="grandsonErrorCb"
+        v-on:add-next-page="addNextPage"
         v-for="(grandson, index) in grandsons"
-        :key="index + 1"
-        :elements="grandson"
+        :key="grandson.parentId"
+        :elements="grandson.elements"
         :level="index + 1"
-        :cols="branchCols(index + 1)" />
+        :cols="branchCols(index + 1)"
+        :limit="limit"
+        :childCount="grandson.childCount"
+        :parentId="grandson.parentId" />
       <b-col v-if="grandsonError" :cols="branchCols(grandsons.length)">
         <error-display :error="grandsonError"></error-display>
       </b-col>
@@ -40,7 +49,8 @@ export default {
       loading: false,
       root: null,
       grandsons: [],
-      grandsonError: null
+      grandsonError: null,
+      limit: 50
     }
   },
   components: {
@@ -50,6 +60,8 @@ export default {
   methods: {
     loadData () {
       this.grandsonError = null
+      this.grandsons = []
+      this.root = null
       this.loading = true
       let promise = this.promiseCb(null)
       axios.processPromise(promise,
@@ -72,7 +84,7 @@ export default {
       this.grandsonError = null
       this.root = response.data
       if (response.data.childs) {
-        this.addBranch({ level: 1, elements: response.data.childs })
+        this.addBranch({ level: 1, elements: response.data.childs }, response.data.childCount)
       }
     },
     errorCb (error) {
@@ -81,13 +93,23 @@ export default {
     finallyCb () {
       this.loading = false
     },
-    addBranch (levelData) {
+    addBranch (levelData, childCount, parentId) {
       if (levelData.level) {
         if (this.grandsons.length < levelData.level) {
-          this.grandsons.push(levelData.elements)
+          this.grandsons.push({ elements: levelData.elements, childCount: childCount, parentId: parentId })
         } else {
           this.grandsons.pop()
-          this.grandsons[levelData.level - 1] = levelData.elements
+          this.grandsons[levelData.level - 1] = { elements: levelData.elements, childCount: childCount, parentId: parentId }
+        }
+      }
+    },
+    addNextPage (level, newElements, parentId) {
+      this.$set(this.grandsons[level - 1], 'elements', this.grandsons[level - 1].elements.concat(newElements))
+      let grandpaElements = this.grandsons[level - 2].elements
+      for (let i = 0; i < grandpaElements.length; i++) {
+        if (grandpaElements[i].id === parentId) {
+          this.$set(this.grandsons[level - 2].elements[i], 'childs', this.grandsons[level - 2].elements[i].childs.concat(newElements))
+          break
         }
       }
     },
