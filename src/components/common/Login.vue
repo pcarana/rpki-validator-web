@@ -97,7 +97,7 @@ export default {
       myAxios.get(config.api.services.get.tokens).then(function (response) {
         me.$refs.loginModal.hide()
         localStorage.setItem('t', response.data.token)
-        me.callbackSet.retryCallback(true)
+        me.callbackSet.retryCallback(true, me.callbackSet.retryCallbackParams)
       }).catch(function (error) {
         if (error.response && error.response.status === 401) {
           me.loginError = error

@@ -34,12 +34,13 @@ Vue.mixin({
     getActiveLang () {
       return i18n.locale
     },
-    checkAuth (error, retryCallback, errorCallback) {
+    checkAuth (error, retryCallback, errorCallback, retryCallbackParams) {
       if (error && error.response && error.response.status === 401) {
         let parentComponent = this.$root.$children[0]
         let loginComponent = parentComponent.$refs.loginComponent
         loginComponent.callbackSet = {
           retryCallback: retryCallback,
+          retryCallbackParams: retryCallbackParams,
           errorCallback: errorCallback
         }
         loginComponent.showLoginModal()

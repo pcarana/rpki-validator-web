@@ -143,6 +143,7 @@ const messages = {
     deleteSuccess: 'Object successfully deleted!',
     syncSuccess: 'Synchronization successfully requested!',
     syncError: 'The synchronization was requested, but there was an error executing it at the server; try again.',
+    syncRunning: 'The synchronization was already requested, wait until it ends its execution.',
     loading: 'Loading...',
     element: 'Element #{n}',
     noElements: 'No elements',

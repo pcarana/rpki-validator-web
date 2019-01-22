@@ -50,6 +50,7 @@ export default {
     return {
       tableId: 'repositoriesTable',
       getListService: config.api.services.get.talList,
+      checkSyncTalService: config.api.services.get.talSync,
       syncTalService: config.api.services.post.talSync,
       tableFields: [
         {key: 'name', label: 'repository.general.name', sortable: true},
@@ -80,7 +81,8 @@ export default {
       },
       syncItemId: null,
       syncError: null,
-      syncMessage: null
+      syncMessage: null,
+      syncChecks: {}
     }
   },
   methods: {
@@ -120,15 +122,28 @@ export default {
         me.syncSuccessCb(response)
       }).catch(function (error) {
         me.syncErrorCb(error)
-      }).finally(function () {
         buttonRef.disabled = false
         buttonRef.innerText = me.$root.$i18n.t('repositories.sync')
+      }).finally(function () {
+        // Nothing
       })
     },
     syncSuccessCb (response) {
+      if (response.data.execStatus === 'requested') {
+        this.syncMessage = 'common.syncSuccess'
+        this.createCheckInterval(this.syncItemId)
+      } else if (response.data.execStatus === 'running') {
+        this.syncMessage = 'common.syncRunning'
+        this.createCheckInterval(this.syncItemId)
+      } else {
+        this.syncMessage = 'common.syncError'
+        this.destroyCheckInterval(this.syncItemId)
+        let buttonRef = this.$refs[this.tableId].$refs[this.syncAction.buttonRef + this.syncItemId]
+        buttonRef.disabled = false
+        buttonRef.innerText = this.$root.$i18n.t('repositories.sync')
+      }
       this.syncError = null
       this.syncItemId = null
-      this.syncMessage = response.data.execStatus === 0 ? 'common.syncSuccess' : 'common.syncError'
       this.$refs.syncSuccessModal.show()
     },
     syncErrorCb (error) {
@@ -137,6 +152,61 @@ export default {
     },
     syncLogin () {
       this.checkAuth(this.syncError, this.trySync, this.syncErrorCb)
+    },
+    checkSyncStatus (useToken, itemId) {
+      let me = this
+      me.syncError = null
+      me.useToken = useToken
+      let service = me.checkSyncTalService.replace(':id', itemId)
+      let promise = axios.getPromise(
+        axios.methods.get,
+        me.$root.$i18n.locale,
+        service,
+        useToken)
+      promise.then(function (response) {
+        switch (response.data.execStatus) {
+          case 'finished-ok':
+          case 'finished-error':
+          case 'not-running':
+            me.resetSyncAction(itemId)
+            break
+          default:
+            // Running
+            let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + itemId]
+            buttonRef.disabled = true
+            buttonRef.innerText = me.$root.$i18n.t('repositories.syncing')
+            me.createCheckInterval(itemId)
+            break
+        }
+      }).catch(function (error) {
+        me.checkSyncErrorCb(error, itemId)
+      }).finally(function () {
+        // Nothing
+      })
+    },
+    checkSyncErrorCb (error, itemId) {
+      this.syncError = error
+      this.checkSyncLogin()
+    },
+    checkSyncLogin (itemId) {
+      this.checkAuth(this.syncError, this.checkSyncStatus, this.checkSyncErrorCb, itemId)
+    },
+    createCheckInterval (itemId) {
+      if (!this.syncChecks[itemId]) {
+        this.syncChecks[itemId] = setInterval(this.checkSyncStatus, 2000, this.useToken, itemId)
+      }
+    },
+    destroyCheckInterval (itemId) {
+      if (this.syncChecks[itemId]) {
+        clearInterval(this.syncChecks[itemId])
+        this.syncChecks[itemId] = null
+      }
+    },
+    resetSyncAction (itemId) {
+      let buttonRef = this.$refs[this.tableId].$refs[this.syncAction.buttonRef + itemId]
+      buttonRef.disabled = false
+      buttonRef.innerText = this.$root.$i18n.t('repositories.sync')
+      this.destroyCheckInterval(itemId)
     }
   }
 }
