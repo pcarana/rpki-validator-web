@@ -137,6 +137,7 @@ export default {
     },
     loadData (useToken) {
       this.error = null
+      this.validationSummary = null
       this.loading = true
       this.useToken = useToken
       let service = this.getListService
@@ -174,7 +175,6 @@ export default {
     },
     errorCb (error) {
       this.error = error
-      this.validationSummary = null
       this.callLogin()
     },
     finallyCb () {
