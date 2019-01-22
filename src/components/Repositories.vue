@@ -25,13 +25,6 @@
                       :additionalAction="syncAction"
                       :additionalError="syncError">
         </custom-table>
-        <b-modal
-          id="syncSuccessModal"
-          ref="syncSuccessModal"
-          size="sm"
-          ok-only>
-          <p class="text-center">{{ $t(syncMessage) }}</p>
-        </b-modal>
       </b-col>
     </b-row>
   </b-container>
@@ -79,7 +72,6 @@ export default {
         label: 'repositories.sync',
         buttonRef: 'repoSync'
       },
-      syncItemId: null,
       syncError: null,
       syncMessage: null,
       syncChecks: {}
@@ -102,61 +94,65 @@ export default {
       }
     },
     syncTal (tal) {
-      this.syncItemId = tal.id
-      this.trySync(this.useToken)
+      this.trySync(this.useToken, tal.id)
     },
-    trySync (useToken) {
+    trySync (useToken, syncItemId) {
       let me = this
       me.syncError = null
       me.useToken = useToken
-      let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + me.syncItemId]
+      let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + syncItemId]
       buttonRef.disabled = true
       buttonRef.innerText = me.$root.$i18n.t('repositories.syncing')
-      let service = me.syncTalService.replace(':id', me.syncItemId)
+      let service = me.syncTalService.replace(':id', syncItemId)
       let promise = axios.getPromise(
         axios.methods.post,
         me.$root.$i18n.locale,
         service,
         useToken)
       promise.then(function (response) {
-        me.syncSuccessCb(response)
+        me.syncSuccessCb(response, syncItemId)
       }).catch(function (error) {
-        me.syncErrorCb(error)
+        me.syncErrorCb(error, syncItemId)
         buttonRef.disabled = false
         buttonRef.innerText = me.$root.$i18n.t('repositories.sync')
       }).finally(function () {
         // Nothing
       })
     },
-    syncSuccessCb (response) {
+    syncSuccessCb (response, syncItemId) {
       if (response.data.execStatus === 'requested') {
         this.syncMessage = 'common.syncSuccess'
-        this.createCheckInterval(this.syncItemId)
+        this.createCheckInterval(syncItemId)
       } else if (response.data.execStatus === 'running') {
         this.syncMessage = 'common.syncRunning'
-        this.createCheckInterval(this.syncItemId)
+        this.createCheckInterval(syncItemId)
       } else {
         this.syncMessage = 'common.syncError'
-        this.destroyCheckInterval(this.syncItemId)
-        let buttonRef = this.$refs[this.tableId].$refs[this.syncAction.buttonRef + this.syncItemId]
-        buttonRef.disabled = false
-        buttonRef.innerText = this.$root.$i18n.t('repositories.sync')
+        this.destroyCheckInterval(syncItemId)
+        let buttonRef = this.$refs[this.tableId].$refs[this.syncAction.buttonRef + syncItemId]
+        buttonRef.style.backgroundColor = 'red'
+        buttonRef.innerText = this.$root.$i18n.t('repositories.syncError')
+        setTimeout(function () {
+          buttonRef.disabled = false
+          buttonRef.innerText = this.$root.$i18n.t('repositories.sync')
+          buttonRef.style.backgroundColor = ''
+        }, 8000)
       }
       this.syncError = null
-      this.syncItemId = null
-      this.$refs.syncSuccessModal.show()
     },
-    syncErrorCb (error) {
+    syncErrorCb (error, itemId) {
       this.syncError = error
-      this.syncLogin()
+      this.syncLogin(itemId)
     },
-    syncLogin () {
-      this.checkAuth(this.syncError, this.trySync, this.syncErrorCb)
+    syncLogin (itemId) {
+      this.checkAuth(this.syncError, this.trySync, this.syncErrorCb, itemId)
     },
     checkSyncStatus (useToken, itemId) {
       let me = this
       me.syncError = null
       me.useToken = useToken
+      // Create the interval (just in case this method is reached from an error flow)
+      me.createCheckInterval(itemId)
       let service = me.checkSyncTalService.replace(':id', itemId)
       let promise = axios.getPromise(
         axios.methods.get,
@@ -164,21 +160,33 @@ export default {
         service,
         useToken)
       promise.then(function (response) {
+        let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + itemId]
         switch (response.data.execStatus) {
           case 'finished-ok':
+            me.destroyCheckInterval(itemId)
+            buttonRef.style.backgroundColor = 'green'
+            buttonRef.innerText = me.$root.$i18n.t('repositories.syncSuccess')
+            setTimeout(me.resetSyncAction, 5000, itemId)
+            break
           case 'finished-error':
+            me.destroyCheckInterval(itemId)
+            buttonRef.style.backgroundColor = 'red'
+            buttonRef.innerText = me.$root.$i18n.t('repositories.syncError')
+            setTimeout(me.resetSyncAction, 5000, itemId)
+            break
           case 'not-running':
+            me.destroyCheckInterval(itemId)
             me.resetSyncAction(itemId)
             break
           default:
             // Running
-            let buttonRef = me.$refs[me.tableId].$refs[me.syncAction.buttonRef + itemId]
             buttonRef.disabled = true
             buttonRef.innerText = me.$root.$i18n.t('repositories.syncing')
             me.createCheckInterval(itemId)
             break
         }
       }).catch(function (error) {
+        me.destroyCheckInterval(itemId)
         me.checkSyncErrorCb(error, itemId)
       }).finally(function () {
         // Nothing
@@ -186,7 +194,9 @@ export default {
     },
     checkSyncErrorCb (error, itemId) {
       this.syncError = error
-      this.checkSyncLogin()
+      // Prevent the check during the error display
+      this.destroyCheckInterval(itemId)
+      this.checkSyncLogin(itemId)
     },
     checkSyncLogin (itemId) {
       this.checkAuth(this.syncError, this.checkSyncStatus, this.checkSyncErrorCb, itemId)
@@ -206,7 +216,7 @@ export default {
       let buttonRef = this.$refs[this.tableId].$refs[this.syncAction.buttonRef + itemId]
       buttonRef.disabled = false
       buttonRef.innerText = this.$root.$i18n.t('repositories.sync')
-      this.destroyCheckInterval(itemId)
+      buttonRef.style.backgroundColor = ''
     }
   }
 }

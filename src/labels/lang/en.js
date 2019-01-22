@@ -20,7 +20,9 @@ const messages = {
     title: 'TAL List',
     description: 'These are the TALs configured at the validator',
     sync: 'Synchronize',
-    syncing: 'Synchronizing'
+    syncing: 'Synchronizing',
+    syncError: 'Error synchronizing',
+    syncSuccess: 'Finished synchronization'
   },
   repository: {
     title: 'TAL detail',
